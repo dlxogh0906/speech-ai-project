@@ -2,6 +2,7 @@
 """Build native-Korean and combined policy32 CSV manifests."""
 
 from __future__ import annotations
+import os
 
 import csv
 import hashlib
@@ -13,10 +14,10 @@ from collections import Counter
 from pathlib import Path
 
 
-DB_PATH = Path("$SPEECH_AI_DATA/taeho/korean_native_index/korean_native_index.sqlite")
-KOREAN_OUT = Path("$SPEECH_AI_DATA/taeho/korean_native_manifest_seed42")
-FOREIGN_MANIFEST = Path("$NATIONALITY_OUTPUTS/policy31_manifest_othergpu_local")
-POLICY32_OUT = Path("$SPEECH_AI_DATA/taeho/policy32_othergpu_split_seed42")
+DB_PATH = Path(os.path.expandvars("$SPEECH_AI_DATA/taeho/korean_native_index/korean_native_index.sqlite"))
+KOREAN_OUT = Path(os.path.expandvars("$SPEECH_AI_DATA/taeho/korean_native_manifest_seed42"))
+FOREIGN_MANIFEST = Path(os.path.expandvars("$NATIONALITY_OUTPUTS/policy31_manifest_othergpu_local"))
+POLICY32_OUT = Path(os.path.expandvars("$SPEECH_AI_DATA/taeho/policy32_othergpu_split_seed42"))
 SEED = 42
 MIN_SEC = 2.0
 MAX_SEC = 16.0

@@ -19,7 +19,16 @@ PY_VERSION="${PY_VERSION:-3.8}"
 CUDA_TAG="${CUDA_TAG:-cu118}"          # override: CUDA_TAG=cu121 bash scripts/create_env.sh
 TORCH_VERSION="${TORCH_VERSION:-2.1.2}"
 TORCHAUDIO_VERSION="${TORCHAUDIO_VERSION:-2.1.2}"
-FAIRSEQ_DIR="${FAIRSEQ_DIR:-$FAIRSEQ_ROOT}"
+# 저장소 .env 를 먼저 읽는다 (README 는 이 스크립트를 .env 작성 전에 돌리라고 안내하므로,
+# 없어도 죽지 않고 안내만 한다).
+_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+[ -f "$_ROOT/.env" ] && { set -a; . "$_ROOT/.env"; set +a; }
+FAIRSEQ_DIR="${FAIRSEQ_DIR:-${FAIRSEQ_ROOT:-}}"
+if [ -z "$FAIRSEQ_DIR" ]; then
+  echo "FAIRSEQ_ROOT 가 없습니다. fairseq 소스 위치를 알려주십시오:" >&2
+  echo "  export FAIRSEQ_ROOT=/path/to/fairseq   또는  cp .env.example .env 후 값 입력" >&2
+  exit 1
+fi
 
 echo "=== nvidia-smi ==="
 nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv 2>/dev/null \
@@ -48,7 +57,8 @@ if [[ "${CONDA_DEFAULT_ENV:-}" != "${ENV_NAME}" ]]; then
   exit 1
 fi
 
-python -m pip install --upgrade pip setuptools wheel
+# omegaconf 2.0.6 은 legacy 메타데이터라 pip>=24.1 이 설치를 거부한다. 상한을 건다.
+python -m pip install --upgrade "pip<24.1" setuptools wheel
 
 echo "=== install PyTorch ${TORCH_VERSION} (${CUDA_TAG}) ==="
 python -m pip install \
@@ -61,7 +71,10 @@ python -m pip install \
   "numpy>=1.21.3,<2" pandas scipy scikit-learn tqdm pyyaml soundfile cython
 
 echo "=== editable install of fairseq (${FAIRSEQ_DIR}) -- non-fatal ==="
-if python -m pip install -e "${FAIRSEQ_DIR}"; then
+# --no-deps 가 필수다. 빼면 fairseq resolver 가 omegaconf 를 최신으로 끌어올려
+# hydra 설정이 통째로 깨진다. 핀은 바로 아래에서 직접 건다.
+python -m pip install "omegaconf==2.0.6" "hydra-core==1.0.7"
+if python -m pip install -e "${FAIRSEQ_DIR}" --no-deps; then
   echo "fairseq editable install OK"
 else
   echo "WARNING: fairseq editable install FAILED."
@@ -89,4 +102,4 @@ PY
 echo
 echo "Done. Next:"
 echo "  conda activate ${ENV_NAME}"
-echo "  python scripts/inspect_manifests.py --data_root $NATIONALITY_DATA --output $NATIONALITY_RUNS/manifest_inspection.json"
+echo "  python scripts/inspect_manifests.py --data_root \$NATIONALITY_DATA --output \$NATIONALITY_RUNS/manifest_inspection.json"

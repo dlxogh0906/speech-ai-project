@@ -8,6 +8,7 @@ label. That makes two-speaker merged labels such as 국가명_불명확 and
 """
 
 from __future__ import annotations
+import os
 
 import argparse
 import csv
@@ -22,13 +23,13 @@ import numpy as np
 
 def parse_args():
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--features_dir", type=Path, default=Path("$NATIONALITY_RUNS/features_fine_811"))
+    p.add_argument("--features_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_RUNS/features_fine_811")))
     p.add_argument(
         "--label_map",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json")),
     )
-    p.add_argument("--out_dir", type=Path, default=Path("$NATIONALITY_OUTPUTS/feature_resplit_policy31_seed42"))
+    p.add_argument("--out_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/feature_resplit_policy31_seed42")))
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--valid_ratio", type=float, default=0.1)
     p.add_argument("--test_ratio", type=float, default=0.1)

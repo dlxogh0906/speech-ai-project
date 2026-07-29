@@ -1,9 +1,12 @@
 """Audio classification models built around the local XLS-R checkpoint."""
 
 # ── 저장소 부트스트랩 (설치 불필요) ──
+import os
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 
 
@@ -66,9 +69,12 @@ class FairseqXLSRCountryClassifier(nn.Module):
     @staticmethod
     def _load_encoder(checkpoint_path, fairseq_root):
         if fairseq_root is not None:
-            fairseq_root = str(Path(fairseq_root).resolve())
-            if fairseq_root not in sys.path:
-                sys.path.insert(0, fairseq_root)
+            # sys.path 에 '있기만' 해서는 부족하다 — **맨 앞**이어야 fairseq 저장소 루트가
+            # namespace package 로 진짜 패키지를 가리는 걸 막는다. ensure_fairseq 는
+            # 기존 항목을 제거하고 앞에 다시 넣는다.
+            os.environ["FAIRSEQ_ROOT"] = str(Path(fairseq_root).resolve())
+            from shared.fairseq_guard import ensure_fairseq
+            ensure_fairseq()
         try:
             from fairseq import checkpoint_utils
         except Exception as exc:

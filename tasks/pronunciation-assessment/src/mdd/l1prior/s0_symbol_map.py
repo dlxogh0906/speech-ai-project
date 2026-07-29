@@ -14,7 +14,9 @@ KoG2P 음소기호로 변환하는 매핑표.  (작업지시서 5절-1 / 3-B-4)
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 
 

@@ -26,7 +26,9 @@ feature 규격 (head.pt 학습 시와 100% 동일해야 함):
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 if "--help" in _sys.argv or "-h" in _sys.argv:   # 인자 파서가 없는 스크립트다. --help 로 본체가 실행되면 안 된다.
     print(__doc__ or "설명이 없다 — 소스를 열어볼 것"); raise SystemExit(0)
@@ -44,7 +46,16 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-# ── 경로/설정 (env var로 override 가능) ─────────────────────────────────────
+# 저장소 루트를 찾아 .env 를 읽는다 (shared.paths import 만으로 로드된다)
+import pathlib as _pl
+_r = _pl.Path(__file__).resolve()
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
+sys.path.insert(0, str(_r))
+import shared.paths as _paths          # noqa: F401  (.env 로드 부작용을 쓴다)
+
+# ── 경로/설정 (env var 또는 .env 로 지정) ───────────────────────────────────
 # 경로는 저장소 루트의 .env 또는 환경변수로 준다 (shared/paths.py 와 같은 키).
 FAIRSEQ_ROOT = os.environ["FAIRSEQ_ROOT"]
 # 32L = slim(옵티마이저 제거)에서 추가로 미사용 layer 32~47 물리 절단.
@@ -65,10 +76,10 @@ USE_ONNX = os.environ.get("USE_ONNX", "1") == "1"  # ONNX Runtime CPU 경로 추
 # ONNX 인코더(layer 출력까지). 기본은 head.pt 옆의 encoder_l17.onnx
 ONNX_PT = os.environ.get("ONNX_PT", str(Path(HEAD_PT).parent / "encoder_l17.onnx"))
 
-# 로컬 fairseq repo를 CWD의 ./fairseq shadowing보다 먼저 두어야
-# `from fairseq import checkpoint_utils`가 제대로 잡힌다.
-if FAIRSEQ_ROOT not in sys.path:
-    sys.path.insert(0, FAIRSEQ_ROOT)
+# 로컬 fairseq repo를 CWD의 ./fairseq shadowing보다 **맨 앞**에 두어야
+# `from fairseq import checkpoint_utils`가 제대로 잡힌다. 있기만 해서는 부족하다.
+from shared.fairseq_guard import ensure_fairseq
+ensure_fairseq()
 
 import numpy as np
 import torch

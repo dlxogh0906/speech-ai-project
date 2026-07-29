@@ -19,13 +19,13 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-sys.path.insert(0, "$HOME")
+sys.path.insert(0, os.path.expandvars("$HOME"))
 from country_classifier.model import build_model
 
 HERE = Path(__file__).resolve().parent
-HEAD_PT = "$NATIONALITY_OUTPUTS/0702_country41_sent_best/head.pt"   # 41개 국적(한국어+유럽문장병합) layer-31
-CKPT = "$SPEECH_AI_MODELS/xlsr2_2B_1000k.pt"
-FAIRSEQ_ROOT = "$FAIRSEQ_ROOT"
+HEAD_PT = os.path.expandvars("$NATIONALITY_OUTPUTS/0702_country41_sent_best/head.pt")   # 41개 국적(한국어+유럽문장병합) layer-31
+CKPT = os.path.expandvars("$SPEECH_AI_MODELS/xlsr2_2B_1000k.pt")
+FAIRSEQ_ROOT = os.path.expandvars("$FAIRSEQ_ROOT")
 LAYER = 31
 SR = 16000
 # DEMO_DEVICE=cpu 로 강제 가능 (GPU가 다른 작업으로 꽉 찼을 때)

@@ -13,7 +13,7 @@ set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 # head.pt는 번들에 포함되어 있어 자동 지정됨
-export HEAD_PT="${HEAD_PT:-$HERE/0704_country41_sent043_en/head.pt}"
+export HEAD_PT="${HEAD_PT:-${NATIONALITY_OUTPUTS:?NATIONALITY_OUTPUTS 를 설정하십시오}/0704_country41_sent043_en/head.pt}"
 
 # 아래 두 개는 반드시 지정 (미설정 시 에러로 안내)
 export XLSR_CKPT="${XLSR_CKPT:?XLSR_CKPT 미설정 — 32L 체크포인트(xlsr2_1p45B_32L.pt) 경로를 지정하세요. SETUP.md 참조}"
@@ -24,7 +24,7 @@ export USE_INT8="${USE_INT8:-1}"      # 0 = int8 경로 비활성
 export PORT="${PORT:-8777}"
 export CPU_CONCURRENCY="${CPU_CONCURRENCY:-4}"
 
-cd "$HERE/latency_demo"
+cd "$HERE"
 echo "* http://localhost:${PORT}          → GPU vs CPU vs int8 비교"
 echo "* http://localhost:${PORT}/loadtest → 동접 부하 테스트"
 exec python server.py

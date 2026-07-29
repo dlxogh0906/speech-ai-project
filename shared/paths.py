@@ -30,6 +30,7 @@ def _load_dotenv(path=None):
         if not line or line.startswith("#") or "=" not in line:
             continue
         k, v = line.split("=", 1)
+        v = v.split(" #", 1)[0].split("\t#", 1)[0]        # 값 뒤 인라인 주석 제거
         os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
@@ -37,18 +38,38 @@ _load_dotenv()
 
 
 class _Required:
-    """설정되지 않은 경로. 실제로 쓰이는 순간 무엇을 설정해야 하는지 알려준다."""
+    """설정되지 않은 경로.
 
-    def __init__(self, key, what):
-        self._key, self._what = key, what
+    설계 의도: **문자열로 조립되는 건 허용하고, 실제로 파일시스템에 닿을 때 실패한다.**
+    라이브러리 모듈들이 최상단에서 `f"{DATA_ROOT}/aihub/..."` 같은 기본값을 만드는데,
+    조립 단계에서 터지면 `import` 자체가 실패해서 데이터 없는 환경에서 코드 점검조차
+    못 하게 된다. 그래서 문자열화는 통과시키되 무엇이 비었는지 값 안에 박아 둔다.
+    """
 
-    def _die(self, *_a, **_k):
+    __slots__ = ("_key", "_what", "_suffix")
+
+    def __init__(self, key, what, suffix=""):
+        self._key, self._what, self._suffix = key, what, suffix
+
+    def __str__(self):
+        return f"<{self._key} 미설정>{self._suffix}"
+
+    __repr__ = __str__
+
+    def __truediv__(self, other):
+        return _Required(self._key, self._what, f"{self._suffix}/{other}")
+
+    def __fspath__(self):
+        """open() / Path() 가 부르는 자리. 여기서 멈춰야 한다."""
         raise RuntimeError(
             f"{self._key} 가 설정되지 않았습니다 ({self._what}).\n"
             f"  cp .env.example .env  후 값을 채우거나  export {self._key}=... 하십시오."
         )
 
-    __fspath__ = __str__ = __truediv__ = __getattr__ = _die
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        self.__fspath__()
 
 
 def _env(key, what):
@@ -70,11 +91,22 @@ MDD_ANALYSIS = _env("MDD_ANALYSIS", "L1-prior 분석 산출물")
 G2P_TOOLS = _env("G2P_TOOLS", "KoG2P / g2pK 클론 위치")
 
 # -- 자주 쓰는 구체 경로 ----------------------------------------
-XLSR_2B = MODEL_ROOT / "xlsr2_2B_1000k.pt"
-XLSR_300M = MODEL_ROOT / "xlsr2_300m.pt"
-MDD_CKPT = DATA_ROOT / "mdd_ckpt_tag_all_lar" / "checkpoint_best.pt"
-KOG2P_DIR = G2P_TOOLS / "KoG2P"
-KOG2P_RULEBOOK = KOG2P_DIR / "rulebook.txt"
+# 모듈 최상단에서 계산하면 안 된다. 미설정 경로는 _Required 라서 `/` 연산만으로도
+# 즉시 터지고, 그러면 `import shared.paths` 자체가 실패한다 — "쓸 때 실패한다"는
+# 이 모듈의 계약이 깨진다. PEP 562 모듈 __getattr__ 로 접근 시점에 만든다.
+_DERIVED = {
+    "XLSR_2B": lambda: MODEL_ROOT / "xlsr2_2B_1000k.pt",
+    "XLSR_300M": lambda: MODEL_ROOT / "xlsr2_300m.pt",
+    "MDD_CKPT": lambda: DATA_ROOT / "mdd_ckpt_tag_all_lar" / "checkpoint_best.pt",
+    "KOG2P_DIR": lambda: G2P_TOOLS / "KoG2P",
+    "KOG2P_RULEBOOK": lambda: G2P_TOOLS / "KoG2P" / "rulebook.txt",
+}
+
+
+def __getattr__(name):
+    if name in _DERIVED:
+        return _DERIVED[name]()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
 
@@ -87,9 +119,10 @@ def ensure_kog2p():
     `sys.argv` 를 잠시 비워야 한다.
     """
     import sys
-    p = str(KOG2P_DIR)
+    p = str(G2P_TOOLS / "KoG2P")
     if p not in sys.path:
         sys.path.insert(0, p)
 
 
-__all__ = [n for n in dir() if n.isupper() or n.startswith("ensure_")]
+__all__ = ([n for n in dir() if n.isupper() or n.startswith("ensure_")]
+           + list(_DERIVED))

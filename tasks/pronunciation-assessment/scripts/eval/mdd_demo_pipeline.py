@@ -6,13 +6,15 @@
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 if "--help" in _sys.argv or "-h" in _sys.argv:   # 인자 파서가 없는 스크립트다. --help 로 본체가 실행되면 안 된다.
     print(__doc__ or "설명이 없다 — 소스를 열어볼 것"); raise SystemExit(0)
 from shared.fairseq_guard import ensure_fairseq
 ensure_fairseq()
-from shared.paths import DATA_ROOT, MDD_OUTPUTS
+from shared.paths import DATA_ROOT, MDD_OUTPUTS, MDD_TASK
 
 import sys, os, glob, json, re
 from mdd import mdd_eval
@@ -83,7 +85,7 @@ def main():
         picks.append({"prompt":pr,"canon":C,"model":P,"errors":errs,"stem":d["st"]})
         if len(picks)>=8: break
 
-    out="/tmp/claude-7778/-home-tta/86db1df8-e52d-4e72-89e0-2554abdda961/scratchpad/demo_examples.json"
+    out=f"{MDD_TASK}/outputs/demo_examples.json"
     json.dump(picks,open(out,"w"),ensure_ascii=False,indent=2)
     print(f"[완료] {len(picks)}개 예시 → {out}",flush=True)
     for p in picks:

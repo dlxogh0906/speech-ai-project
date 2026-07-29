@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run Policy32 inference with the optimizer-free XLS-R checkpoint."""
 
+import os
 import argparse
 import json
 import random
@@ -13,7 +14,7 @@ import torch
 import torch.nn as nn
 
 
-PROJECT_ROOT = Path("$HOME")
+PROJECT_ROOT = Path(os.path.expandvars("$HOME"))
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -55,7 +56,7 @@ def main():
     parser.add_argument(
         "--xlsr-checkpoint",
         type=Path,
-        default=Path("$SPEECH_AI_DATA/models/xlsr2_2B_1000k_inference.pt"),
+        default=Path(os.path.expandvars("$SPEECH_AI_DATA/models/xlsr2_2B_1000k_inference.pt")),
     )
     parser.add_argument(
         "--head-checkpoint",

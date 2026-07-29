@@ -12,7 +12,9 @@ Reports test micro/macro top-5 (selected by valid macro top-5).
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 if "--help" in _sys.argv or "-h" in _sys.argv:   # 인자 파서가 없는 스크립트다. --help 로 본체가 실행되면 안 된다.
     print(__doc__ or "설명이 없다 — 소스를 열어볼 것"); raise SystemExit(0)

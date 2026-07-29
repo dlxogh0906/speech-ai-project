@@ -10,6 +10,7 @@ Writes train.csv/valid.csv/test.csv plus labels.txt/label2id.json/id2label.json.
 """
 
 from __future__ import annotations
+import os
 
 import argparse
 import csv
@@ -22,18 +23,18 @@ CSV_FIELDS = ["audio_path", "json_path", "speaker_id", "label_name", "label_id",
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--source_manifest_dir", type=Path, default=Path("$NATIONALITY_DATA/aihub_nationality_fine_811"))
+    p.add_argument("--source_manifest_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_DATA/aihub_nationality_fine_811")))
     p.add_argument(
         "--label_map",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json")),
     )
     p.add_argument(
         "--speaker_assignment",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/feature_resplit_policy31_seed42/speaker_assignment.json"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/feature_resplit_policy31_seed42/speaker_assignment.json")),
     )
-    p.add_argument("--out_dir", type=Path, default=Path("$NATIONALITY_OUTPUTS/policy31_manifest_seed42"))
+    p.add_argument("--out_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/policy31_manifest_seed42")))
     return p.parse_args()
 
 

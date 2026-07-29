@@ -22,11 +22,12 @@ fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더
 ```bash
 git clone <this-repo> && cd speech-ai-project
 
-# 1) 파이썬 환경 (python 3.8 · torch 2.1.2+cu118 · fairseq editable)
-bash tools/create_env.sh
-
-# 2) 경로 설정 — 자기 환경의 코퍼스·모델·산출물 위치를 채운다
+# 1) 경로 설정 — 자기 환경의 코퍼스·모델·fairseq 소스 위치를 채운다
+#    (2단계가 여기서 FAIRSEQ_ROOT 를 읽으므로 순서를 지킬 것)
 cp .env.example .env && ${EDITOR:-vi} .env
+
+# 2) 파이썬 환경 (python 3.8 · torch 2.1.2+cu118 · fairseq editable --no-deps)
+bash tools/create_env.sh
 
 # 3) 의존성
 pip install -r requirements-nationality.txt      # 국적 분류
@@ -39,8 +40,10 @@ python tests/test_imports.py
 `pip install -e .` 도 지원하지만 필수는 아니다. 모든 스크립트 상단에 5줄짜리 부트스트랩이
 있어 설치 없이도 어디서 실행하든 저장소 패키지를 찾는다.
 
-> `.env` 를 안 만들면 그 경로를 **실제로 쓰는 순간** 무엇을 설정해야 하는지 알려주며 멈춘다.
-> import 만으로는 실패하지 않으므로 일부 경로만 필요한 스크립트는 그대로 돌아간다.
+> `.env` 없이도 **import 와 문법 점검은 전부 통과한다.** 미설정 경로는
+> `<SPEECH_AI_DATA 미설정>/...` 같은 값으로 조립되다가, 실제로 파일을 열려는 순간
+> 무엇을 채워야 하는지 알려주며 멈춘다. 덕분에 데이터가 없는 머신에서도 코드 상태를
+> 검증할 수 있고, `tests/test_imports.py` 는 '환경 미구성'과 '코드 결함'을 구분해 보고한다.
 
 ---
 

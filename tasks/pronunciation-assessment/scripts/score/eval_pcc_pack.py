@@ -16,11 +16,13 @@
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 from shared.fairseq_guard import ensure_fairseq
 ensure_fairseq()
-from shared.paths import DATA_ROOT, MDD_OUTPUTS
+from shared.paths import DATA_ROOT, MDD_OUTPUTS, MDD_TASK
 
 import sys, os, json, time, argparse, collections
 import numpy as np
@@ -38,7 +40,7 @@ ap.add_argument("--out", default=f"{MDD_OUTPUTS}/eval_pcc_pack.json")
 A = ap.parse_args()
 
 WAV = f"{DATA_ROOT}/mdd_gold_wav16k"
-DICT = "/tmp/claude-7778/-home-tta/10c4e7a9-7fb1-463f-b365-95e33ca89ab2/scratchpad/pcc_dict"
+DICT = f"{MDD_TASK}/outputs/pcc_dict"
 MAX_SAMPLES = 1_600_000
 
 # 과제명 → (팩 디렉토리, 라벨 필드)

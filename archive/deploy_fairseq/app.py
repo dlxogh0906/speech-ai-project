@@ -32,7 +32,7 @@ import torch
 # --- import path: mirror the proven policy32_inference_compact.py ordering ---
 # country_classifier.model inserts fairseq_root at the FRONT of sys.path before
 # `import fairseq`, so the editable fairseq package wins over the bare repo dir.
-REPO_ROOT = Path(os.environ.get("REPO_ROOT", "$HOME"))
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", os.path.expandvars("$HOME")))
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
@@ -62,7 +62,7 @@ def _norm_stats(payload):
     std = payload.get("sd", payload.get("std"))
     return mean, std
 
-XLSR_CKPT = Path(os.environ.get("XLSR_CKPT", "$SPEECH_AI_DATA/models/xlsr2_2B_1000k_inference.pt"))
+XLSR_CKPT = Path(os.environ.get("XLSR_CKPT", os.path.expandvars("$SPEECH_AI_DATA/models/xlsr2_2B_1000k_inference.pt")))
 HEAD_PT = Path(os.environ.get("HEAD_PT", str(Path(__file__).resolve().parent / "head_fine62_16s.pt")))
 FAIRSEQ_ROOT = REPO_ROOT / "fairseq"
 MAX_SEC = float(os.environ.get("MAX_SEC", "16"))

@@ -18,7 +18,9 @@ GPU 재실행 없이 이 캐시만으로 CPU에서 파생할 수 있다.
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 from shared.fairseq_guard import ensure_fairseq
 ensure_fairseq()
@@ -36,7 +38,9 @@ import editdistance
 # 같은 우회를 해야 했다. import 부작용을 없애서 그 우회를 전부 제거했다.
 
 from mdd import mdd_eval
-mdd_eval.CKPT = str(MDD_CKPT)          # 기본 체크포인트. main() 에서 --ckpt 로 덮어씀
+# ⚠️ 여기서 mdd_eval.CKPT 를 건드리면 안 된다. 이 모듈을 import 하는 스크립트가
+#    이미 자기 --ckpt 를 설정해 둔 경우 조용히 덮어써서 '다른 모델을 재고 맞다고
+#    출력하는' 최악의 실패가 난다. 체크포인트는 main() 에서만 설정한다.
 
 
 def _parse_args(argv=None):

@@ -2,6 +2,7 @@
 """Compare Policy32 12-second baseline with two class-balancing strategies."""
 
 from __future__ import annotations
+import os
 
 import argparse
 import csv
@@ -17,17 +18,17 @@ def parse_args():
     parser.add_argument(
         "--features-dir",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/feature_policy32_othergpu_split_12s"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/feature_policy32_othergpu_split_12s")),
     )
     parser.add_argument(
         "--baseline-dir",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/policy32_othergpu_split_12s_probe"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/policy32_othergpu_split_12s_probe")),
     )
     parser.add_argument(
         "--out-dir",
         type=Path,
-        default=Path("$SPEECH_AI_DATA/taeho/policy32_balance_experiments_12s"),
+        default=Path(os.path.expandvars("$SPEECH_AI_DATA/taeho/policy32_balance_experiments_12s")),
     )
     parser.add_argument("--epochs", type=int, default=60)
     parser.add_argument("--batch-size", type=int, default=4096)

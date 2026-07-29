@@ -14,13 +14,16 @@ done
 grep -q "done training" "$LOG" || { echo "[abort] training not finished after 2h wait"; exit 1; }
 sleep 30
 echo "[gate1] TAG test 178k re-eval with $CKPT"
-cd scripts
-$PY mdd_eval_tag71.py --manifest $M/manifest_tag_all --ckpt $CKPT \
+# 저장소 루트를 기준으로 동작한다. .env 를 읽어 경로 변수를 채운다.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+. "$ROOT/tools/env.sh"
+cd "$ROOT"
+$PY tasks/pronunciation-assessment/scripts/eval/mdd_eval_tag71.py --manifest $M/manifest_tag_all --ckpt $CKPT \
     --preds $M/eval_tag_all_lar_preds.jsonl --out $M/eval_tag71_all_lar.json \
     > $M/gate1_tag.log 2>&1
 echo "[gate1] exit=$?"
 echo "[gate2] word-skip re-eval (record LAR 20k)"
-$PY eval_word_skip_record.py --ckpt $CKPT \
+$PY tasks/pronunciation-assessment/scripts/eval/eval_word_skip_record.py --ckpt $CKPT \
     --preds $M/word_skip_preds_lar.jsonl --out $M/eval_word_skip_lar.json \
     > $M/gate2_wordskip.log 2>&1
 echo "[gate2] exit=$?"

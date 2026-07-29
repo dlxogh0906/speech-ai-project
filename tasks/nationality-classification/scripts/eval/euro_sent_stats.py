@@ -5,18 +5,20 @@ npz 화자배열 + manifest + sent_mask 만 읽음 (학습/추출 재실행 없�
 # ── 저장소 부트스트랩 (설치 불필요) ──
 import sys as _sys, pathlib as _pl
 _r = _pl.Path(__file__).resolve()
-while not (_r / "pyproject.toml").exists(): _r = _r.parent
+while not (_r / "pyproject.toml").exists():
+    if _r.parent == _r: raise RuntimeError("저장소 루트(pyproject.toml)를 찾지 못했습니다")
+    _r = _r.parent
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 if "--help" in _sys.argv or "-h" in _sys.argv:   # 인자 파서가 없는 스크립트다. --help 로 본체가 실행되면 안 된다.
     print(__doc__ or "설명이 없다 — 소스를 열어볼 것"); raise SystemExit(0)
-from shared.paths import DATA_ROOT, NAT_DATA
+from shared.paths import DATA_ROOT, NAT_DATA, NAT_TASK
 
 import csv, json, os, sys
 from collections import defaultdict, Counter, OrderedDict
 import numpy as np
 from country_classifier.make_country40_probe import SPLIT, LANG2C
 from country_classifier.make_speaker_split import assign_speakers
-OUT="/tmp/claude-7778/-home-tta/86db1df8-e52d-4e72-89e0-2554abdda961/scratchpad/sent_stats.json"
+OUT=f"{NAT_TASK}/outputs/sent_stats.json"
 
 rows=list(csv.DictReader(open(f"{NAT_DATA}/fine_labels.csv",encoding="utf-8")))
 spk_mt={}; spk_cc=defaultdict(Counter)

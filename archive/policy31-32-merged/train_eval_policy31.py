@@ -7,6 +7,7 @@ linear/MLP classifier heads on the cached 1920-d XLS-R mean-pooled features.
 """
 
 from __future__ import annotations
+import os
 
 import argparse
 import csv
@@ -19,13 +20,13 @@ import numpy as np
 
 def parse_args():
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--features_dir", type=Path, default=Path("$NATIONALITY_RUNS/features_fine_811"))
+    p.add_argument("--features_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_RUNS/features_fine_811")))
     p.add_argument(
         "--label_map",
         type=Path,
-        default=Path("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json"),
+        default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/xlsr_nationality_inference_bundle/labels/label_map.json")),
     )
-    p.add_argument("--out_dir", type=Path, default=Path("$NATIONALITY_OUTPUTS/policy31_feature_probe"))
+    p.add_argument("--out_dir", type=Path, default=Path(os.path.expandvars("$NATIONALITY_OUTPUTS/policy31_feature_probe")))
     p.add_argument("--epochs", type=int, default=60)
     p.add_argument("--batch_size", type=int, default=4096)
     p.add_argument("--lr", type=float, default=1e-3)
