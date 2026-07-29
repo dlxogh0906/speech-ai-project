@@ -1,0 +1,66 @@
+# @package _group_
+# LAR 도메인 적응: tag_all 체크포인트에서 이어학습 (처음부터 X)
+# 데이터 = RW/RS TAG 143만(강라벨, 복습) + 무오류 LAR ~7%(G2P 라벨, 신규 도메인)
+# 게이트: ① TAG test F1 ≥0.95 유지 ② LAR 삭제율 중앙값 21%→<10%
+common:
+  fp16: true
+  log_format: json
+  log_interval: 100
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all_lar/tb
+
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all_lar
+  finetune_from_model: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all/checkpoint_best.pt   # 가중치 이어받음(옵티마이저 리셋)
+  no_epoch_checkpoints: true
+  best_checkpoint_metric: loss
+  save_interval_updates: 2000
+  keep_interval_updates: 3
+
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_tag_all_lar
+  normalize: true
+  labels: ltr
+
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+
+distributed_training:
+  ddp_backend: legacy_ddp
+  distributed_world_size: 1
+
+criterion:
+  _name: ctc
+  zero_infinity: true
+
+optimization:
+  max_update: 15000              # 50k 아님 — 적응만
+  lr: [0.00001]                  # 본학습 3e-5 의 1/3
+  sentence_avg: true
+  update_freq: [4]
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt   # 구조 정의용(가중치는 finetune_from_model이 덮어씀)
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 0     # 이미 적응된 인코더 — 동결 불필요

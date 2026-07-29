@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=45"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "speech-ai-project"
+version = "0.1.0"
+description = "한국어 음성 AI 2종 — 외국인 화자 국적 분류(XLS-R 2B) / 발음 진단·평가(XLS-R 300m + CTC)"
+readme = "README.md"
+requires-python = ">=3.8,<3.9"      # fairseq 0.12.2 + omegaconf 2.0.6 조합이 3.8 고정이다
+license = { text = "Proprietary" }
+
+# 공통 최소 의존성. task 별 추가분은 requirements-*.txt 참고.
+dependencies = [
+    "numpy>=1.24,<2",
+    "scipy>=1.10",
+    "torch==2.1.2",
+]
+
+[project.optional-dependencies]
+nationality = ["scikit-learn", "pandas", "matplotlib", "onnx", "onnxruntime", "tqdm"]
+pronunciation = ["edlib", "editdistance", "scikit-learn", "joblib", "pandas", "openpyxl"]
+serve = ["fastapi", "uvicorn", "python-multipart"]
+dev = ["pytest"]
+
+[tool.setuptools]
+# src 레이아웃 2개 + 공통 패키지 1개.
+# 설치하지 않아도 각 스크립트 상단의 5줄 부트스트랩으로 동작한다(shared/bootstrap.py 참고).
+package-dir = { "shared" = "shared", "country_classifier" = "tasks/nationality-classification/src/country_classifier", "mdd" = "tasks/pronunciation-assessment/src/mdd" }
+
+[tool.setuptools.packages.find]
+where = ["shared", "tasks/nationality-classification/src", "tasks/pronunciation-assessment/src"]

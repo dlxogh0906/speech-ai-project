@@ -1,0 +1,101 @@
+[
+ {
+  "stem": "71583-F-99-EN-B-LAR013-3445037",
+  "wav": "$SPEECH_AI_DATA/mdd_wav16k/71/71583-F-99-EN-B-LAR013-3445037.wav",
+  "prompt": "동물을 키울 수 있는 크고 좋은 집에서 살고 싶어",
+  "tr": "동물을 키울 수 있는 크고 좋은 집에서 살고 싶어",
+  "n_err": 0,
+  "dur": 10.2,
+  "L1": "Philippines",
+  "task": "LAR",
+  "note": "정확히 읽음(전사=프롬프트) · 10.2초 · Philippines"
+ },
+ {
+  "stem": "71737-M-87-EN-B-LAR029-3454852",
+  "wav": "$SPEECH_AI_DATA/mdd_wav16k/71/71737-M-87-EN-B-LAR029-3454852.wav",
+  "prompt": "열한 시 반 기차가 이미 역을 떠났는지 모르겠다",
+  "tr": "열한 시 반 기차가 이미 역을 떠났는지 모르겠다",
+  "n_err": 0,
+  "dur": 10.2,
+  "L1": "Philippines",
+  "task": "LAR",
+  "note": "정확히 읽음(전사=프롬프트) · 10.2초 · Philippines"
+ },
+ {
+  "stem": "71499-F-1-EN-B-LAR023-3456335",
+  "wav": "$SPEECH_AI_DATA/mdd_wav16k/71/71499-F-1-EN-B-LAR023-3456335.wav",
+  "prompt": "나는 외출하기 전까지 방 청소를 끝내야 한다",
+  "tr": "나는 외출하기 전까지 방 청소를 끝내야 한다",
+  "n_err": 0,
+  "dur": 10.2,
+  "L1": "Philippines",
+  "task": "LAR",
+  "note": "정확히 읽음(전사=프롬프트) · 10.2초 · Philippines"
+ },
+ {
+  "stem": "71596-M-92-EN-B-LAR027-3434304",
+  "wav": "$SPEECH_AI_DATA/mdd_wav16k/71/71596-M-92-EN-B-LAR027-3434304.wav",
+  "prompt": "담배를 피우는 사람 수가 매년 증가하고 있다",
+  "tr": "담배를 피우는 사람 수가 매년 증가하고 있다",
+  "n_err": 0,
+  "dur": 10.2,
+  "L1": "Philippines",
+  "task": "LAR",
+  "note": "정확히 읽음(전사=프롬프트) · 10.2초 · Philippines"
+ },
+ {
+  "stem": "00232-F-95-ET-B-LAR009-0057957",
+  "wav": "$SPEECH_AI_DATA/mdd_wav16k/00/00232-F-95-ET-B-LAR009-0057957.wav",
+  "prompt": "나는 행복하게 끝나는 영화가 좋다",
+  "tr": "나는 행복하게 끝나는 여호와가 죽다",
+  "n_err": 5,
+  "dur": 5.9,
+  "L1": "Estonia",
+  "task": "LAR",
+  "note": "단어 누락 있음(record n_errors=5) · 5.9초"
+ },
+ {
+  "stem": "00282-F-99-RO-B-RW114-0098529",
+  "wav": "$SPEECH_AI_DATA/mdd_gold_wav16k/00/00282-F-99-RO-B-RW114-0098529.wav",
+  "prompt": "끝이",
+  "canon": "ㄲ ㅡ ㅊ ㅣ",
+  "ltr": "ㅋ ㅡ ㅊ ㅣ",
+  "task": "RW",
+  "dur": 2.6,
+  "n_err": 1,
+  "note": "발음문항 · TAG 전사자가 오류 표시 · 2.6초"
+ },
+ {
+  "stem": "03415-M-1-IT-A-RS071-1006632",
+  "wav": "$SPEECH_AI_DATA/mdd_gold_wav16k/03/03415-M-1-IT-A-RS071-1006632.wav",
+  "prompt": "오늘은 지하철 타고 가자.",
+  "canon": "ㅗ ㄴ ㅡ ㄹ ㅡ ㄴ ㅈ ㅣ ㅎ ㅏ ㅊ ㅓ ㄹ ㅌ ㅏ ㄱ ㅗ ㄱ ㅏ ㅈ ㅏ",
+  "ltr": "ㅗ ㄴ ㅡ ㄹ ㅡ ㄹ ㅈ ㅣ ㅎ ㅏ ㅊ ㅓ ㄹ ㅌ ㅏ ㄱ ㅗ ㄱ ㅏ ㅈ ㅏ",
+  "task": "RS",
+  "dur": 4.9,
+  "n_err": 1,
+  "note": "발음문항 · TAG 전사자가 오류 표시 · 4.9초"
+ },
+ {
+  "stem": "01354-F-97-TR-A-RS067-0415454",
+  "wav": "$SPEECH_AI_DATA/mdd_gold_wav16k/01/01354-F-97-TR-A-RS067-0415454.wav",
+  "prompt": "나 시험 100점 받았다. 부럽지?",
+  "canon": "ㄴ ㅏ ㅅ ㅣ ㅎ ㅓ ㅁ ㅂ ㅏ ㄷ ㅏ ㄸ ㅏ ㅂ ㅜ ㄹ ㅓ ㅂ ㅉ ㅣ",
+  "ltr": "ㄴ ㅏ ㅅ ㅣ ㅎ ㅓ ㅁ ㅍ ㅏ ㄷ ㅏ ㄸ ㅏ ㅂ ㅜ ㄹ ㅓ ㅂ ㅉ ㅣ",
+  "task": "RS",
+  "dur": 6.1,
+  "n_err": 1,
+  "note": "발음문항 · TAG 전사자가 오류 표시 · 6.1초"
+ },
+ {
+  "stem": "06464-F-4-DE-B-RW135-1418471",
+  "wav": "$SPEECH_AI_DATA/mdd_gold_wav16k/06/06464-F-4-DE-B-RW135-1418471.wav",
+  "prompt": "법원",
+  "canon": "ㅂ ㅓ ㅂ ㅝ ㄴ",
+  "ltr": "ㅃ ㅓ ㅂ ㅝ ㄴ",
+  "task": "RW",
+  "dur": 3.0,
+  "n_err": 1,
+  "note": "발음문항 · TAG 전사자가 오류 표시 · 3.0초"
+ }
+]

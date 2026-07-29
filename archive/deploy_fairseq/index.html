@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XLS-R 국적 분류 데모</title>
+<style>
+  :root { --bg:#0f1115; --card:#1a1d24; --line:#2a2f3a; --fg:#e7e9ee; --mut:#9aa3b2;
+          --acc:#5b8cff; --good:#3ddc97; --warn:#ffcc66; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+         background:var(--bg); color:var(--fg); line-height:1.5; }
+  .wrap { max-width:780px; margin:0 auto; padding:28px 18px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--mut); font-size:13px; margin-bottom:20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
+          padding:18px; margin-bottom:16px; }
+  #drop { border:2px dashed var(--line); border-radius:12px; padding:28px; text-align:center;
+          cursor:pointer; transition:.15s; }
+  #drop.hover { border-color:var(--acc); background:#171b27; }
+  #drop b { color:var(--acc); }
+  audio { width:100%; margin-top:12px; }
+  button { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:11px 18px;
+           font-size:15px; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .muted { color:var(--mut); font-size:13px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .metric { background:#11141b; border:1px solid var(--line); border-radius:10px; padding:12px; }
+  .metric .k { color:var(--mut); font-size:12px; }
+  .metric .v { font-size:20px; font-weight:700; margin-top:2px; }
+  .metric .v small { font-size:12px; color:var(--mut); font-weight:400; }
+  .bar { position:relative; background:#11141b; border:1px solid var(--line); border-radius:8px;
+         height:34px; margin:7px 0; overflow:hidden; }
+  .bar .fill { position:absolute; inset:0 auto 0 0; background:linear-gradient(90deg,#2b5bd7,#5b8cff); }
+  .bar .lab { position:absolute; inset:0; display:flex; align-items:center;
+              justify-content:space-between; padding:0 12px; font-size:14px; }
+  .bar.top1 .fill { background:linear-gradient(90deg,#1f9d6b,#3ddc97); }
+  .pct { font-variant-numeric:tabular-nums; color:#fff; font-weight:600; }
+  h2 { font-size:14px; color:var(--mut); margin:0 0 8px; text-transform:uppercase; letter-spacing:.04em; }
+  .err { color:#ff8080; }
+  .pill { display:inline-block; font-size:12px; padding:2px 8px; border-radius:99px;
+          background:#11141b; border:1px solid var(--line); color:var(--mut); }
+  a { color:var(--acc); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>XLS-R 외국인 한국어 발화 · 국적 분류</h1>
+  <div class="sub">음성 파일을 올리면 모국어 top-5 · 추론 속도 · GPU 메모리를 보여줍니다.
+    <span id="hpill" class="pill">서버 확인 중…</span></div>
+
+  <div class="card">
+    <div id="drop">
+      <div><b>음성 파일 선택</b> 또는 여기로 드래그</div>
+      <div class="muted" style="margin-top:6px">WAV / FLAC / OGG 권장 (브라우저 녹음 webm은 서버가 못 읽음)</div>
+      <input id="file" type="file" accept="audio/*,.wav,.flac,.ogg" hidden />
+    </div>
+    <audio id="player" controls hidden></audio>
+    <div class="row" style="margin-top:14px">
+      <button id="go" disabled>국적 예측</button>
+      <span id="fname" class="muted"></span>
+    </div>
+  </div>
+
+  <div id="out" hidden>
+    <div class="card">
+      <h2>예측 결과 (top-5)</h2>
+      <div id="bars"></div>
+    </div>
+    <div class="card">
+      <h2>추론 속도</h2>
+      <div class="grid" id="timing"></div>
+    </div>
+    <div class="card">
+      <h2>GPU 메모리</h2>
+      <div class="grid" id="gpu"></div>
+      <div class="muted" style="margin-top:8px">
+        peak_req = 이번 요청 한 건의 피크 · proc_reserved = 이 프로세스가 잡고 있는 캐시 ·
+        device_used = GPU 전체 사용량(다른 프로세스 포함)
+      </div>
+    </div>
+  </div>
+
+  <div id="err" class="card err" hidden></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const drop=$("#drop"), file=$("#file"), player=$("#player"), go=$("#go");
+let picked=null;
+
+// server health
+fetch("/health").then(r=>r.json()).then(h=>{
+  const g=h.gpu||{};
+  const dev = h.device==="cuda" ? (g.name||"GPU") : "CPU";
+  $("#hpill").textContent = `${h.status} · ${dev} · ${h.classes}개 클래스`
+    + (g.device_total_mb ? ` · ${g.proc_reserved_mb}/${g.device_total_mb}MB` : "");
+}).catch(()=>{ $("#hpill").textContent="서버 응답 없음"; });
+
+drop.onclick=()=>file.click();
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("hover");}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("hover");}));
+drop.addEventListener("drop",ev=>{ if(ev.dataTransfer.files[0]) setFile(ev.dataTransfer.files[0]); });
+file.onchange=()=>{ if(file.files[0]) setFile(file.files[0]); };
+
+function setFile(f){
+  picked=f;
+  $("#fname").textContent = `${f.name} · ${(f.size/1024).toFixed(0)} KB`;
+  player.src=URL.createObjectURL(f); player.hidden=false; go.disabled=false;
+}
+
+go.onclick=async()=>{
+  if(!picked) return;
+  go.disabled=true; go.textContent="추론 중…"; $("#err").hidden=true;
+  const fd=new FormData(); fd.append("audio",picked);
+  try{
+    const r=await fetch("/predict",{method:"POST",body:fd});
+    const j=await r.json();
+    if(!r.ok) throw new Error(j.detail||JSON.stringify(j));
+    render(j);
+  }catch(e){ $("#err").textContent="오류: "+e.message; $("#err").hidden=false; }
+  go.disabled=false; go.textContent="국적 예측";
+};
+
+function metric(k,v,sub){ return `<div class="metric"><div class="k">${k}</div>
+  <div class="v">${v}${sub?` <small>${sub}</small>`:""}</div></div>`; }
+
+function render(j){
+  $("#out").hidden=false;
+  const max=Math.max(...j.top.map(t=>t.prob));
+  $("#bars").innerHTML = j.top.map((t,i)=>`
+    <div class="bar ${i===0?"top1":""}">
+      <div class="fill" style="width:${Math.max(4,t.prob/max*100)}%"></div>
+      <div class="lab"><span>${i+1}. ${t.label}</span>
+        <span class="pct">${(t.prob*100).toFixed(1)}%</span></div>
+    </div>`).join("");
+
+  const tm=j.timing||{};
+  $("#timing").innerHTML =
+      metric("총 추론", tm.infer_sec+"s")
+    + metric("인코더", tm.encoder_sec+"s")
+    + metric("헤드", tm.head_sec+"s")
+    + metric("실시간 배속", tm.realtime_factor+"×","오디오 "+tm.used_sec+"s")
+    + metric("응답 전체", tm.wall_sec+"s","디코딩 포함");
+
+  const g=j.gpu||{};
+  $("#gpu").innerHTML = (j.device==="cuda")
+    ? metric("peak (이번 요청)", g.peak_req_mb, "MB")
+    + metric("proc reserved", g.proc_reserved_mb, "MB")
+    + metric("proc allocated", g.proc_allocated_mb, "MB")
+    + metric("GPU 전체", g.device_used_mb+" / "+g.device_total_mb, "MB")
+    : `<div class="metric"><div class="k">device</div><div class="v">CPU</div></div>`;
+}
+</script>
+</body>
+</html>

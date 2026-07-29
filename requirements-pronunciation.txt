@@ -1,0 +1,35 @@
+# 발음 진단(MDD) + 점수 3종 — 이 서버 fairseq_xlsr 환경(python 3.8.20)의 실측 버전
+# 설치:  $PY -m pip install -r requirements-pronunciation.txt
+#
+# ⚠️ fairseq 은 여기 없다 (editable 수정 사본). → tools/create_env.sh
+# ⚠️ KoG2P 는 pip 패키지가 아니라 클론이다. G2P_TOOLS 환경변수로 위치를 지정한다.
+#    https://github.com/scarletcho/KoG2P
+
+torch==2.1.2+cu118        # --index-url https://download.pytorch.org/whl/cu118
+numpy==1.24.4
+scipy==1.10.1
+scikit-learn==1.3.2       # HistGradientBoostingRegressor (점수 보정기)
+joblib==1.4.2             # score_models_v2.joblib
+pandas==2.0.3
+openpyxl==3.1.5
+
+# 정렬 (MDD 의 핵심)
+edlib==1.3.9.post1        # Needleman-Wunsch, cigar
+editdistance==0.8.1       # PER
+
+# fairseq 가 요구하는 핀
+omegaconf==2.0.6
+hydra-core==1.0.7
+bitarray==3.8.1
+sacrebleu==2.5.1
+Cython==3.2.5
+regex==2024.11.6
+
+# 리포트·시각화
+matplotlib==3.7.5
+seaborn
+
+# 데모/API 서빙 (deploy/)
+fastapi==0.124.4
+uvicorn==0.33.0
+python-multipart==0.0.20

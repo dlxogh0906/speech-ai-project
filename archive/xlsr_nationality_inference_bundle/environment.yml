@@ -1,0 +1,20 @@
+name: xlsr_hf
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - torchaudio
+  - pytorch-cuda=12.1
+  - pandas
+  - numpy
+  - soundfile
+  - ipykernel
+  - pip
+  - pip:
+      - transformers
+      - accelerate
+      - safetensors

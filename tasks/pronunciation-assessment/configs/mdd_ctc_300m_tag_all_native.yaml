@@ -1,0 +1,69 @@
+# @package _group_
+# 원어민 포함 + 수렴까지 이어학습: tag_all_lar(배포본)에서 계속
+# 데이터 = TAG 143만 + 무오류 LAR 11.7만 + 원어민 자유대화 5.37만×2 (전체의 6.5%, G2P 약라벨)
+# 종료 = patience 10 (valid 2k마다 → 20k step 개선 없으면 자동 종료), 상한 60k
+# 게이트: ① TAG test F1 ≥0.95 유지 ② 오류클래스 F1 ~0.43 유지(자동교정 재발 감지)
+#         ③ 원어민 test 6,644 PER 개선 확인
+common:
+  fp16: true
+  log_format: json
+  log_interval: 100
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all_native/tb
+
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all_native
+  finetune_from_model: ${env:SPEECH_AI_DATA}/mdd_ckpt_tag_all_lar/checkpoint_best.pt
+  no_epoch_checkpoints: true
+  best_checkpoint_metric: loss
+  save_interval_updates: 2000
+  keep_interval_updates: 3
+  patience: 10
+
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_tag_all_native
+  normalize: true
+  labels: ltr
+
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+
+distributed_training:
+  ddp_backend: legacy_ddp
+  distributed_world_size: 1
+
+criterion:
+  _name: ctc
+  zero_infinity: true
+
+optimization:
+  max_update: 60000
+  lr: [0.00001]
+  sentence_avg: true
+  update_freq: [4]
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 0

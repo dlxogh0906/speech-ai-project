@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>한국어 발화 국적 분류 데모</title>
+<style>
+  :root{ --bg:#0f1226; --card:#1a1f3a; --accent:#6c8cff; --accent2:#9d6cff; --text:#eaecf5; --muted:#9aa3c7; }
+  *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',system-ui,'Apple SD Gothic Neo',sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#23284d 0%,var(--bg) 55%);color:var(--text);min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto;padding:48px 20px 80px}
+  h1{font-size:30px;font-weight:800;margin:0 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:15px}
+  .card{background:var(--card);border:1px solid #2a3056;border-radius:18px;padding:22px;margin-bottom:18px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  .prompt-label{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .prompt{font-size:19px;line-height:1.6;font-weight:600}
+  .center{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .mic{width:96px;height:96px;border-radius:50%;border:none;cursor:pointer;font-size:38px;color:#fff;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 30px rgba(108,140,255,.5);
+    transition:transform .15s} .mic:hover{transform:scale(1.05)}
+  .mic.rec{background:linear-gradient(135deg,#ff5b7f,#ff8a5b);animation:pulse 1.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,91,127,.6)}70%{box-shadow:0 0 0 22px rgba(255,91,127,0)}100%{box-shadow:0 0 0 0 rgba(255,91,127,0)}}
+  .hint{color:var(--muted);font-size:14px;min-height:20px}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .btn{padding:11px 20px;border-radius:12px;border:1px solid #2a3056;background:#232a52;color:var(--text);
+    font-size:15px;font-weight:600;cursor:pointer} .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  audio{width:100%;margin-top:12px}
+  .results{margin-top:4px}
+  .bar{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:#161b34;margin-bottom:10px;
+    border:1px solid #232a52} .bar.top{border-color:var(--accent);background:#1c2348}
+  .flag{font-size:26px;width:34px;text-align:center}
+  .meta{flex:1} .nat{font-weight:700;font-size:16px} .mt{color:var(--muted);font-size:12px}
+  .pct{font-weight:800;font-size:16px;min-width:56px;text-align:right;color:var(--accent)}
+  .track{height:8px;background:#0e1228;border-radius:6px;overflow:hidden;margin-top:6px}
+  .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .5s}
+  .foot{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+  .spinner{width:26px;height:26px;border:3px solid #2a3056;border-top-color:var(--accent);border-radius:50%;
+    animation:spin .8s linear infinite;margin:8px auto} @keyframes spin{to{transform:rotate(360deg)}}
+  .file{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🗣️ 한국어 발화 → 국적 분류</h1>
+  <p class="sub">아래 문장을 또박또박 읽어 녹음하면, 발음(악센트)으로 국적 Top-5를 예측합니다.</p>
+
+  <div class="card">
+    <div class="prompt-label">📖 이 문장을 읽어주세요</div>
+    <div class="prompt" id="prompt">음악도 매력적이고 드라마 내용도 너무 좋았어요 이 드라마를 보고 한국어를 배워야겠다고 생각했어요</div>
+  </div>
+
+  <div class="card center">
+    <button class="mic" id="mic">🎙️</button>
+    <div class="hint" id="hint">버튼을 눌러 녹음을 시작하세요 (약 10초 권장)</div>
+    <audio id="player" controls style="display:none"></audio>
+    <div class="row">
+      <button class="btn primary" id="analyze" disabled>분석하기</button>
+      <label class="btn">파일 업로드<input id="file" type="file" accept="audio/*" hidden></label>
+    </div>
+    <div class="file">또는 wav/mp3/m4a 파일을 업로드할 수 있어요</div>
+  </div>
+
+  <div id="out"></div>
+  <div class="foot">frozen XLS-R 2B · layer-31 · 41개 국적 (한국어 포함) · 데모</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let mediaRec, chunks=[], blob=null, recording=false;
+
+$("mic").onclick=async()=>{
+  if(!recording){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      mediaRec=new MediaRecorder(stream); chunks=[];
+      mediaRec.ondataavailable=e=>chunks.push(e.data);
+      mediaRec.onstop=()=>{
+        blob=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});
+        const url=URL.createObjectURL(blob);
+        $("player").src=url; $("player").style.display='block';
+        $("analyze").disabled=false; $("hint").textContent='녹음 완료 — 분석하기를 누르세요';
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      mediaRec.start(); recording=true;
+      $("mic").classList.add('rec'); $("mic").textContent='⏹️'; $("hint").textContent='녹음 중... 문장을 읽고 다시 누르면 멈춰요';
+    }catch(e){ $("hint").textContent='🎤 마이크 권한이 필요해요: '+e.message; }
+  }else{
+    mediaRec.stop(); recording=false; $("mic").classList.remove('rec'); $("mic").textContent='🎙️';
+  }
+};
+
+$("file").onchange=e=>{ blob=e.target.files[0]; if(blob){ $("analyze").disabled=false;
+  $("player").src=URL.createObjectURL(blob); $("player").style.display='block'; $("hint").textContent='파일 선택됨 — 분석하기를 누르세요';} };
+
+$("analyze").onclick=async()=>{
+  if(!blob) return;
+  $("out").innerHTML='<div class="card center"><div class="spinner"></div><div class="hint">분석 중...</div></div>';
+  const fd=new FormData(); fd.append('audio', blob, 'rec.webm');
+  try{
+    const r=await fetch('/predict',{method:'POST',body:fd,headers:{'X-Pinggy-No-Screen':'true'}});
+    const ct=r.headers.get('content-type')||'';
+    if(!ct.includes('application/json')){
+      // 터널(예: pinggy)이 JSON 대신 HTML 안내/에러 페이지를 끼워넣은 경우
+      throw new Error('서버가 JSON이 아닌 응답을 보냈습니다 (터널 안내/에러 페이지일 수 있음). 페이지를 새로고침해 주세요.');
+    }
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.detail||('HTTP '+r.status));
+    render(d);
+  }catch(e){ $("out").innerHTML='<div class="card"><div class="hint">⚠️ 오류: '+e.message+'</div></div>'; }
+};
+
+function render(d){
+  let h='<div class="card"><div class="prompt-label">예측 결과 (Top-5) · '+d.duration_sec+'초 · '+d.took_sec+'s</div><div class="results">';
+  d.top.forEach((t,i)=>{
+    const pct=(t.prob*100).toFixed(1);
+    h+=`<div class="bar ${i===0?'top':''}">
+      <div class="flag">${t.flag}</div>
+      <div class="meta"><div class="nat">${t.nationality}</div>
+        <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>
+      <div class="pct">${pct}%</div></div>`;
+  });
+  h+='</div></div>'; $("out").innerHTML=h;
+}
+</script>
+</body>
+</html>

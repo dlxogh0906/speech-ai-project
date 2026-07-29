@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한국어 발음 진단 (MDD)</title>
+<style>
+:root{--bg:#0f1420;--card:#1a2233;--line:#2a3550;--tx:#e8ecf5;--sub:#8fa0bd;--acc:#5b8cff;--red:#ff6b6b;--orange:#ffb454;--green:#4ade80}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;min-height:100vh;padding:24px 16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px}
+.sub{color:var(--sub);font-size:13px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:14px;color:var(--sub);margin-bottom:12px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#232e47;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:14px;cursor:pointer;transition:.15s}
+.chip small{color:var(--sub);margin-left:5px;font-size:11px}
+.chip.sel{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip.sel small{color:#dce6ff}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+input[type=text],select{background:#0e1526;border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:10px 12px;font-size:14px;flex:1;min-width:180px}
+button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+button:disabled{opacity:.4;cursor:default}
+button.rec{background:var(--red)}
+button.ghost{background:#232e47;border:1px solid var(--line)}
+.target{font-size:34px;font-weight:700;text-align:center;padding:14px 0 4px}
+.canonhint{text-align:center;color:var(--sub);font-size:13px;margin-bottom:6px}
+.status{color:var(--sub);font-size:13px;min-height:18px;margin-top:8px}
+.alignbox{overflow-x:auto;padding:6px 0}
+.alignrow{display:flex;gap:4px;margin:3px 0;align-items:stretch}
+.alignrow .lab{flex:0 0 74px;color:var(--sub);font-size:12px;align-self:center}
+.cell{min-width:34px;padding:7px 4px;border-radius:8px;text-align:center;font-size:17px;background:#232e47;position:relative}
+.cell small{display:block;font-size:9px;color:var(--sub);margin-top:2px}
+.cell.err{background:#4a2330;color:var(--red);font-weight:700}
+.cell.ins{background:#453317;color:var(--orange)}
+.cell.gap{background:transparent;border:1px dashed var(--line);color:var(--sub)}
+.score{font-size:15px;margin:10px 0 4px}
+.score b{color:var(--green);font-size:20px}
+.ecard{background:#20182380;border:1px solid #4a2330;border-radius:10px;padding:10px 14px;margin-top:8px;font-size:14px}
+.ecard .t{font-weight:700;color:var(--red)}
+.badge{display:inline-block;background:#4a2330;color:var(--red);border-radius:6px;font-size:11px;padding:2px 8px;margin-left:8px}
+.badge.l1{background:#173a2a;color:var(--green)}
+.ok{color:var(--green);font-size:16px;font-weight:600;margin-top:8px}
+.words{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.wchip{border-radius:10px;padding:8px 14px;font-size:16px;font-weight:600;border:1px solid var(--line)}
+.wchip small{display:block;font-size:10.5px;font-weight:400;margin-top:2px;opacity:.85}
+.wchip.ok{background:#14301f;color:var(--green);border-color:#1e4a30}
+.wchip.error{background:#3a2030;color:var(--red);border-color:#4a2330}
+.wchip.missing{background:#2a1520;color:#ff8f8f;border-color:#5a2030;text-decoration:line-through}
+.wchip.uncertain{background:#3a2f15;color:var(--orange);border-color:#5a4a20}
+.relwarn{background:#3a2f15;border:1px solid #5a4a20;border-radius:10px;padding:9px 13px;font-size:13px;color:var(--orange);margin:8px 0}
+.footer{color:var(--sub);font-size:11.5px;margin-top:14px;line-height:1.6}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--sub);border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🗣️ 한국어 발음 진단 데모</h1>
+<div class="sub">문장을 읽으면 어느 소리를 어떻게 발음했는지 짚어줍니다 · XLS-R 300m + CTC · 전 언어권(영어·중국어·일본어·유럽·아시아) 학습 · weighted F1 0.955</div>
+
+<div class="card">
+  <h2>① 읽을 문장 선택</h2>
+  <div class="chips" id="chips"></div>
+  <div class="row">
+    <input type="text" id="custom" placeholder="직접 입력 (예: 밥 먹었어요) — 표준발음은 G2P 자동 생성">
+    <select id="l1"><option value="">모국어(선택) — 국적 맞춤 피드백</option></select>
+  </div>
+</div>
+
+<div class="card">
+  <h2>② 녹음 또는 파일 업로드</h2>
+  <div class="target" id="target">문장을 선택하세요</div>
+  <div class="canonhint" id="canonhint"></div>
+  <div class="row" style="justify-content:center">
+    <button id="recbtn" disabled>🎙️ 녹음 시작</button>
+    <button class="ghost" id="upbtn" disabled>📁 파일 업로드</button>
+    <input type="file" id="file" accept="audio/*" style="display:none">
+  </div>
+  <div class="status" id="status"></div>
+</div>
+
+<div class="card" id="result" style="display:none">
+  <h2>③ 진단 결과</h2>
+  <div class="score" id="score"></div>
+  <div class="words" id="words"></div>
+  <div class="alignbox" id="align"></div>
+  <div id="errors"></div>
+  <div class="footer">표기: 큰 글자 = 자모 · 작은 글자 = KoG2P 음소 · <span style="color:var(--red)">빨강 = 표준과 다르게 발음</span> · <span style="color:var(--orange)">주황 = 추가된 소리</span><br>
+  ⚠️ 개별 위치 판정은 오탐이 있을 수 있습니다(위치 단위 precision ~0.51). 반복해서 나타나는 유형 위주로 참고하세요.</div>
+</div>
+</div>
+
+<script>
+const BASE = location.pathname.replace(/\/(index\.html)?$/, '');
+let sentence = "", media = null, chunks = [], recording = false;
+
+async function init(){
+  const m = await (await fetch(`${BASE}/meta`)).json();
+  const chips = document.getElementById('chips');
+  m.presets.forEach(p=>{
+    const c = document.createElement('div'); c.className='chip';
+    c.innerHTML = `${p.text}<small>${p.focus}</small>`;
+    c.onclick = ()=>{ pick(p.text); document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel')); c.classList.add('sel'); };
+    chips.appendChild(c);
+  });
+  const l1 = document.getElementById('l1');
+  m.countries.forEach(c=>{ const o=document.createElement('option'); o.value=o.textContent=c; l1.appendChild(o); });
+}
+function pick(t){
+  sentence = t;
+  document.getElementById('target').textContent = t;
+  document.getElementById('canonhint').textContent = '';
+  document.getElementById('recbtn').disabled = false;
+  document.getElementById('upbtn').disabled = false;
+  document.getElementById('result').style.display='none';
+}
+document.getElementById('custom').addEventListener('change', e=>{
+  if(e.target.value.trim()){ pick(e.target.value.trim()); document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel')); }
+});
+
+const recbtn = document.getElementById('recbtn');
+recbtn.onclick = async ()=>{
+  if(recording){ media.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  chunks = []; media = new MediaRecorder(stream);
+  media.ondataavailable = e=>chunks.push(e.data);
+  media.onstop = ()=>{ stream.getTracks().forEach(t=>t.stop()); recording=false;
+    recbtn.textContent='🎙️ 녹음 시작'; recbtn.classList.remove('rec');
+    send(new File(chunks, 'recording.webm', {type:'audio/webm'})); };
+  media.start(); recording = true;
+  recbtn.textContent = '⏹️ 녹음 끝내기'; recbtn.classList.add('rec');
+  document.getElementById('status').textContent = '녹음 중... 문장을 읽고 [녹음 끝내기]를 누르세요';
+};
+document.getElementById('upbtn').onclick = ()=>document.getElementById('file').click();
+document.getElementById('file').addEventListener('change', e=>{ if(e.target.files[0]) send(e.target.files[0]); });
+
+async function send(file){
+  const st = document.getElementById('status');
+  st.innerHTML = '<span class="spin"></span>분석 중...';
+  const fd = new FormData();
+  fd.append('audio', file); fd.append('sentence', sentence);
+  const l1 = document.getElementById('l1').value; if(l1) fd.append('country', l1);
+  try{
+    const r = await fetch(`${BASE}/predict`, {method:'POST', body:fd});
+    const ct = r.headers.get('content-type')||'';
+    if(!ct.includes('json')) throw new Error('서버 응답 오류');
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.detail||'오류');
+    st.textContent = ''; render(d);
+  }catch(err){ st.textContent = '⚠️ ' + err.message; }
+}
+
+function render(d){
+  const R = document.getElementById('result'); R.style.display='block';
+  const sc = document.getElementById('score'), al = document.getElementById('align'), er = document.getElementById('errors');
+  const wd = document.getElementById('words');
+  if(d.no_speech){ sc.innerHTML='🔇 음성이 감지되지 않았습니다. 다시 녹음해 주세요.'; al.innerHTML=''; er.innerHTML=''; wd.innerHTML=''; return; }
+  sc.innerHTML = `표준 발음 일치율 <b>${Math.round(d.match_rate*100)}%</b> <span style="color:var(--sub);font-size:12px">(${d.duration_sec}s 발화 · 추론 ${d.took_sec}s)</span>`;
+
+  // 단어 수준 요약 칩
+  wd.innerHTML = (d.words||[]).map(w=>{
+    const lab = w.status==='missing' ? '누락됨' : w.status==='uncertain' ? '판정 보류' : w.status==='error' ? `오류 ${w.n_err}` : 'OK';
+    return `<div class="wchip ${w.status}">${w.word}<small>${lab}</small></div>`;
+  }).join('');
+  if(d.reliability && d.reliability.low_confidence){
+    wd.innerHTML += `<div class="relwarn" style="flex-basis:100%">⚠️ 발화 속도가 빠르거나(${d.reliability.speaking_rate}음절/초) 인식 불일치가 커서 누락 판정을 보류했습니다. 조금 천천히 또박또박 읽어보세요.</div>`;
+  }
+
+  // 정렬 렌더: ops 순회
+  let top='', bot='';
+  d.ops.forEach(op=>{
+    const tp = op.kind!=='ins' ? d.canon_ph[op.tpos]||'' : '';
+    const ap = op.apos!=null ? d.pred_ph[op.apos]||'' : '';
+    if(op.kind==='match'){ top+=`<div class="cell">${op.target}<small>${tp}</small></div>`; bot+=`<div class="cell">${op.actual}<small>${ap}</small></div>`; }
+    else if(op.kind==='sub'){ top+=`<div class="cell err">${op.target}<small>${tp}</small></div>`; bot+=`<div class="cell err">${op.actual}<small>${ap}</small></div>`; }
+    else if(op.kind==='del'){ top+=`<div class="cell err">${op.target}<small>${tp}</small></div>`; bot+=`<div class="cell gap">∅</div>`; }
+    else { top+=`<div class="cell gap">·</div>`; bot+=`<div class="cell ins">${op.actual}<small>${ap}</small></div>`; }
+  });
+  al.innerHTML = `<div class="alignrow"><div class="lab">표준 발음</div>${top}</div><div class="alignrow"><div class="lab">내 발음</div>${bot}</div>`;
+
+  if(!d.errors.length){ er.innerHTML = '<div class="ok">✅ 표준 발음과 일치합니다!</div>'; return; }
+  er.innerHTML = d.errors.map(e=>{
+    const what = e.kind==='del' ? `<span class="t">${e.target}</span>(${e.target_ph}) 소리를 빠뜨림`
+      : e.kind==='ins' ? `<span class="t">${e.actual}</span>(${e.actual_ph}) 소리가 추가됨`
+      : `<span class="t">${e.target}</span>(${e.target_ph})를 <span class="t">${e.actual}</span>(${e.actual_ph})로 발음`;
+    const l1b = e.l1_typical ? `<span class="badge l1">내 모국어권에서 흔한 오류 ×${e.l1_weight}</span>` : '';
+    const wtag = e.word ? `'${e.word}'의 ` : '';
+    return `<div class="ecard">${wtag}${e.pos+1}번째 소리 — ${what}<span class="badge">${e.type}</span>${l1b}<div style="color:var(--sub);font-size:12px;margin-top:4px">${e.desc}</div></div>`;
+  }).join('');
+}
+init();
+</script>
+</body>
+</html>

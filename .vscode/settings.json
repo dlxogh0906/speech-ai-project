@@ -1,0 +1,20 @@
+{
+  "//": "산출물 경로가 /data(2 TB)를 가리켜서, 감시 대상에 들어가면 Remote-SSH 확장 호스트가 OOM 으로 죽는다. 반드시 제외할 것.",
+  "files.watcherExclude": {
+    "**/outputs/**": true,
+    "**/.git/objects/**": true,
+    "**/__pycache__/**": true,
+    "**/node_modules/**": true
+  },
+  "search.exclude": {
+    "**/outputs/**": true,
+    "**/archive/**": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "python.analysis.extraPaths": [
+    "./tasks/nationality-classification/src",
+    "./tasks/pronunciation-assessment/src"
+  ]
+}

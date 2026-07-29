@@ -1,0 +1,65 @@
+# @package _group_
+# 공식 soup 인코더 warm-start → 우리 라벨(record KoG2P) 음소 CTC 파인튜닝
+# 기존 mdd_ctc_300m.yaml과 동일, 차이: finetune_from_model(공식인코더+새75헤드), save_dir 분리
+common:
+  fp16: true
+  log_format: json
+  log_interval: 100
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/mdd_ckpt_soupwarm/tb
+
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/mdd_ckpt_soupwarm
+  finetune_from_model: ${env:SPEECH_AI_DATA}/mdd_official_ckpt/warmstart_soup_enc_75head.pt  # 공식 인코더 warm-start
+  no_epoch_checkpoints: true
+  best_checkpoint_metric: loss
+  save_interval_updates: 2000
+  keep_interval_updates: 3
+
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_train
+  normalize: true
+  labels: ltr                             # 우리 라벨(record KoG2P) 그대로
+
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+
+distributed_training:
+  ddp_backend: legacy_ddp
+  distributed_world_size: 1
+
+criterion:
+  _name: ctc
+  zero_infinity: true
+
+optimization:
+  max_update: 50000
+  lr: [0.00003]
+  sentence_avg: true
+  update_freq: [4]
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt   # 구조용(가중치는 finetune_from_model이 덮어씀)
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 10000

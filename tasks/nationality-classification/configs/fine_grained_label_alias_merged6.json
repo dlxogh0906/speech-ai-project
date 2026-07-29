@@ -1,0 +1,11 @@
+{
+  "description": "Merge strong/selected fine-grained nationality labels without modifying original AIHub data.",
+  "aliases": {
+    "이탈라아어": "이탈리아어",
+    "캄보디아어": "크메르어",
+    "르완다어": "키냐르완다어",
+    "우즈베키스탄어": "우즈베크어",
+    "필리핀어": "타갈로그어",
+    "아프리카계영어": "영어"
+  }
+}

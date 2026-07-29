@@ -1,0 +1,83 @@
+# ─────────────────────────────────────────────────────────────
+# 이 저장소는 코드와 문서만 담는다 (약 15 MB).
+# 데이터·모델·캐시는 전부 저장소 밖(`.env` 로 지정, `shared/paths.py` 참고)에 있고
+# 합치면 14 GB가 넘는다. 실수로라도 들어오지 않게 넓게 막는다.
+# ─────────────────────────────────────────────────────────────
+
+# 산출물 루트 (심볼릭 링크 또는 실제 디렉터리)
+outputs/
+!outputs/.gitkeep
+
+# 모델·체크포인트·양자화
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.joblib
+*.pkl
+*.safetensors
+
+# 특징 캐시·배열
+*.npz
+*.npy
+
+# 오디오
+*.wav
+*.flac
+*.mp3
+*.m4a
+*.ogg
+
+# 매니페스트·예측 캐시 (재생성 가능하지만 GPU 수시간 → 저장소 밖 보관)
+manifest*/
+*_preds.jsonl
+records*.jsonl
+gop_feats_*.jsonl
+word_skip_preds*.jsonl
+fine_labels.csv
+
+# 압축·배포 산출물
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# 로그
+*.log
+logs/
+nohup.out
+
+# hydra / fairseq 실행 디렉터리
+outputs/*/
+multirun/
+.hydra/
+
+# 파이썬
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# 환경
+.env
+.venv/
+venv/
+env/
+
+# 에디터·OS
+.vscode-server/
+.idea/
+.DS_Store
+*.swp
+
+# 폰트 (10 MB — tools/fetch_fonts.sh 로 내려받는다)
+*.ttf
+*.otf
+
+# 이전 작업 전용 노트 (저장소 밖에 보관)
+_refactor_notes/

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CPU vs GPU · Nationality Classification</title>
+<style>
+  :root{--bg:#0f1115;--card:#1a1d24;--line:#2a2f3a;--fg:#e7e9ee;--mut:#9aa3b2;--gpu:#3ddc97;--cpu:#ffb454;--acc:#5b8cff;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
+  .wrap{max-width:900px;margin:0 auto;padding:26px 16px 60px}
+  h1{font-size:21px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px;margin-bottom:18px}
+  .pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;background:#11141b;border:1px solid var(--line);color:var(--mut);margin-left:4px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  #drop{border:2px dashed var(--line);border-radius:12px;padding:26px;text-align:center;cursor:pointer;transition:.15s}
+  #drop.hover{border-color:var(--acc);background:#171b27}
+  #drop b{color:var(--acc)}
+  audio{width:100%;margin-top:12px}
+  button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .muted{color:var(--mut);font-size:13px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.cols{grid-template-columns:1fr}}
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .tag{font-weight:700;font-size:15px;padding:3px 10px;border-radius:8px}
+  .tag.gpu{background:rgba(61,220,151,.15);color:var(--gpu)}
+  .tag.cpu{background:rgba(255,180,84,.15);color:var(--cpu)}
+  .big{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+  .big small{font-size:13px;color:var(--mut);font-weight:400}
+  .bar{position:relative;background:#11141b;border:1px solid var(--line);border-radius:8px;height:30px;margin:6px 0;overflow:hidden}
+  .bar .fill{position:absolute;inset:0 auto 0 0}
+  .bar.g .fill{background:linear-gradient(90deg,#1f9d6b,#3ddc97)}
+  .bar.c .fill{background:linear-gradient(90deg,#c67d24,#ffb454)}
+  .bar .lab{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:13px}
+  .pct{font-variant-numeric:tabular-nums;color:#fff;font-weight:600}
+  .summary{text-align:center;font-size:15px}
+  .summary b{color:var(--gpu)}
+  .err{color:#ff8080}
+  h2{font-size:12px;color:var(--mut);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>CPU vs GPU · Nationality Classification Speed<span id="hp" class="pill">checking…</span></h1>
+  <div class="sub">Upload one audio clip; the <b>same model</b> runs on both GPU and CPU so you can compare <b>speed and predictions</b> side by side.</div>
+
+  <div class="card">
+    <div id="drop"><div><b>Choose an audio file</b> or drag it here</div>
+      <div class="muted" style="margin-top:6px">wav / webm / m4a / mp3, etc.</div>
+      <input id="file" type="file" accept="audio/*,.wav,.webm,.m4a,.mp3,.ogg,.flac" hidden/></div>
+    <div class="row" style="margin-top:12px;justify-content:center">
+      <span class="muted">or</span>
+      <button id="rec" style="background:#7a3d3d">🎙 Record</button>
+      <span id="rectime" class="muted"></span>
+    </div>
+    <audio id="player" controls hidden></audio>
+    <div class="row" style="margin-top:12px">
+      <button id="go" disabled>Compare GPU vs CPU</button>
+      <span id="fname" class="muted"></span>
+    </div>
+  </div>
+
+  <div id="out" hidden>
+    <div class="card summary" id="summary"></div>
+    <div class="cols">
+      <div class="card"><div class="head"><span class="tag gpu">⚡ GPU</span><span class="big" id="gpu_t">–</span></div><div id="gpu_body"></div></div>
+      <div class="card"><div class="head"><span class="tag cpu">🖥 CPU</span><span class="big" id="cpu_t">–</span></div><div id="cpu_body"></div></div>
+    </div>
+  </div>
+  <div id="err" class="card err" hidden></div>
+</div>
+
+<script>
+// Korean label -> English display name (covers all 41 country classes)
+const EN={"네팔":"Nepal","독일":"Germany","러시아":"Russia","루마니아":"Romania","르완다":"Rwanda",
+"말레이시아":"Malaysia","몽골":"Mongolia","미국":"USA","미얀마":"Myanmar","방글라데시":"Bangladesh",
+"베트남":"Vietnam","불가리아":"Bulgaria","브라질":"Brazil","스페인":"Spain","싱가포르":"Singapore",
+"에티오피아":"Ethiopia","영국":"UK","우즈베키스탄":"Uzbekistan","우크라이나":"Ukraine","이란":"Iran",
+"이탈리아":"Italy","인도":"India","인도네시아":"Indonesia","일본":"Japan","잠비아":"Zambia","중국":"China",
+"칠레":"Chile","카자흐스탄":"Kazakhstan","캄보디아":"Cambodia","콜롬비아":"Colombia","키르기스스탄":"Kyrgyzstan",
+"타지키스탄":"Tajikistan","태국":"Thailand","투르크메니스탄":"Turkmenistan","튀르키예":"Turkey","파키스탄":"Pakistan",
+"페루":"Peru","프랑스":"France","필리핀":"Philippines","한국어":"Korea (native)","홍콩":"Hong Kong"};
+const en=t=>EN[t.label]||EN[t.nationality]||t.label;
+
+const $=s=>document.getElementById(s);
+const drop=$("drop"),file=$("file"),player=$("player"),go=$("go");let picked=null;
+
+fetch("/health").then(r=>r.json()).then(h=>{
+  const g=h.gpu?.status, c=h.cpu?.status;
+  $("hp").textContent=`GPU ${g==="ok"?"✓":"✗"} · CPU ${c==="ok"?"✓":"✗"}`;
+}).catch(()=>$("hp").textContent="server check failed");
+
+drop.onclick=()=>file.click();
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("hover")}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("hover")}));
+drop.addEventListener("drop",ev=>{if(ev.dataTransfer.files[0])setFile(ev.dataTransfer.files[0])});
+file.onchange=()=>{if(file.files[0])setFile(file.files[0])};
+function setFile(f){picked=f;$("fname").textContent=`${f.name||"recording"} · ${(f.size/1024).toFixed(0)} KB`;
+  player.src=URL.createObjectURL(f);player.hidden=false;go.disabled=false;}
+
+// --- microphone recording ---
+let mediaRec=null,chunks=[],recTimer=null,recStart=0;
+const rec=$("rec");
+rec.onclick=async()=>{
+  if(mediaRec&&mediaRec.state==="recording"){mediaRec.stop();return;}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks=[];mediaRec=new MediaRecorder(stream);
+    mediaRec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    mediaRec.onstop=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const f=new File(chunks,"recording.webm",{type:(mediaRec.mimeType||"audio/webm")});
+      setFile(f);
+      rec.textContent="🎙 Record";rec.style.background="#7a3d3d";
+      clearInterval(recTimer);$("rectime").textContent="";
+    };
+    mediaRec.start();
+    rec.textContent="⏹ Stop";rec.style.background="#cc5c5c";recStart=Date.now();
+    recTimer=setInterval(()=>{$("rectime").textContent="● "+((Date.now()-recStart)/1000).toFixed(1)+"s";},100);
+  }catch(e){$("err").textContent="Mic error: "+e.message+" (allow microphone permission)";$("err").hidden=false;}
+};
+
+go.onclick=async()=>{
+  if(!picked)return;
+  go.disabled=true;go.textContent="Comparing… (CPU takes a few seconds)";$("err").hidden=true;
+  const fd=new FormData();fd.append("audio",picked,picked.name||"recording.webm");
+  try{
+    const r=await fetch("/predict_both",{method:"POST",body:fd});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.detail||JSON.stringify(j));
+    render(j);
+  }catch(e){$("err").textContent="Error: "+e.message;$("err").hidden=false;}
+  go.disabled=false;go.textContent="Compare GPU vs CPU";
+};
+
+function bars(res,cls){
+  if(!res.ok)return `<div class="err">⚠️ ${res.error}</div>`;
+  const max=Math.max(...res.top.map(t=>t.prob));
+  return res.top.map((t,i)=>`<div class="bar ${cls}">
+    <div class="fill" style="width:${Math.max(4,t.prob/max*100)}%"></div>
+    <div class="lab"><span>${t.flag||""} ${i+1}. ${en(t)}</span>
+    <span class="pct">${(t.prob*100).toFixed(1)}%</span></div></div>`).join("");
+}
+
+function render(j){
+  $("out").hidden=false;
+  const g=j.gpu,c=j.cpu;
+  $("gpu_t").innerHTML = g.ok?`${g.took_sec}<small>s</small>`:"–";
+  $("cpu_t").innerHTML = c.ok?`${c.took_sec}<small>s</small>`:"–";
+  $("gpu_body").innerHTML=bars(g,"g");
+  $("cpu_body").innerHTML=bars(c,"c");
+  let s="";
+  if(g.ok&&c.ok){
+    const sp=(c.took_sec/Math.max(g.took_sec,1e-9)).toFixed(1);
+    const same=g.top[0].label===c.top[0].label;
+    s=`⚡ GPU is <b>${sp}× faster</b> (${g.took_sec}s vs ${c.took_sec}s) · Top-1 ${same?"match ✓":"differ (fp16 rounding)"}`;
+  } else s="One backend failed to respond — see below";
+  $("summary").innerHTML=s;
+}
+</script>
+</body>
+</html>

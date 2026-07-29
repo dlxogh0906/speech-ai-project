@@ -1,0 +1,9 @@
+torch
+torchaudio
+transformers
+accelerate
+safetensors
+soundfile
+pandas
+numpy
+ipykernel
