@@ -1,0 +1,695 @@
+{
+ "_설명": "MDD 주 평가 — TAG 잣대 weighted F1 (모델 계보 비교)",
+ "_생성": "2026-07-29",
+ "_주의": "원본 파일명을 source 로 남겨 두었다. 재생성 방법은 README.md 참고.",
+ "항목": {
+  "tag_all_lar": {
+   "설명": "★현역★ 밑바닥 50k → LAR 이어학습 15k",
+   "source": "eval_tag71_all_lar.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_tag_all_lar/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9547,
+     "err_f1": 0.4319,
+     "precision": 0.4663,
+     "recall": 0.4022,
+     "positions": 1799725,
+     "true_err": 74439,
+     "pred_err": 64213
+    },
+    "kog2p71": {
+     "f1_weighted": 0.9538,
+     "err_f1": 0.4322,
+     "precision": 0.4666,
+     "recall": 0.4026,
+     "positions": 1799583,
+     "true_err": 75900,
+     "pred_err": 65483
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.9517
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.9669
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.9591
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.9435
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.9558
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9371
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.9459
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.9621
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9667
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9522
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9631
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9625
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.951
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.9578
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.9601
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9553
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9647
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9157
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.9552
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9639
+     }
+    },
+    "utts_scoring_differs": 2495,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "tag_all": {
+   "설명": "밑바닥 학습 50k (LAR 적응 전)",
+   "source": "eval_tag71_all.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_tag_all/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9547,
+     "err_f1": 0.4328,
+     "precision": 0.4666,
+     "recall": 0.4036,
+     "positions": 1799544,
+     "true_err": 74457,
+     "pred_err": 64402
+    },
+    "kog2p71": {
+     "f1_weighted": 0.9538,
+     "err_f1": 0.4328,
+     "precision": 0.4666,
+     "recall": 0.4036,
+     "positions": 1799416,
+     "true_err": 75910,
+     "pred_err": 65655
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.9514
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.9672
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.9591
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.944
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.9561
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9374
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.9463
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.9619
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9664
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9522
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9628
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9627
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.9492
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.9573
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.9601
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9545
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9654
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9156
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.955
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9652
+     }
+    },
+    "utts_scoring_differs": 2499,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "tag_all_native": {
+   "설명": "원어민 데이터 포함 변형",
+   "source": "eval_tag71_native.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_tag_all_native/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9558,
+     "err_f1": 0.4518,
+     "precision": 0.4768,
+     "recall": 0.4292,
+     "positions": 1799448,
+     "true_err": 74443,
+     "pred_err": 67010
+    },
+    "kog2p71": {
+     "f1_weighted": 0.955,
+     "err_f1": 0.452,
+     "precision": 0.4772,
+     "recall": 0.4293,
+     "positions": 1799284,
+     "true_err": 75898,
+     "pred_err": 68279
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.9523
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.9675
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.961
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.9446
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.957
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9386
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.9481
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.9632
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9674
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9536
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9638
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9633
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.9524
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.958
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.9618
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9569
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9669
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9179
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.9561
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9655
+     }
+    },
+    "utts_scoring_differs": 2474,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "errup": {
+   "설명": "오류 발화 업샘플 변형",
+   "source": "eval_tag71_errup.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_errup/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9564,
+     "err_f1": 0.5035,
+     "precision": 0.455,
+     "recall": 0.5636,
+     "positions": 1800429,
+     "true_err": 74458,
+     "pred_err": 92229
+    },
+    "kog2p71": {
+     "f1_weighted": 0.9555,
+     "err_f1": 0.5037,
+     "precision": 0.4554,
+     "recall": 0.5635,
+     "positions": 1800252,
+     "true_err": 75915,
+     "pred_err": 93930
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.95
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.9681
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.9631
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.9465
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.9569
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9399
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.951
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.9653
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9688
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9551
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9645
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9662
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.9538
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.9597
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.9618
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9569
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9661
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9169
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.9581
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9674
+     }
+    },
+    "utts_scoring_differs": 2790,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "omniw2v": {
+   "설명": "omniASR w2v 초기화 변형",
+   "source": "eval_tag71_omni.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_omniw2v/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9551,
+     "err_f1": 0.4397,
+     "precision": 0.4689,
+     "recall": 0.414,
+     "positions": 1799189,
+     "true_err": 74428,
+     "pred_err": 65714
+    },
+    "kog2p71": {
+     "f1_weighted": 0.9541,
+     "err_f1": 0.4394,
+     "precision": 0.4679,
+     "recall": 0.4142,
+     "positions": 1799040,
+     "true_err": 75880,
+     "pred_err": 67159
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.9512
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.9676
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.9599
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.9435
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.9566
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9387
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.9472
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.963
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9666
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9521
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9638
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9632
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.9505
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.9569
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.9603
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9566
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9649
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9188
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.9561
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9654
+     }
+    },
+    "utts_scoring_differs": 2634,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "omniw2v_46k": {
+   "설명": "omniASR 46k 스텝",
+   "source": "eval_tag71_omni46k.json",
+   "값": {
+    "n": 178049,
+    "ckpt": "/data/tta/mdd_ckpt_omniw2v/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9493,
+     "err_f1": 0.3688,
+     "precision": 0.3914,
+     "recall": 0.3488,
+     "positions": 1801203,
+     "true_err": 74471,
+     "pred_err": 66364
+    },
+    "kog2p71": {
+     "f1_weighted": 0.9483,
+     "err_f1": 0.3693,
+     "precision": 0.3905,
+     "recall": 0.3503,
+     "positions": 1801043,
+     "true_err": 75919,
+     "pred_err": 68103
+    },
+    "by_lang": {
+     "EN": {
+      "n_utts": 39289,
+      "f1_weighted": 0.9461
+     },
+     "ID": {
+      "n_utts": 24658,
+      "f1_weighted": 0.963
+     },
+     "ZH": {
+      "n_utts": 20569,
+      "f1_weighted": 0.9532
+     },
+     "VI": {
+      "n_utts": 16178,
+      "f1_weighted": 0.9359
+     },
+     "JA": {
+      "n_utts": 13980,
+      "f1_weighted": 0.9518
+     },
+     "ES": {
+      "n_utts": 9959,
+      "f1_weighted": 0.9309
+     },
+     "RU": {
+      "n_utts": 8263,
+      "f1_weighted": 0.9401
+     },
+     "DE": {
+      "n_utts": 5934,
+      "f1_weighted": 0.9584
+     },
+     "TR": {
+      "n_utts": 4974,
+      "f1_weighted": 0.9628
+     },
+     "PT": {
+      "n_utts": 3553,
+      "f1_weighted": 0.9465
+     },
+     "IT": {
+      "n_utts": 3527,
+      "f1_weighted": 0.9579
+     },
+     "PL": {
+      "n_utts": 3324,
+      "f1_weighted": 0.9561
+     },
+     "MN": {
+      "n_utts": 2739,
+      "f1_weighted": 0.9421
+     },
+     "CS": {
+      "n_utts": 2701,
+      "f1_weighted": 0.9513
+     },
+     "FR": {
+      "n_utts": 2300,
+      "f1_weighted": 0.955
+     },
+     "RO": {
+      "n_utts": 2299,
+      "f1_weighted": 0.9516
+     },
+     "AZ": {
+      "n_utts": 1926,
+      "f1_weighted": 0.9581
+     },
+     "HU": {
+      "n_utts": 1592,
+      "f1_weighted": 0.9085
+     },
+     "KK": {
+      "n_utts": 1228,
+      "f1_weighted": 0.9511
+     },
+     "HY": {
+      "n_utts": 1068,
+      "f1_weighted": 0.9597
+     }
+    },
+    "utts_scoring_differs": 2987,
+    "preds_with_special_tokens": 0
+   }
+  },
+  "tag_combined": {
+   "설명": "040~043 결합 초기 변형",
+   "source": "eval_tag71_combined.json",
+   "값": {
+    "n": 104211,
+    "ckpt": "/data/tta/mdd_ckpt_tag_combined/checkpoint_best.pt",
+    "jamo": {
+     "f1_weighted": 0.9558,
+     "err_f1": 0.4707,
+     "precision": 0.5149,
+     "recall": 0.4335,
+     "positions": 1066762,
+     "true_err": 46459,
+     "pred_err": 39110
+    },
+    "kog2p71": {
+     "f1_weighted": 0.955,
+     "err_f1": 0.4708,
+     "precision": 0.5152,
+     "recall": 0.4334,
+     "positions": 1066695,
+     "true_err": 47262,
+     "pred_err": 39759
+    },
+    "utts_scoring_differs": 1333,
+    "preds_with_special_tokens": 0
+   }
+  }
+ }
+}

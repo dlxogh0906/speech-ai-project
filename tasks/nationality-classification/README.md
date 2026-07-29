@@ -25,6 +25,9 @@
 > 병목은 알고리즘이 아니라 **소수 클래스의 학습 화자 수**다 — LTAS/포먼트 분석에서 국적 음향
 > 신호 자체가 약하고, t-SNE 에서 표현이 화자 지배적이다. 근거는 `notebooks/` 참고.
 
+> 위 수치의 **근거 파일은 [`results/`](results/)** 에 있다. 흩어져 있던 `metrics.json` 을
+> 한 파일로 병합했고, 클래스별 성능은 CSV 로 정리했다.
+
 ## 라벨 체계
 
 - **61-class** — 화자 모국어(`skill_info.motherTongue`). 캐노니컬 분할은 `aihub_nationality_fine_811`.

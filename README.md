@@ -125,6 +125,7 @@ python tests/test_imports.py # 문법 166 · 경로 상수 · 라이브러리 im
 |---|---|
 | [`tasks/nationality-classification/README.md`](tasks/nationality-classification/README.md) | 국적 분류 — 성능·라벨·실행·함정 |
 | [`tasks/pronunciation-assessment/README.md`](tasks/pronunciation-assessment/README.md) | 발음 진단 — 성능·모델 계보·라벨 3종·실행·함정 |
+| [`tasks/*/results/`](tasks/pronunciation-assessment/results/) | **실험 기록** — 문서 수치의 근거 파일 |
 | [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) | 환경 구축과 함정 6가지 |
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | 왜 이렇게 설계했는가 (다시 뒤집지 않도록) |
 | [`docs/REMAINING_ISSUES.md`](docs/REMAINING_ISSUES.md) | 알려진 한계와 미해결 과제 |

@@ -1,0 +1,236 @@
+{
+ "_설명": "MDD 보조 검증 — 보존율·화자누출·단어누락·약라벨 잣대",
+ "_생성": "2026-07-29",
+ "_주의": "원본 파일명을 source 로 남겨 두었다. 재생성 방법은 README.md 참고.",
+ "항목": {
+  "오발음_보존율": {
+   "설명": "오발음이 표준으로 복원되지 않고 보존되는 비율 (B-2)",
+   "source": "check_b2_preservation.json",
+   "값": {
+    "all": {
+     "per_pred_tag": 0.0471,
+     "per_pred_canon": 0.0365,
+     "per_tag_canon": 0.0424,
+     "preservation": 0.86,
+     "n_positions": 1783349
+    },
+    "err": {
+     "per_pred_tag": 0.0887,
+     "per_pred_canon": 0.0594,
+     "per_tag_canon": 0.1156,
+     "preservation": 0.514,
+     "n_positions": 650828
+    },
+    "clean": {
+     "per_pred_tag": 0.0232,
+     "per_pred_canon": 0.0232,
+     "per_tag_canon": 0.0,
+     "preservation": null,
+     "n_positions": 1132521
+    }
+   }
+  },
+  "화자누출_영향": {
+   "설명": "train↔test 화자 502명 겹침의 실측 영향",
+   "source": "check_lar_leak.json",
+   "값": {
+    "n_test": 178049,
+    "n_leaked_spk": 502,
+    "n_leaked_utt": 82841,
+    "models": {
+     "tag_all": {
+      "leaked": 0.9607,
+      "clean": 0.9493,
+      "gap": 0.0114,
+      "all": 0.9547
+     },
+     "tag_all_lar": {
+      "leaked": 0.9607,
+      "clean": 0.9493,
+      "gap": 0.0114,
+      "all": 0.9547
+     }
+    }
+   }
+  },
+  "단어누락_검출": {
+   "설명": "record LAR 267,662발화 전수",
+   "source": "eval_word_skip_lar_ALL268k.json",
+   "값": {
+    "n_utts_used": 267662,
+    "n_utts_skipped": 0,
+    "n_words": 1552700,
+    "gt_missing_words": 43198,
+    "gt_missing_rate": 0.0278,
+    "ckpt": "/data/tta/mdd_ckpt_tag_all_lar/checkpoint_best.pt",
+    "thresholds": {
+     "0.5": {
+      "tp": 35311,
+      "fp": 35452,
+      "fn": 7887,
+      "precision": 0.499,
+      "recall": 0.8174,
+      "f1": 0.6197
+     },
+     "0.6": {
+      "tp": 34073,
+      "fp": 27171,
+      "fn": 9125,
+      "precision": 0.5563,
+      "recall": 0.7888,
+      "f1": 0.6525
+     },
+     "0.7": {
+      "tp": 33052,
+      "fp": 22583,
+      "fn": 10146,
+      "precision": 0.5941,
+      "recall": 0.7651,
+      "f1": 0.6688
+     },
+     "0.8": {
+      "tp": 29665,
+      "fp": 14151,
+      "fn": 13533,
+      "precision": 0.677,
+      "recall": 0.6867,
+      "f1": 0.6818
+     },
+     "0.9": {
+      "tp": 27206,
+      "fp": 11206,
+      "fn": 15992,
+      "precision": 0.7083,
+      "recall": 0.6298,
+      "f1": 0.6667
+     }
+    },
+    "examples_at_0.7": {
+     "fp": [
+      {
+       "stem": "69668-F-2-EN-B-LAR006-3418796",
+       "word": "않아",
+       "prompt": "그 사람이 운전을 할 것 같지 않아",
+       "transcript": "으사라니"
+      },
+      {
+       "stem": "03995-F-3-PL-B-LAR030-1075709",
+       "word": "않는",
+       "prompt": "아침에 아무것도 먹지 않는 사람들이 많습니다",
+       "transcript": "아침에 벗고 텔미 전모 알리다"
+      },
+      {
+       "stem": "05895-F-99-ES-B-LAR011-1298114",
+       "word": "키우던",
+       "prompt": "아이가 키우던 개를 잃어버려서 슬퍼해요",
+       "transcript": "내가 거뜨려 그때 부려서 실퍼한다"
+      },
+      {
+       "stem": "06953-F-99-RU-A-LAR024-1519253",
+       "word": "때가",
+       "prompt": "나는 공연 보러 갔을 때가 가장 즐거웠다",
+       "transcript": "나는 공원 공연 보러 갔을 때 가장 즐거웠다"
+      },
+      {
+       "stem": "03350-F-3-CS-B-LAR020-0752343",
+       "word": "따뜻해지면",
+       "prompt": "올해는 작년보다 빨리 따뜻해지면 좋겠다",
+       "transcript": "올해는 작년 보다 가으리 따뜻해지"
+      },
+      {
+       "stem": "09346-M-95-ZH-B-LAR023-2053497",
+       "word": "끝내야",
+       "prompt": "나는 외출하기 전까지 방 청소를 끝내야 한다",
+       "transcript": "나는 방에 추궁하지 청소는 하겠다"
+      },
+      {
+       "stem": "01661-F-2-VI-B-LAR012-0455591",
+       "word": "맛이",
+       "prompt": "그 식당은 음식 맛이 좋다고 한다",
+       "transcript": "그 식 다 그 식단는 음식 단이"
+      },
+      {
+       "stem": "01661-F-2-VI-B-LAR012-0455591",
+       "word": "좋다고",
+       "prompt": "그 식당은 음식 맛이 좋다고 한다",
+       "transcript": "그 식 다 그 식단는 음식 단이"
+      }
+     ],
+     "fn": [
+      {
+       "stem": "01340-F-3-VI-B-LAR021-0376163",
+       "word": "옆집",
+       "prompt": "내 친구는 항상 옆집 아이 셋을 돌봐 준다",
+       "transcript": "내 친구는 항상 아이 셋을 돈 가신다"
+      },
+      {
+       "stem": "03995-F-3-PL-B-LAR030-1075709",
+       "word": "아무것도",
+       "prompt": "아침에 아무것도 먹지 않는 사람들이 많습니다",
+       "transcript": "아침에 벗고 텔미 전모 알리다"
+      },
+      {
+       "stem": "03995-F-3-PL-B-LAR030-1075709",
+       "word": "먹지",
+       "prompt": "아침에 아무것도 먹지 않는 사람들이 많습니다",
+       "transcript": "아침에 벗고 텔미 전모 알리다"
+      },
+      {
+       "stem": "00655-F-0-RU-A-LAR023-0151827",
+       "word": "방",
+       "prompt": "나는 외출하기 전까지 방 청소를 끝내야 한다",
+       "transcript": "저는 외출하기 전까지 반손해야한다"
+      },
+      {
+       "stem": "03350-F-3-CS-B-LAR020-0752343",
+       "word": "좋겠다",
+       "prompt": "올해는 작년보다 빨리 따뜻해지면 좋겠다",
+       "transcript": "올해는 작년 보다 가으리 따뜻해지"
+      },
+      {
+       "stem": "07265-F-7-MN-B-LAR006-1990625",
+       "word": "그",
+       "prompt": "그 사람이 운전을 할 것 같지 않아",
+       "transcript": "상홍 운전을 할 것 같지 않아"
+      },
+      {
+       "stem": "01790-O-3-VI-B-LAR013-0698872",
+       "word": "동물을",
+       "prompt": "동물을 키울 수 있는 크고 좋은 집에서 살고 싶어",
+       "transcript": "그 색상은 딨어 채서 있서"
+      },
+      {
+       "stem": "01790-O-3-VI-B-LAR013-0698872",
+       "word": "수",
+       "prompt": "동물을 키울 수 있는 크고 좋은 집에서 살고 싶어",
+       "transcript": "그 색상은 딨어 채서 있서"
+      }
+     ]
+    }
+   }
+  },
+  "record_잣대_F1": {
+   "설명": "참고용 약라벨 잣대 (MDD 공식 잣대 아님)",
+   "source": "eval_record_f1.json",
+   "값": {
+    "n": 243387,
+    "preds_file": "/home/tta/taeho_2/_mdd_train/word_skip_preds_lar.jsonl",
+    "all": {
+     "n": 243387,
+     "PER": 0.0501,
+     "f1_weighted": 0.9505
+    },
+    "clean": {
+     "n": 115844,
+     "PER": 0.0052,
+     "f1_weighted": 0.9972
+    },
+    "err": {
+     "n": 127543,
+     "PER": 0.0909,
+     "f1_weighted": 0.9154
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,203 @@
+{
+ "_설명": "음소별 GOP — 정의 비교와 성능 상한 분석",
+ "_생성": "2026-07-29",
+ "_주의": "원본 파일명을 source 로 남겨 두었다. 재생성 방법은 README.md 참고.",
+ "항목": {
+  "정의_4종비교": {
+   "설명": "maxnorm / post_raw / post_min / margin2",
+   "source": "gop_variants_probe.json",
+   "값": {
+    "n_pos": 59797,
+    "err_rate": 0.0381,
+    "variants": {
+     "gop_maxnorm": {
+      "auc": 0.6943,
+      "pr_auc": 0.1875,
+      "zero_frac": 0.9665,
+      "n_unique": 555
+     },
+     "post_raw": {
+      "auc": 0.9299,
+      "pr_auc": 0.3481,
+      "zero_frac": 0.611,
+      "n_unique": 578
+     },
+     "post_min": {
+      "auc": 0.9292,
+      "pr_auc": 0.3442,
+      "zero_frac": 0.6106,
+      "n_unique": 578
+     },
+     "margin2": {
+      "auc": 0.9296,
+      "pr_auc": 0.35,
+      "zero_frac": 0.0023,
+      "n_unique": 1667
+     }
+    }
+   }
+  },
+  "성능_상한": {
+   "설명": "왜 PR-AUC 0.4 에서 멈추는가 (자동교정 59.2%)",
+   "source": "gop_ceiling_probe.json",
+   "값": {
+    "n_pos": 80052,
+    "n_err": 3058,
+    "detected": {
+     "auc": 0.9795,
+     "pr_auc": 0.4072,
+     "baseline": 0.0159
+    },
+    "missed": {
+     "auc": 0.8954,
+     "pr_auc": 0.1343,
+     "baseline": 0.023
+    },
+    "auto_correct_rate": 0.5922,
+    "all": {
+     "auc": 0.9297,
+     "pr_auc": 0.3561,
+     "baseline": 0.0382
+    }
+   }
+  },
+  "재학습_여지": {
+   "설명": "자동교정 자리에서 실현형이 확률 몇 등인가",
+   "source": "gop_headroom_probe.json",
+   "값": {
+    "detected": {
+     "n": 1044,
+     "n_deletion": 203,
+     "median_rank": 1,
+     "top1": 0.8209,
+     "top3": 0.9205,
+     "top5": 0.9483,
+     "mean_rank": 1.83
+    },
+    "missed": {
+     "n": 1555,
+     "n_deletion": 256,
+     "median_rank": 2,
+     "top1": 0.0039,
+     "top3": 0.9023,
+     "top5": 0.9441,
+     "mean_rank": 2.8
+    }
+   }
+  },
+  "공식모델_대조": {
+   "설명": "공식 MDD 로 GOP 를 뽑으면 나은가",
+   "source": "gop_official_vs_ours.json",
+   "값": {
+    "ours": {
+     "n_pos": 80052,
+     "err_rate": 0.0382,
+     "maxnorm": {
+      "auc": 0.6926,
+      "pr_auc": 0.1921,
+      "mode_frac": 0.9672
+     },
+     "margin2": {
+      "auc": 0.9297,
+      "pr_auc": 0.3561,
+      "mode_frac": 0.0023
+     }
+    },
+    "official": {
+     "n_pos": 80052,
+     "err_rate": 0.0382,
+     "maxnorm": {
+      "auc": 0.702,
+      "pr_auc": 0.2334,
+      "mode_frac": 0.9695
+     },
+     "margin2": {
+      "auc": 0.9403,
+      "pr_auc": 0.4109,
+      "mode_frac": 0.0025
+     }
+    }
+   }
+  },
+  "음소별_점수": {
+   "설명": "현행 정의의 퇴화(96.7% 가 정확히 0)",
+   "source": "eval_gop_per_phone.json",
+   "값": {
+    "n_utt": 178049,
+    "n_pos": 1787938,
+    "err_rate": 0.038,
+    "gop_auc": 0.6925,
+    "gop_pr_auc": 0.1949,
+    "thr": 0.0,
+    "A_transcript": {
+     "P": 0.4896,
+     "R": 0.4099,
+     "F1": 0.4463
+    },
+    "B_gop": {
+     "P": 0.4709,
+     "R": 0.4033,
+     "F1": 0.4345
+    },
+    "A_or_B": {
+     "P": 0.4689,
+     "R": 0.4142,
+     "F1": 0.4399
+    },
+    "A_and_B": {
+     "P": 0.4924,
+     "R": 0.3991,
+     "F1": 0.4408
+    }
+   }
+  },
+  "디코딩_편향": {
+   "설명": "경계 문제인가 표현 문제인가",
+   "source": "eval_bias_sweep.json",
+   "값": {
+    "0.0": {
+     "weighted_f1": 0.9555,
+     "err_p": 0.4794,
+     "err_r": 0.4245,
+     "err_f1": 0.4502
+    },
+    "0.1": {
+     "weighted_f1": 0.9553,
+     "err_p": 0.4785,
+     "err_r": 0.4181,
+     "err_f1": 0.4462
+    },
+    "0.2": {
+     "weighted_f1": 0.9549,
+     "err_p": 0.4731,
+     "err_r": 0.4147,
+     "err_f1": 0.442
+    },
+    "0.3": {
+     "weighted_f1": 0.9542,
+     "err_p": 0.4625,
+     "err_r": 0.4082,
+     "err_f1": 0.4337
+    },
+    "0.5": {
+     "weighted_f1": 0.9522,
+     "err_p": 0.4327,
+     "err_r": 0.401,
+     "err_f1": 0.4163
+    },
+    "0.7": {
+     "weighted_f1": 0.9495,
+     "err_p": 0.3931,
+     "err_r": 0.405,
+     "err_f1": 0.3989
+    },
+    "1.0": {
+     "weighted_f1": 0.941,
+     "err_p": 0.304,
+     "err_r": 0.4156,
+     "err_f1": 0.3511
+    }
+   }
+  }
+ }
+}
