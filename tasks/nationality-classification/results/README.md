@@ -63,6 +63,24 @@ macro-F1 은 오르지만 제품이 답해야 할 질문이 바뀐다("이 사�
 
 ---
 
+### `06_지식증류_2B_to_300m.json`
+
+2B(교사) → 300m(학생) 선형 헤드 지식증류. 두 인코더가 동결이고 특징 캐시가 발화 단위로
+정렬돼 있어 **GPU 없이** 수행했다 (유럽 041 은 행 순서가 달라 6조각 순열 복구 —
+`scripts/data/recover_euro_sent_perm.py`, 발화 지문 cos 0.9993 로 검증).
+
+| | top1 | top5 | macro5 |
+|---|--:|--:|--:|
+| baseline (출하본 재현) | 0.7512 | 0.9333 | 0.6181 |
+| **KD (043제외, α=0.3 T=2)** | **0.7696** | **0.9412** | **0.6356** |
+| clean Δ (2차 누수 제거) | +1.6%p | +0.4%p | **−1.7%p** |
+
+> **이득과 비용이 갈린다.** 교사가 아는 도메인(505·041)에선 clean top1 +1.8%p 의 진짜
+> 이득. 대신 꼬리 클래스 top5 가 내려간다 — ① 교사 미학습(043) 클래스로 무지가 새고
+> ② 교사 자신이 약한 꼬리를 soft label 이 뭉갠다(KD 의 고전적 부작용).
+> **트래픽 가중 지표가 목표면 KD 헤드, 소수 국적 공정성이 목표면 baseline.**
+> 학습된 헤드: `outputs/kd_no043/kd_heads/kd_best_head.pt` (재학습 불필요).
+
 ## 재생성
 
 ```bash
@@ -81,6 +99,9 @@ python $T/scripts/train/train_probe.py \
     --out_dir $T/outputs/probe_fine_811 --epochs 60
 
 python $T/scripts/eval/country41_per_class.py    # 클래스별 표
+
+# 지식증류 (CPU ~43분: 교사 로짓 + baseline + KD 스윕)
+python $T/experiments/kd_2b_to_300m.py --kd_domains asia,korean,euro
 ```
 
 원본 `metrics.json` 들은 `$NATIONALITY_OUTPUTS/<실험>/` 과 `$NATIONALITY_RUNS/<실험>/` 에
