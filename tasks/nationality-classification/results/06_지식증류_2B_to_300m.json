@@ -513,6 +513,124 @@
     ],
     "해석": "두 갈래 — ① 043 전용 클래스(인도·타지크·파키스탄·캄보디아)는 KD 를 꺼도 공유 헤드를 통해 교사 무지가 새어 들어감. ② 043 무관 소수 클래스(필리핀·브라질·투르크멘)는 교사 자신이 약한 꼬리(교사 macro 0.665)라 soft label 이 꼬리를 머리 쪽으로 뭉갬 — KD 의 고전적 부작용."
    }
+  },
+  "기법_변형_비교": {
+   "설명": "KD 기법 8+1종 같은 조건 비교 (GPU, sweep300 스케줄·valid 선택 동일). source: outputs/kd_variants/",
+   "값": {
+    "featkd_ridge_direct": {
+     "top1": 0.7416,
+     "top5": 0.9296,
+     "macro5": 0.5948,
+     "o43_top1": 0.0387,
+     "clean_macro5": 0.5398,
+     "valid_macro5": 0.5519
+    },
+    "baseline_ce": {
+     "top1": 0.751,
+     "top5": 0.9331,
+     "macro5": 0.617,
+     "o43_top1": 0.1594,
+     "clean_macro5": 0.6183,
+     "valid_macro5": 0.6018
+    },
+    "ls_e0.05": {
+     "top1": 0.7533,
+     "top5": 0.9298,
+     "macro5": 0.6016,
+     "o43_top1": 0.1246,
+     "clean_macro5": 0.6022,
+     "valid_macro5": 0.5898
+    },
+    "ls_e0.1": {
+     "top1": 0.757,
+     "top5": 0.9306,
+     "macro5": 0.6005,
+     "o43_top1": 0.1349,
+     "clean_macro5": 0.5975,
+     "valid_macro5": 0.5823
+    },
+    "kd_vanilla": {
+     "top1": 0.7693,
+     "top5": 0.9405,
+     "macro5": 0.6337,
+     "o43_top1": 0.1204,
+     "clean_macro5": 0.5976,
+     "valid_macro5": 0.5992
+    },
+    "dkd_a1_b0.5": {
+     "top1": 0.7665,
+     "top5": 0.9388,
+     "macro5": 0.6312,
+     "o43_top1": 0.0732,
+     "clean_macro5": 0.5889,
+     "valid_macro5": 0.5946
+    },
+    "dkd_a1_b2": {
+     "top1": 0.7637,
+     "top5": 0.9373,
+     "macro5": 0.6199,
+     "o43_top1": 0.0659,
+     "clean_macro5": 0.5697,
+     "valid_macro5": 0.5801
+    },
+    "dkd_a0_b1": {
+     "top1": 0.7602,
+     "top5": 0.9379,
+     "macro5": 0.6203,
+     "o43_top1": 0.0717,
+     "clean_macro5": 0.5711,
+     "valid_macro5": 0.5891
+    },
+    "gate_margin": {
+     "top1": 0.7676,
+     "top5": 0.9397,
+     "macro5": 0.6293,
+     "o43_top1": 0.1361,
+     "clean_macro5": 0.6044,
+     "valid_macro5": 0.6032
+    },
+    "gate_th0.5": {
+     "top1": 0.7676,
+     "top5": 0.94,
+     "macro5": 0.635,
+     "o43_top1": 0.1296,
+     "clean_macro5": 0.6076,
+     "valid_macro5": 0.6026
+    },
+    "featkd_kd": {
+     "top1": 0.7658,
+     "top5": 0.9388,
+     "macro5": 0.6178,
+     "o43_top1": 0.1027,
+     "clean_macro5": 0.5804,
+     "valid_macro5": 0.5909
+    },
+    "ens_self": {
+     "top1": 0.7665,
+     "top5": 0.9385,
+     "macro5": 0.6251,
+     "o43_top1": 0.1449,
+     "clean_macro5": 0.614,
+     "valid_macro5": 0.6008
+    },
+    "ens_gate": {
+     "top1": 0.7648,
+     "top5": 0.9378,
+     "macro5": 0.622,
+     "o43_top1": 0.1533,
+     "clean_macro5": 0.613,
+     "valid_macro5": 0.6011
+    }
+   },
+   "결론": {
+    "LS_대조군": "top1 +0.2~0.6%p 에 그치고 macro 는 해침 — KD 의 +1.8%p 는 smoothing 이 아니라 교사 지식",
+    "DKD": "기각 — 전 항목 열세, 043 은 반토막(0.066~0.073). target/non-target 분리로는 교사 무지를 못 걸러냄",
+    "게이팅": "성립 — 단일 교사 중 최고 macro(0.6350), 도메인 마스크를 원리적 방법으로 대체",
+    "앙상블_교사": "균형 최적 — clean macro5 0.6140(baseline 대비 −0.4%p뿐)에 top1 +1.55%p. 학생 자신이 교사 맹점을 희석",
+    "하이브리드(ens+gate)": "우세 없음 — 043 보존 최고(0.1533)나 top1·clean macro 는 ens_self 에 소폭 열세",
+    "특징KD": "기각 — 동결 인코더에서 선형 투영 합성은 같은 가설공간 (direct 0.7416 < baseline)",
+    "종착": "동결 헤드 KD 의 한계 내에서 꼬리 동률(−0.4%p)까지 접근. 꼬리까지 이기려면 인코더 증류 필요"
+   }
   }
  },
  "결론": {

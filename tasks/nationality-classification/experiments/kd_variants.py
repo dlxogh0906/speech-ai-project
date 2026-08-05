@@ -44,6 +44,7 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.3, help="게이트·앙상블 변형의 기본 α (바닐라 최적)")
     ap.add_argument("--T", type=float, default=2.0)
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--only", default="", help="콤마목록 — 지정 시 해당 변형만 학습 (baseline_ce 는 항상 포함)")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--out", default=str(NAT_TASK / "outputs" / "kd_variants" / "kd_variants.json"))
     A = ap.parse_args()
@@ -206,6 +207,9 @@ def main():
         return sched_train(lf)
     VAR["featkd_kd"] = mk_featkd
 
+    if A.only:
+        allow = set(A.only.split(",")) | {"baseline_ce"}
+        VAR = {k: v for k, v in VAR.items() if k in allow}
     print(f"[5/6] 변형 학습 ({len(VAR)}개 + ens_self, 각 {A.epochs}ep)", flush=True)
     runs = {"meta": {"n": int(N), "epochs": A.epochs, "alpha": a0, "T": T0, "quick": A.quick,
                      "ridge_lambda": lam_best,
@@ -226,16 +230,23 @@ def main():
         print(f"    {name}: valid={vm:.4f} | test m5={r['micro5']} mac5={r['macro5']} m1={r['micro1']} | 043 top1={r['by_domain']['043']['top1']} | clean mac5={r['clean']['macro5']}", flush=True)
         if name == "baseline_ce":
             base_logits_tr = lg(Xtr)                      # 앙상블 교사용
-    # ── 앙상블 교사 (2B + CE 학생) ──
+    # ── 앙상블 교사 (2B + CE 학생) ± 마진 게이팅 ──
     Bt = torch.from_numpy(base_logits_tr).to(dev)
     Pe = (F.softmax(Tt / T0, 1) + F.softmax(Bt / T0, 1)) / 2
-    def lf_ens(z, j):
-        ce = F.cross_entropy(z, Yt[j], reduction="none")
-        return ((1 - a0) * ce + a0 * (T0 * T0) * kl_to(z, Pe[j], T0)).mean()
-    hd, vm, lg = sched_train(lf_ens)
-    r = K.evaluate(lg(Xte), yte, dte, contam=contam_te); r["valid_macro5"] = round(float(vm), 4)
-    runs["variants"]["ens_self"] = r
-    print(f"    ens_self: valid={vm:.4f} | test m5={r['micro5']} mac5={r['macro5']} m1={r['micro1']} | 043 top1={r['by_domain']['043']['top1']} | clean mac5={r['clean']['macro5']}", flush=True)
+    ens_variants = [("ens_self", None)]
+    if not A.only or "ens_gate" in A.only:
+        ens_variants.append(("ens_gate", Mg))            # 하이브리드: 앙상블 교사 + 마진 게이트
+    if A.only:
+        ens_variants = [(n, g) for n, g in ens_variants if n in A.only.split(",")]
+    for ename, gate in ens_variants:
+        def lf_ens(z, j, gate=gate):
+            ce = F.cross_entropy(z, Yt[j], reduction="none")
+            w = a0 * (gate[j] if gate is not None else 1.0)
+            return ((1 - w) * ce + w * (T0 * T0) * kl_to(z, Pe[j], T0)).mean()
+        hd, vm, lg = sched_train(lf_ens)
+        r = K.evaluate(lg(Xte), yte, dte, contam=contam_te); r["valid_macro5"] = round(float(vm), 4)
+        runs["variants"][ename] = r
+        print(f"    {ename}: valid={vm:.4f} | test m5={r['micro5']} mac5={r['macro5']} m1={r['micro1']} | 043 top1={r['by_domain']['043']['top1']} | clean mac5={r['clean']['macro5']}", flush=True)
 
     print("[6/6] 저장", flush=True)
     base = runs["variants"]["baseline_ce"]
