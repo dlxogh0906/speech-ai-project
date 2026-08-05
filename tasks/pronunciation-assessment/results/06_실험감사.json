@@ -1,0 +1,85 @@
+{
+  "date": "2026-07-29",
+  "auditor": "codex gpt-5.6-sol (ultra, read-only) — cross-model external reviewer",
+  "skill": "ARIS /experiment-audit",
+  "procedure": "executor passed file paths only; no hints about known pitfalls; reviewer read sources directly",
+  "scope": {
+    "eval_scripts": 17,
+    "scoring_scripts": 10,
+    "result_files": 6,
+    "claims_docs": 5,
+    "configs": 10
+  },
+  "overall_verdict": "fail",
+  "integrity_status": "fail",
+  "checks": {
+    "gt_provenance": {
+      "status": "fail",
+      "verified_locally": true,
+      "details": "Headline evaluator derives the 'true error' vector from a 3-way alignment that includes the model prediction (mdd_eval_tag71.py:76-81, mdd_reproduce_official.py:47-60). On the same 178,049-utterance test set, aligned positions vary 1,799,189-1,801,203 and true_err varies 74,428-74,471 across checkpoints. A fixed dataset reference cannot change with the evaluated model. Not labeled as proxy."
+    },
+    "score_normalization": {
+      "status": "fail",
+      "verified_locally": "partial",
+      "details": "eval_gop_per_phone.py:125-128 fits a 0-100 empirical CDF from the evaluated model's own outputs. gop_ctc.py:170-176 maxnorm subtracts the model's own per-frame max logit, collapsing 96.65% of scores to exactly 0. Headline 0.9547 vs trivial always-normal baseline 0.9384 = +0.0163 improvement; normal class is 95.86% of positions."
+    },
+    "result_existence": {
+      "status": "fail",
+      "verified_locally": "partial",
+      "details": "All 6 result files exist and stored values match their raw sources. However several documented claims point to stale/absent/different evidence: 'official 0.96 -> 0.42' cites own checkpoint (.2235-.2956) not the official model; record F1 .9377/.9008 not in bundle (still .9505/.9154); tag_combined uses 104,211 utterances not 178,049; no tracker/status field in any result JSON; run_gates_lar.sh:21-30 prints ALL_GATES_DONE unconditionally."
+    },
+    "dead_code": {
+      "status": "warn",
+      "verified_locally": "partial",
+      "details": "pcc_headtohead.py:34-37 references undefined name 'c' in a module-level f-string -> NameError on import (statically confirmed: 'c' is not bound at module level). mdd_eval_tag71.py:46-47 imports nonexistent top-level module mdd_eval. deploy/mdd-demo/app.py:25-35 never calls pipeline.load(), leaving health='loading' and predictions at 503. mdd_eval_s5style.py and decode_bias_sweep.py produce no persisted artifact."
+    },
+    "scope": {
+      "status": "warn",
+      "verified_locally": "partial",
+      "details": "No seed field in any YAML; no repeated runs, CIs, bootstrap, or significance tests. gop_calibrate.py seeds from Python's randomized hash() (non-reproducible). gop_calibrate_v2.py selects among 4 alternatives on the only test set, admitted in docs/00:204-211. Main evaluation contains 502 train/test overlapping speakers affecting 82,841 test utterances (~46.5% of test)."
+    },
+    "eval_type": "effective_synthetic_proxy_unlabeled"
+  },
+  "verified_findings": [
+    {
+      "id": "V1",
+      "claim": "reference changes with the evaluated checkpoint",
+      "evidence": "results/01_mdd_모델별성능.json — positions spread 2014, true_err spread 43 across 6 models on same test set"
+    },
+    {
+      "id": "V2",
+      "claim": "trivial always-normal baseline weighted F1 = 0.9384",
+      "evidence": "N=1799725, positives=74439 -> negative F1 0.97887, weighted 0.93840; reported 0.9547 (+0.0163)"
+    },
+    {
+      "id": "V3",
+      "claim": "results/README.md:21 states normal ratio ~89%, actual is 95.86%",
+      "evidence": "1725286/1799725 = 0.95864"
+    },
+    {
+      "id": "V4",
+      "claim": "tag_combined uses a different test partition",
+      "evidence": "positions 1,066,762 vs ~1,799,xxx for the other six"
+    },
+    {
+      "id": "V5",
+      "claim": "pcc_headtohead.py cannot run",
+      "evidence": "AST scan: name 'c' unbound at module level, referenced in f-strings at lines 34-37"
+    }
+  ],
+  "claims": [
+    {"id": "C1", "text": "MDD weighted F1 0.9547", "impact": "needs_qualifier"},
+    {"id": "C2", "text": "error F1 0.4319", "impact": "needs_qualifier"},
+    {"id": "C3", "text": "score PCC .6622/.6825/.7618", "impact": "needs_qualifier"},
+    {"id": "C4", "text": "official 0.96 model drops to 0.42 under gold", "impact": "unsupported"},
+    {"id": "C5", "text": "all language groups completed / validated", "impact": "unsupported"}
+  ],
+  "action_items": [
+    "Recompute the primary metric from a checkpoint-independent, immutable reference",
+    "Replace invalid bundle entries with corrected gold results",
+    "Content-hash caches and checkpoints (no checkpoint/manifest/data-order hash today)",
+    "Separate model and threshold selection from the final test set",
+    "Doc-only fixes: README.md lines 21, 24, 30-32, 68-69; docs/01:128-134; docs/02:241-245"
+  ],
+  "limits": "Safety net, not a guarantee. Items marked verified_locally=partial contain reviewer claims not independently re-derived."
+}

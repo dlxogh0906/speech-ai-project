@@ -9,7 +9,7 @@
 | task | 하는 일 | 모델 | 성능 |
 |---|---|---|---|
 | `tasks/nationality-classification/` | 외국인의 한국어 발화 → 화자 모국어/국적 | XLS-R **2B** 동결 + 헤드 | top-5 0.950 / top-1 0.798 (41클래스) |
-| `tasks/pronunciation-assessment/` | 외국인의 한국어 발음 → 음소 오류 + 1~5점 | XLS-R **300m** + CTC 직접 학습 | weighted F1 0.9547 · PCC 0.662/0.683/0.762 |
+| `tasks/pronunciation-assessment/` | 외국인의 한국어 발음 → 음소 오류 + 1~5점 | XLS-R **300m** + CTC 직접 학습 | weighted F1 0.9547 · PCC 0.662/0.683/0.762 (전체 발화 기준 · 30발화 집계 0.646/0.671/0.762) |
 
 두 task 는 **교차 import 0건**이다. 한쪽을 고쳐도 다른 쪽은 안 깨진다.
 공유하는 건 `shared/`(경로 설정 + fairseq 가드)뿐이고, **오디오 로더는 일부러 안 합쳤다**
@@ -55,12 +55,23 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
 ## 평가 잣대 (틀리면 수치가 통째로 달라진다)
 
 - **발음**: 라벨이 3종(TAG / record / gold). **TAG 만 MDD 잣대다.**
-  gold 로 재면 공식 0.96 모델도 0.42 로 떨어진다 — 모델이 아니라 잣대가 틀린 것.
-  gold 는 점수 라벨 출처로만 쓴다.
-- **발음 점수는 화자 단위로만 유효.** 발화 1개 PCC 는 0.43, 20~30문장 모아야 포화한다.
+  gold 로 재면 TAG 에서 0.965 인 공식 모델도 F1 **0.42** 로 떨어진다 — 모델이 아니라 잣대가
+  틀린 것. 근거는 `$MDD_OUTPUTS/eval_official2_041.json`(`checkpoint_mdd_eu.pt`, tol0 `.4196`)이며
+  **번들 `04_공식팩_검증.json` 에는 아직 병합돼 있지 않다.** 번들의 `gold잣대_대조` 는 공식이
+  아니라 우리 모델(`.2235`)이니 이 주장의 근거로 인용하지 말 것. gold 는 점수 라벨 출처로만 쓴다.
+- **발음 점수는 화자 단위로만 유효.** 발화 1개 PCC 는 발음·이해도 **≈0.43**,
+  유창성 **0.607** 이고 20~30문장 모아야 포화한다.
 - **국적**: 61 / 62 / 41 클래스가 섞여 있다. 어느 split 인지 먼저 확인할 것.
   어족·권역 병합(31/13-class)은 **중단됐다** — `archive/` 에 있고 되살리지 않는다.
 - weighted F1(0.9547)과 오류 F1(0.4319)은 둘 다 사실이다. 보고엔 전자, 질문 오면 후자도 말한다.
+  단 정상 위치가 **95.86%** 라 전부 "정상"으로 찍어도 weighted F1 **0.9384** 가 나온다.
+  즉 0.9547 의 실제 개선폭은 **+0.0163** 이다 — 이 맥락 없이 0.9547 만 인용하지 말 것.
+- **0.9547 은 학습에 쓴 287개 문장 범위 안의 값이다.** 학습셋 155만 발화가 287문장뿐이라
+  (문장당 5,398회 반복) 모델이 문장을 외워 표준발음을 읊는다. 홀드아웃 실험 실측:
+  본 문장 weighted F1 0.9509 / 되돌림 61.8% → **안 본 문장 0.8218 / 되돌림 22.1%**.
+  화자 일반화는 정상이다(중복 화자 영향 +0.0000). **문장 일반화만 깨져 있다.**
+  후처리·재가중·디코딩 편향은 못 고친다 — 문장 다양성만이 검증된 처방(격차 −43%).
+  근거와 재현: `tasks/pronunciation-assessment/results/08_문장암기_일반화.md`
 
 ## 하지 말 것
 
@@ -82,3 +93,11 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
 `docs/REMAINING_ISSUES.md` 참고. 요약하면 — 골든 수치 회귀 테스트가 없고,
 fairseq 수정 사본의 출처가 기록돼 있지 않으며, 옛 작업 트리(`/home/tta/scripts` 등)가
 아직 남아 있다(운영 서비스가 참조 중이라 단계적으로 정리).
+<!-- ARIS:BEGIN -->
+## ARIS Skill Scope
+ARIS skills installed in this project: 22 entries.
+Manifest: `.aris/installed-skills.txt` (lists every skill ARIS installed and its upstream target).
+For ARIS workflows, prefer the project-local skills under `.claude/skills/` over global skills.
+Do not modify or delete files inside any skill that is a symlink (symlinks point into `/home/tta/tools/aris`).
+Update with: `bash /home/tta/tools/aris/tools/install_aris.sh`  (re-runnable; reconciles new/removed skills).
+<!-- ARIS:END -->

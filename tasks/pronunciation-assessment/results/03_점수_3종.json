@@ -1,105 +1,105 @@
 {
- "_설명": "점수 3종 (발음숙달·이해가능·유창성) PCC",
- "_생성": "2026-07-29",
- "_주의": "원본 파일명을 source 로 남겨 두었다. 재생성 방법은 README.md 참고.",
- "항목": {
-  "채택_화자단위": {
-   "설명": "★채택★ 41특징 + GBM, 화자 단위 집계",
-   "source": "eval_score_v2.json",
-   "값": {
-    "max_utts": 30,
-    "n_feats_v2": 41,
-    "dims": {
-     "pron": {
-      "n_train_spk": 8872,
-      "n_test_spk": 1180,
-      "v1_ridge": 0.5235,
-      "v2_ridge": 0.6184,
-      "v2_gbm": 0.6487,
-      "v2_gbm_utt": 0.6622,
-      "n_utt_train": 119952
-     },
-     "comp": {
-      "n_train_spk": 8872,
-      "n_test_spk": 1180,
-      "v1_ridge": 0.5558,
-      "v2_ridge": 0.6421,
-      "v2_gbm": 0.6748,
-      "v2_gbm_utt": 0.6825,
-      "n_utt_train": 119952
-     },
-     "flu": {
-      "n_train_spk": 5506,
-      "n_test_spk": 1031,
-      "v1_ridge": 0.7026,
-      "v2_ridge": 0.7502,
-      "v2_gbm": 0.7516,
-      "v2_gbm_utt": 0.7618,
-      "n_utt_train": 28634
-     }
-    }
-   }
-  },
-  "전체_변형비교": {
-   "설명": "v1-ridge / v2-ridge / v2-gbm / v2-gbm-utt 비교",
-   "source": "eval_score_v2_all.json",
-   "값": {
-    "max_utts": 100000,
-    "n_feats_v2": 41,
-    "dims": {
-     "pron": {
-      "n_train_spk": 8872,
-      "n_test_spk": 1180,
-      "v1_ridge": 0.5513,
-      "v2_ridge": 0.6562,
-      "v2_gbm": 0.6747,
-      "v2_gbm_utt": 0.6622,
-      "n_utt_train": 119952
-     },
-     "comp": {
-      "n_train_spk": 8872,
-      "n_test_spk": 1180,
-      "v1_ridge": 0.5871,
-      "v2_ridge": 0.6791,
-      "v2_gbm": 0.6912,
-      "v2_gbm_utt": 0.6825,
-      "n_utt_train": 119952
-     },
-     "flu": {
-      "n_train_spk": 5506,
-      "n_test_spk": 1031,
-      "v1_ridge": 0.709,
-      "v2_ridge": 0.7533,
-      "v2_gbm": 0.7569,
-      "v2_gbm_utt": 0.7618,
-      "n_utt_train": 28634
-     }
-    }
-   }
-  },
-  "발화단위": {
-   "설명": "발화 1개 기준 (참고 — 화자 단위로만 유효)",
-   "source": "eval_score_v2_utt.json",
-   "값": {
-    "발음숙달": {
-     "utt": 0.4251,
-     "spk30": 0.6455,
-     "spk_all": 0.6622,
-     "n": 177969
+  "_설명": "점수 3종 (발음숙달·이해가능·유창성) PCC",
+  "_생성": "2026-07-29",
+  "_주의": "원본 파일명을 source 로 남겨 두었다. 재생성 방법은 README.md 참고. ⚠️ 2026-07-30 감사: '채택_화자단위'의 max_utts=30 은 v2_gbm_utt 에 적용되지 않는다 (gop_calibrate_v2.py 가 화자별 전체 발화를 평균) — 그 값은 사실상 spk_all 이다. '전체_변형비교'(cap 100000)와 v2_gbm_utt 가 동일한 것이 증거. 30발화 집계 기준 값은 '발화단위' 항목의 spk30 을 쓸 것: 발음숙달 0.6455 / 이해가능 0.6707 / 유창성 0.7615.",
+  "항목": {
+    "채택_화자단위": {
+      "설명": "★채택★ 41특징 + GBM, 화자 단위 집계",
+      "source": "eval_score_v2.json",
+      "값": {
+        "max_utts": 30,
+        "n_feats_v2": 41,
+        "dims": {
+          "pron": {
+            "n_train_spk": 8872,
+            "n_test_spk": 1180,
+            "v1_ridge": 0.5235,
+            "v2_ridge": 0.6184,
+            "v2_gbm": 0.6487,
+            "v2_gbm_utt": 0.6622,
+            "n_utt_train": 119952
+          },
+          "comp": {
+            "n_train_spk": 8872,
+            "n_test_spk": 1180,
+            "v1_ridge": 0.5558,
+            "v2_ridge": 0.6421,
+            "v2_gbm": 0.6748,
+            "v2_gbm_utt": 0.6825,
+            "n_utt_train": 119952
+          },
+          "flu": {
+            "n_train_spk": 5506,
+            "n_test_spk": 1031,
+            "v1_ridge": 0.7026,
+            "v2_ridge": 0.7502,
+            "v2_gbm": 0.7516,
+            "v2_gbm_utt": 0.7618,
+            "n_utt_train": 28634
+          }
+        }
+      }
     },
-    "이해가능": {
-     "utt": 0.4266,
-     "spk30": 0.6707,
-     "spk_all": 0.6825,
-     "n": 177969
+    "전체_변형비교": {
+      "설명": "v1-ridge / v2-ridge / v2-gbm / v2-gbm-utt 비교",
+      "source": "eval_score_v2_all.json",
+      "값": {
+        "max_utts": 100000,
+        "n_feats_v2": 41,
+        "dims": {
+          "pron": {
+            "n_train_spk": 8872,
+            "n_test_spk": 1180,
+            "v1_ridge": 0.5513,
+            "v2_ridge": 0.6562,
+            "v2_gbm": 0.6747,
+            "v2_gbm_utt": 0.6622,
+            "n_utt_train": 119952
+          },
+          "comp": {
+            "n_train_spk": 8872,
+            "n_test_spk": 1180,
+            "v1_ridge": 0.5871,
+            "v2_ridge": 0.6791,
+            "v2_gbm": 0.6912,
+            "v2_gbm_utt": 0.6825,
+            "n_utt_train": 119952
+          },
+          "flu": {
+            "n_train_spk": 5506,
+            "n_test_spk": 1031,
+            "v1_ridge": 0.709,
+            "v2_ridge": 0.7533,
+            "v2_gbm": 0.7569,
+            "v2_gbm_utt": 0.7618,
+            "n_utt_train": 28634
+          }
+        }
+      }
     },
-    "유창성": {
-     "utt": 0.607,
-     "spk30": 0.7615,
-     "spk_all": 0.7618,
-     "n": 42044
+    "발화단위": {
+      "설명": "발화 1개 기준 (참고 — 화자 단위로만 유효)",
+      "source": "eval_score_v2_utt.json",
+      "값": {
+        "발음숙달": {
+          "utt": 0.4251,
+          "spk30": 0.6455,
+          "spk_all": 0.6622,
+          "n": 177969
+        },
+        "이해가능": {
+          "utt": 0.4266,
+          "spk30": 0.6707,
+          "spk_all": 0.6825,
+          "n": 177969
+        },
+        "유창성": {
+          "utt": 0.607,
+          "spk30": 0.7615,
+          "spk_all": 0.7618,
+          "n": 42044
+        }
+      }
     }
-   }
   }
- }
 }

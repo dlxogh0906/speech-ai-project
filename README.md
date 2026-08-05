@@ -6,7 +6,7 @@
 | task | 무엇을 하는가 | 모델 | 성능 |
 |---|---|---|---|
 | [`nationality-classification`](tasks/nationality-classification/) | 외국인이 한국어로 말한 음성 → **화자의 모국어/국적** 예측 | XLS-R **2B** 동결 + 분류 헤드 | top-5 **0.950** · top-1 0.798 (41클래스) |
-| [`pronunciation-assessment`](tasks/pronunciation-assessment/) | 외국인의 한국어 발음 → **어느 음소를 어떻게 틀렸는지** + 1~5점 | XLS-R **300m** + CTC (직접 학습) | weighted F1 **0.9547** · PCC **0.662/0.683/0.762** |
+| [`pronunciation-assessment`](tasks/pronunciation-assessment/) | 외국인의 한국어 발음 → **어느 음소를 어떻게 틀렸는지** + 1~5점 | XLS-R **300m** + CTC (직접 학습) | weighted F1 **0.9547** · PCC **0.662/0.683/0.762** (전체 발화 · 30발화 집계 0.646/0.671/0.762) |
 
 두 task 는 **코드상 완전히 독립**이다 (교차 import 0건). 공유하는 것은 경로 설정과
 fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더는 요구사항이 달라
