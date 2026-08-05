@@ -127,6 +127,13 @@ for dim, name in DIMS:
     agg = collections.defaultdict(list); lab = {}
     for x, p in zip(ute, pv):
         agg[x["stem"][:5]].append(p); lab[x["stem"][:5]] = lab.get(x["stem"][:5], []) + [x[dim]]
+    # ⚠️ 알려진 결함 (2026-07-30 감사) — v2_gbm_utt 는 --max_utts 상한을 적용하지 않는다.
+    # 아래는 화자별 *전체* 발화를 평균하므로 결과는 사실상 spk_all 이며, --max_utts 30 으로
+    # 돌려도 100000 으로 돌려도 같은 값이 나온다(실측: 발음숙달 둘 다 0.6622).
+    # 산출물 메타데이터의 max_utts 는 이 지표에 대해서는 사실이 아니다.
+    # 30발화 집계가 필요하면 `발화단위` 항목의 spk30(0.6455/0.6707/0.7615)을 쓸 것.
+    # 고치려면 agg[s] 를 상한만큼 잘라야 하는데, "어느 30발화를 쓸 것인가"(앞에서부터/무작위)가
+    # 설계 판단이라 여기서 임의로 바꾸지 않았다. 바꾸면 저장된 결과와 어긋난다.
     ks = [s for s in agg if len(agg[s]) >= A.min_utts]
     r["v2_gbm_utt"] = round(pcc([np.mean(agg[s]) for s in ks], [np.mean(lab[s]) for s in ks]), 4)
     r["n_utt_train"] = len(utr)

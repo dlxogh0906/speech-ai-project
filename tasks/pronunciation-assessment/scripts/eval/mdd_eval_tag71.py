@@ -43,8 +43,12 @@ if have_preds():
         d = json.loads(line); P[d["i"]] = d["pred"]
     print(f"[preds] loaded {N:,} from {PREDS}", flush=True)
 else:
-    import mdd_eval; mdd_eval.CKPT = CKPT
-    from mdd_eval import Decoder, load_wav, batched
+    # 최상위 `mdd_eval` 모듈은 없다 — 패키지 모듈은 `mdd.mdd_eval` 이다.
+    # (2026-07-30 감사에서 지적된 결함. 캐시가 늘 있어서 이 분기가 한 번도 안 돌았다)
+    # Decoder.__init__ 이 모듈 전역 CKPT 를 읽으므로 인스턴스 생성 전에 덮어쓴다.
+    from mdd import mdd_eval
+    mdd_eval.CKPT = CKPT
+    from mdd.mdd_eval import Decoder, load_wav, batched
     dec = Decoder()
     P = [None] * N
     items = [(int(rel[i][1]), i) for i in range(N)]   # (frames, orig_idx) — batched()는 [0]로 정렬
