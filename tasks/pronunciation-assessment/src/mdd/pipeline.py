@@ -179,10 +179,17 @@ def diagnose(wave, sentence, country=None):
     ops = _nw(canon, pred)
 
     priors = S["l1"].get(country or "", {}).get("weights", {})
-    errors = []
-    for op in ops:
-        if op["kind"] == "match":
-            continue
+
+    # 삭제·삽입은 사용자 지적에서 뺀다 — "틀리게 발음했다"가 아니라 "못 알아들었다"이다.
+    # 실측(2026-08-03): 레슨(30발화)당 억울한 지적 4.82 → 2.97회, 깨끗한 레슨 16.5 → 23.3%.
+    # 대가는 정확 포착 3.97 → 3.31개로 교환비가 2.8배 유리하다.
+    # 근거 `outputs/suppress_tag_all_lar.json`, 정책 `mdd/suppress.py`.
+    # 단어 수준 집계(아래 word_spans)는 원본 ops 를 그대로 쓴다 — 누락 표시가 필요하다.
+    from mdd.suppress import classify_ops, SuppressPolicy
+    shown_ops, hidden_ops = classify_ops(ops, SuppressPolicy())
+
+    errors, not_recognized = [], []
+    for op in shown_ops:
         tpos = op["tpos"]
         # 초/종성 판정: canonical 위치의 다음 토큰이 모음이면 초성 (ㅇ은 항상 종성 ng)
         is_coda = False
@@ -199,6 +206,14 @@ def diagnose(wave, sentence, country=None):
             e["l1_weight"] = round(w, 2)
             e["l1_typical"] = bool(w >= 1.3)
         errors.append(e)
+
+    # 숨긴 것도 버리지 않는다 — "이 부분은 잘 안 들렸습니다" 안내로 쓸 수 있어야 한다.
+    for op in hidden_ops:
+        tp = op["tpos"]
+        not_recognized.append({
+            "pos": tp, "kind": op["kind"], "reason": op.get("reason"),
+            "target": op.get("target") or "∅",
+            "target_ph": canon_ph[tp] if op["kind"] != "ins" and tp < len(canon_ph) else "∅"})
 
     # ── 단어 수준 집계: 음절 span별 sub/del/ins → OK / 오류 / 누락 ──
     spans = word_spans(sentence, canon)
@@ -241,6 +256,7 @@ def diagnose(wave, sentence, country=None):
             "canon": canon, "canon_ph": canon_ph, "pred": pred, "pred_ph": pred_ph,
             "ops": [{k: op[k] for k in ("kind", "target", "actual", "tpos", "apos")} for op in ops],
             "errors": errors,
+            "not_recognized": not_recognized,      # 지적에서 뺀 삭제·삽입
             "match_rate": round(1.0 - n_err_pos / max(1, len(canon)), 3),
             "duration_sec": round(dur, 2), "took_sec": round(time.time() - t0, 3)}
 
