@@ -31,6 +31,10 @@ def main():
     # HTML 은 이 디렉터리에 있다 (pipeline 이 자기 위치를 기준으로 찾지 않도록 명시)
     pipeline.HERE = os.path.dirname(os.path.abspath(__file__))
 
+    # 모델을 실제로 올린다. 이게 없으면 pipeline.S 가 비어 있어 /health 가 계속
+    # "loading" 이고 진단 요청은 503 으로 죽는다 (2026-07-30 교차감사에서 지적된 결함).
+    pipeline.load()
+
     import uvicorn
     uvicorn.run(pipeline.make_app(), host=a.host, port=a.port)
 

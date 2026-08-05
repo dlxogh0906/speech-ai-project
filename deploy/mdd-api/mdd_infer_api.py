@@ -25,7 +25,7 @@ while not (_r / "pyproject.toml").exists():
 _sys.path[:0] = [str(_r), *(str(p) for p in sorted(_r.glob("tasks/*/src")))]
 from shared.fairseq_guard import ensure_fairseq
 ensure_fairseq()
-from shared.paths import MDD_OUTPUTS
+from shared.paths import DATA_ROOT, MDD_OUTPUTS
 
 import os, sys, json, time, argparse, threading, collections
 import numpy as np
@@ -43,7 +43,19 @@ from mdd.jamo_to_kog2p import jamo_to_phones
 SR = 16000
 MIN_UTTS = 5                                  # 이 밑에서는 점수를 내지 않는다
 GOOD_UTTS = 20                                # 여기부터 신뢰 구간 (30에서 포화)
-MODELS_PATH = f"{MDD_OUTPUTS}/score_models_v2.joblib"
+# 서빙하는 모델을 여기서 못 박는다. `shared.paths.MDD_CKPT` 기본값(= tag_all_lar)을 쓰지
+# 않는 이유: 그 기본값은 평가 스크립트들도 공유해서, 바꾸면 results/ 에 기록된 수치가
+# 재현되지 않는다. 배포가 무엇을 쓰는지는 배포 파일이 직접 밝히는 편이 안전하다.
+#   tag_all_native = tag_all_lar + 원어민 자유대화. 원어민 PER 31.45%→8.58%,
+#   외국인 TAG test weighted F1 0.9547→0.9558 (2026-08-04 교체)
+CKPT_PATH = os.environ.get("MDD_SERVE_CKPT",
+                           f"{DATA_ROOT}/mdd_ckpt_tag_all_native/checkpoint_best.pt")
+# 회귀기도 같은 체크포인트의 특징으로 학습된 것이어야 한다. 짝이 어긋나면 점수가 조용히 틀린다.
+MODELS_PATH = os.environ.get("MDD_SERVE_SCORER",
+                             f"{MDD_OUTPUTS}/score_models_v2_native.joblib")
+# /health 가 보고하는 TAG test weighted F1. 근거는 eval_tag71{,_native}.json.
+# ⚠️ 전부 "정상"으로 찍어도 0.9384 가 나온다 — 이 값만 떼어 인용하지 말 것.
+MDD_F1 = {"mdd_ckpt_tag_all_lar": 0.9547, "mdd_ckpt_tag_all_native": 0.9558}
 S = {"dec": None, "bundle": None, "lock": threading.Lock(),
      "sessions": collections.defaultdict(list)}
 
@@ -52,9 +64,12 @@ def load():
     t0 = time.time()
     import g2p
     MD.S["ri"], MD.S["ro"] = g2p.readRules(g2p.ver_info[0], MD.RULEBOOK)
+    import mdd.mdd_eval as _me
+    _me.CKPT = CKPT_PATH                      # Decoder() 가 이 전역을 읽는다
     S["dec"] = Decoder()
     S["bundle"] = joblib.load(MODELS_PATH)
-    print(f"[load] 모델 1개 + 회귀기 3개 · 특징 {len(S['bundle']['feature_names'])}개 "
+    print(f"[load] {os.path.basename(os.path.dirname(CKPT_PATH))} + "
+          f"{os.path.basename(MODELS_PATH)} · 특징 {len(S['bundle']['feature_names'])}개 "
           f"({time.time()-t0:.0f}s)", flush=True)
 
 
@@ -137,26 +152,44 @@ def read_text(sentence):
     return " ".join(t.split())
 
 
-def diagnose_ops(canon, pred):
-    """정렬 결과를 UI 가 그대로 그릴 수 있는 형태로."""
+def diagnose_ops(canon, pred, suppress=True):
+    """정렬 결과를 UI 가 그대로 그릴 수 있는 형태로.
+
+    suppress=True 면 삭제형(모델이 그 자리 음소를 내지 못함)을 **오류 지적에서 빼고**
+    `not_recognized` 로 따로 돌려준다. 그건 발음 오류가 아니라 인식 실패다.
+    실측(2026-08-03, test 178,049발화): 레슨(30발화)당 억울한 지적 4.82 → 2.97회,
+    억울한 지적이 0회인 레슨 16.5% → 23.3%. 대가는 정확 포착 3.97 → 3.31개로,
+    교환비가 2.8배 유리하다. 근거 `outputs/suppress_tag_all_lar.json`.
+
+    근본 원인(287문장 암기)은 이걸로 고쳐지지 않는다 — 출력 해석을 바로잡는 것뿐이다.
+    자세한 건 `src/mdd/suppress.py` 와 `results/08_문장암기_일반화.md`.
+    """
+    from mdd.suppress import classify_ops, SuppressPolicy
+
     ops = MD._nw(canon, pred)
-    errors = []
     n = {"sub": 0, "del": 0, "ins": 0}
     for op in ops:
-        if op["kind"] == "match":
-            continue
-        n[op["kind"]] += 1
+        if op["kind"] != "match":
+            n[op["kind"]] += 1
+
+    pol = SuppressPolicy(hide_deletions=suppress, hide_insertions=suppress)
+    shown_ops, hidden_ops = classify_ops(ops, pol)
+
+    def render(op):
         tpos = op["tpos"]
         is_coda = False
         if op["kind"] != "ins" and tpos < len(canon) and canon[tpos] not in MD.VOWELS:
             is_coda = (canon[tpos] == "ㅇ") or not (tpos + 1 < len(canon)
                                                     and canon[tpos + 1] in MD.VOWELS)
-        errors.append({"pos": tpos, "kind": op["kind"],
-                       "type": MD.ctype(op.get("target") or "", op.get("actual") or "",
-                                        op["kind"], is_coda),
-                       "target": op.get("target") or "∅", "actual": op.get("actual") or "∅"})
+        return {"pos": tpos, "kind": op["kind"],
+                "type": MD.ctype(op.get("target") or "", op.get("actual") or "",
+                                 op["kind"], is_coda),
+                "target": op.get("target") or "∅", "actual": op.get("actual") or "∅"}
+
+    errors = [render(o) for o in shown_ops]
+    not_recognized = [{**render(o), "reason": o.get("reason")} for o in hidden_ops]
     hit = len({e["pos"] for e in errors if e["kind"] != "ins"})
-    return errors, n, round(1.0 - hit / max(1, len(canon)), 3)
+    return errors, n, round(1.0 - hit / max(1, len(canon)), 3), not_recognized
 
 
 def session_scores(sid):
@@ -193,18 +226,64 @@ def session_scores(sid):
 def make_app():
     from fastapi import FastAPI, File, UploadFile, Form, HTTPException, APIRouter
     from fastapi.middleware.cors import CORSMiddleware
+    from fastapi.responses import HTMLResponse
 
     app = FastAPI(title="발음진단 통합 API (MDD + 점수 3종)")
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"],
                        allow_headers=["*"])
     r = APIRouter()
 
+    from fastapi.responses import FileResponse
+
+    HERE = os.path.dirname(os.path.abspath(__file__))
+    # 실제 AIHub 발화 샘플. compare 데모와 같은 파일을 쓴다.
+    # wav 경로에 "$SPEECH_AI_DATA" 가 문자열로 들어 있어 확장이 필요하다.
+    SAMPLES = []
+    _sj = os.path.join(HERE, "..", "model-compare", "compare_samples.json")
+    if os.path.exists(_sj):
+        for _s in json.load(open(_sj, encoding="utf-8")):
+            _s["wav"] = os.path.expandvars(_s.get("wav", ""))
+            if os.path.exists(_s["wav"]):
+                SAMPLES.append(_s)
+
+    @r.get("/", response_class=HTMLResponse)
+    def index():
+        """데모 UI. API 만 쓰려면 이 경로를 무시하면 된다."""
+        return open(os.path.join(HERE, "mdd_full.html"), encoding="utf-8").read()
+
+    @r.get("/samples")
+    def samples():
+        return [{"i": i, "prompt": s["prompt"], "task": s.get("task", ""),
+                 "note": s.get("note", ""), "dur": s.get("dur"),
+                 "n_err": s.get("n_err", 0)} for i, s in enumerate(SAMPLES)]
+
+    @r.get("/sample_audio/{i}")
+    def sample_audio(i: int):
+        if not 0 <= i < len(SAMPLES):
+            raise HTTPException(404, "no such sample")
+        return FileResponse(SAMPLES[i]["wav"], media_type="audio/wav")
+
+    @r.post("/diagnose_sample")
+    def diagnose_sample(i: int = Form(...), session_id: str = Form(None)):
+        """샘플 발화를 세션에 넣는다. 점수는 MIN_UTTS(5)부터 나오므로
+        UI 가 이걸 여러 번 호출해 한 번에 세션을 채울 수 있게 한다."""
+        if not S["dec"]:
+            raise HTTPException(503, "loading")
+        if not 0 <= i < len(SAMPLES):
+            raise HTTPException(404, "no such sample")
+        s = SAMPLES[i]
+        import wave as _w
+        with _w.open(s["wav"], "rb") as f:
+            arr = np.frombuffer(f.readframes(f.getnframes()), np.int16).astype(np.float32) / 32768.0
+        return _run(arr, s["prompt"], session_id, sample=s)
+
     @r.get("/health")
     def health():
         b = S["bundle"]
         return {"status": "ok" if S["dec"] else "loading",
-                "ckpt": "mdd_ckpt_tag_all_lar/checkpoint_best.pt",
-                "mdd_f1_weighted": 0.9547,
+                # 하드코딩하면 체크포인트를 바꿔도 안 따라온다 (실제로 그랬다)
+                "ckpt": "/".join(CKPT_PATH.split("/")[-2:]),
+                "mdd_f1_weighted": MDD_F1.get(CKPT_PATH.split("/")[-2]),
                 "score_pcc": {m["name"]: m["pcc_spk"] for m in (b["metrics"].values() if b else [])},
                 "n_features": len(b["feature_names"]) if b else 0,
                 "note": "점수는 세션 단위. 발화 1개로는 신뢰 불가(PCC 0.43)"}
@@ -221,7 +300,11 @@ def make_app():
             w = MD.decode_audio(await audio.read())
         except ValueError:
             raise HTTPException(400, "could not decode audio")
+        return _run(w, sentence, session_id)
 
+    def _run(w, sentence, session_id, sample=None):
+        """업로드·녹음·내장샘플이 공유하는 진단 본체."""
+        sentence = (sentence or "").strip()
         dur = len(w) / SR
         if dur < 0.3 or float(np.sqrt((w ** 2).mean())) < 1.5e-3:
             return {"no_speech": True, "duration_sec": round(dur, 2)}
@@ -236,7 +319,7 @@ def make_app():
         t0 = time.time()
         with S["lock"]:                       # 단일 GPU — 직렬화
             pred, feat, gops, spans = analyze(w[: 30 * SR], canon)
-        errors, n, match_rate = diagnose_ops(canon, pred)
+        errors, n, match_rate, not_recognized = diagnose_ops(canon, pred)
 
         res = {
             "no_speech": False, "sentence": sentence, "read_text": read,
@@ -244,8 +327,13 @@ def make_app():
             "took_sec": round(time.time() - t0, 3),
             "canonical": {"jamo": canon, "phones": jamo_to_phones(canon)},
             "recognized": {"jamo": pred, "phones": jamo_to_phones(pred) if pred else []},
+            # errors 는 사용자에게 지적으로 보여줄 것만 담는다. 삭제·삽입은
+            # not_recognized 로 분리한다 — "틀렸다"가 아니라 "못 알아들었다"이다.
+            # n_sub/n_del/n_ins 는 억제 전 원본 개수라 기존 소비자와 호환된다.
             "mdd": {"errors": errors, "n_sub": n["sub"], "n_del": n["del"],
-                    "n_ins": n["ins"], "match_rate": match_rate},
+                    "n_ins": n["ins"], "match_rate": match_rate,
+                    "not_recognized": not_recognized,
+                    "suppression": "deletions+insertions hidden from user-facing errors"},
             "per_phone": [{"i": i, "phone": canon[i], "gop": round(gops[i], 2),
                            **({"span": spans[i]} if i < len(spans) else {})}
                           for i in range(len(canon))],
@@ -256,6 +344,8 @@ def make_app():
         else:
             res["session"] = {"status": "no_session",
                               "message": "session_id 를 보내면 문장이 누적되어 점수가 산출됩니다"}
+        if sample:
+            res["sample"] = {k: sample.get(k) for k in ("task", "note", "n_err")}
         return res
 
     @r.get("/session/{sid}")

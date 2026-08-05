@@ -1,0 +1,267 @@
+<meta charset="utf-8">
+<title>발음 진단 + 점수 3종</title>
+<style>
+:root{--bg:#0e1320;--card:#171f31;--line:#2a3550;--tx:#e8ecf5;--sub:#93a3c0;
+      --a:#ff8f6b;--b:#3ddc97;--red:#ff6b6b;--amber:#ffb454;--blue:#5b8cff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+     line-height:1.55;padding:22px 16px 60px}
+.wrap{max-width:1280px;margin:0 auto}
+h1{font-size:21px;margin-bottom:4px}
+.sub{color:var(--sub);font-size:13px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.card h2{font-size:13px;color:var(--sub);margin-bottom:11px;font-weight:700;letter-spacing:.02em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#212c46;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13.5px;
+      cursor:pointer;transition:.15s;max-width:100%}
+.chip:hover{border-color:var(--blue)}
+.chip.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+.chip.sel small{color:#dbe6ff}
+.badge{display:inline-block;border-radius:5px;padding:1px 6px;font-size:10.5px;font-weight:700;margin-right:6px;
+       background:#2f3d5e;color:#b9c8e6}
+.badge.lar{background:#4a3520;color:var(--amber)}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+input[type=text]{background:#0c1322;border:1px solid var(--line);border-radius:9px;color:var(--tx);
+                 padding:10px 12px;font-size:14px;flex:1;min-width:220px}
+button{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-size:13.5px;
+       font-weight:600;cursor:pointer;transition:.15s}
+button:disabled{opacity:.4;cursor:default}
+button.rec{background:var(--red)} button.ghost{background:#212c46;border:1px solid var(--line)}
+.status{color:var(--sub);font-size:13px;min-height:18px;margin-top:9px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--sub);border-top-color:var(--blue);
+      border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.prompt{font-size:22px;font-weight:700;margin:2px 0 6px}
+.meta{color:var(--sub);font-size:12.5px}
+.banner{border-radius:11px;padding:13px 16px;margin:12px 0;font-size:14.5px;font-weight:600}
+.banner.big{background:#3a2018;border:1px solid #5c3324;color:var(--a)}
+.banner.small{background:#14301f;border:1px solid #1e4a30;color:var(--b)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px;min-width:0}
+.panel.A{border-top:3px solid var(--a)} .panel.B{border-top:3px solid var(--b)}
+.ptitle{font-size:16px;font-weight:700} .ptitle .k{font-size:11.5px;color:var(--sub);font-weight:400;display:block}
+.stats{display:flex;gap:16px;margin:11px 0 6px;flex-wrap:wrap}
+.stat b{display:block;font-size:23px;line-height:1.15}
+.stat span{font-size:11px;color:var(--sub)}
+.A .stat b.hl{color:var(--a)} .B .stat b.hl{color:var(--b)}
+.alignbox{overflow-x:auto;padding:6px 0;margin-top:6px}
+.alignrow{display:flex;gap:3px;margin:3px 0}
+.alignrow .lab{flex:0 0 62px;color:var(--sub);font-size:11px;align-self:center}
+.cell{min-width:28px;padding:5px 3px;border-radius:6px;text-align:center;font-size:15px;background:#212c46;flex:0 0 auto}
+.cell small{display:block;font-size:8.5px;color:var(--sub);margin-top:1px}
+.cell.err{background:#4a2330;color:var(--red);font-weight:700}
+.cell.ins{background:#453317;color:var(--amber)}
+.cell.gap{background:transparent;border:1px dashed var(--line);color:var(--sub)}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:#0a0f1a;border:1px solid var(--line);
+      border-radius:8px;padding:9px 11px;margin-top:9px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.foot{color:var(--sub);font-size:11.5px;margin-top:16px;line-height:1.65}
+audio{height:30px;vertical-align:middle}
+</style>
+<div class="wrap">
+<h1>🎙️ 발음 진단 + 점수 3종</h1>
+<div class="sub">외국인 한국어 학습자의 발화를 듣고 <b>어느 음소를 틀렸는지</b> 짚고,
+문장이 쌓이면 <b>발음숙달 · 이해가능 · 유창성</b>을 1~5점으로 냅니다.
+XLS-R 300m + CTC 단일 모델이며, 점수는 그 모델의 부산물 특징 위에 보정기만 얹은 것입니다.</div>
+
+<div class="card">
+  <h2>① 실제 AIHub 음성으로 바로 보기 &nbsp;— 전체를 넣으면 점수까지 나옵니다</h2>
+  <div class="row" style="margin-bottom:10px">
+    <button id="loadall">▶ 샘플 전체 넣기</button>
+    <button class="ghost" id="reset">세션 초기화</button>
+    <span class="meta">점수는 5문장부터 · 20문장 이상이어야 신뢰할 수 있습니다</span>
+  </div>
+  <div class="chips" id="samples"><span class="meta">불러오는 중…</span></div>
+</div>
+
+<div class="card">
+  <h2>② 직접 입력 — 일부러 틀리게 발음해 보세요</h2>
+  <div class="row">
+    <input type="text" id="sent" placeholder="읽을 문장을 입력하세요 (예: 동물을 키울 수 있는 크고 좋은 집에서 살고 싶어)">
+  </div>
+  <div class="row">
+    <button id="recbtn">🎙️ 녹음 시작</button>
+    <button class="ghost" id="upbtn">📁 음성 파일 업로드</button>
+    <input type="file" id="file" accept="audio/*" style="display:none">
+  </div>
+  <div class="status" id="status"></div>
+</div>
+
+<div class="card" id="scorecard">
+  <h2>③ 세션 점수 <span class="chip" id="sesstag" style="cursor:default">0문장</span></h2>
+  <div class="grid" id="scores"></div>
+  <div class="meta" id="sessmsg" style="margin-top:10px"></div>
+</div>
+
+<div id="result" style="display:none">
+  <div class="card" style="margin-bottom:12px">
+    <div class="prompt" id="prompt"></div>
+    <div class="meta" id="meta"></div>
+    <div id="player" style="margin-top:8px"></div>
+    <div class="mono" id="canon"></div>
+  </div>
+  <div id="banner"></div>
+  <div class="card" id="panel"></div>
+</div>
+
+<div class="card" style="border-left:4px solid #d97706">
+  <h2>읽는 법</h2>
+  <div class="meta" style="line-height:1.8">
+  · 정렬표의 <b style="color:#fca5a5">빨강</b>은 “표준과 다르게 발음했다”는 지적입니다.<br>
+  · <b style="color:#fcd34d">∅ 회색</b>은 모델이 그 자리를 <b>못 알아들은</b> 것으로, 지적에서 뺐습니다.
+    발음 오류가 아니라 인식 실패이기 때문입니다 — 이 억제로 레슨(30발화)당 억울한 지적이
+    <b>4.82 → 2.97회</b>, 억울한 지적이 없는 레슨이 <b>16.5% → 23.3%</b>가 됩니다.<br>
+  · 점수는 <b>화자 단위</b>로만 유효합니다. 문장 1개 PCC는 0.43, 30문장이면 0.65~0.76입니다.<br>
+  · ⚠️ 이 모델은 학습에 쓴 287개 문장 안에서 평가됐습니다. 처음 보는 문장에서는 성능이 낮습니다.
+  </div>
+</div>
+</div>
+
+<script>
+const B = location.pathname.replace(/\/$/,'');
+const SID = 'demo-' + Math.random().toString(36).slice(2,10);
+const api = p => (B && B!=='/' ? B : '') + p;
+const $ = id => document.getElementById(id);
+let rec=null, chunks=[], NS=0;
+
+function alignHTML(d, m){
+  let top='', bot='';
+  m.ops.forEach(op=>{
+    const tp = op.kind!=='ins' ? (d.canon_ph[op.tpos]||'') : '';
+    const ap = op.apos!=null ? (m.pred_ph[op.apos]||'') : '';
+    if(op.kind==='match'){ top+=`<div class="cell">${op.target}<small>${tp}</small></div>`;
+                           bot+=`<div class="cell">${op.actual}<small>${ap}</small></div>`; }
+    else if(op.kind==='sub'){ top+=`<div class="cell err">${op.target}<small>${tp}</small></div>`;
+                              bot+=`<div class="cell err">${op.actual}<small>${ap}</small></div>`; }
+    else if(op.kind==='del'){ top+=`<div class="cell err">${op.target}<small>${tp}</small></div>`;
+                              bot+=`<div class="cell gap">∅</div>`; }
+    else { top+=`<div class="cell gap">·</div>`; bot+=`<div class="cell ins">${op.actual}<small>${ap}</small></div>`; }
+  });
+  return `<div class="alignbox">
+    <div class="alignrow"><div class="lab">표준 발음</div>${top}</div>
+    <div class="alignrow"><div class="lab">모델 인식</div>${bot}</div></div>`;
+}
+
+
+function render(d, audioUrl){
+  const R=$('result'); R.style.display='block';
+  if(d.no_speech){ $('prompt').textContent='🔇 음성이 감지되지 않았습니다';
+    $('panel').innerHTML=''; $('banner').innerHTML=''; $('meta').textContent='';
+    $('canon').textContent=''; return; }
+
+  const canon=d.canonical.jamo, canon_ph=d.canonical.phones;
+  const m=d.mdd, errs=m.errors||[], nr=m.not_recognized||[];
+
+  $('prompt').textContent = d.sentence || '(문장 미상)';
+  $('meta').innerHTML = `발화 ${d.duration_sec}초 · 추론 ${d.took_sec}초` +
+    (d.sample ? ` · <span class="meta">${d.sample.task||''} ${d.sample.note||''}</span>` : '');
+  $('player').innerHTML = audioUrl ? `<audio controls src="${audioUrl}"></audio>` : '';
+  $('canon').textContent = '표준 발음  '+canon.join(' ')+'\n(KoG2P)   '+canon_ph.join(' ');
+
+  $('banner').innerHTML = `<div class="banner ${errs.length>=3?'big':'small'}">` +
+    (errs.length
+      ? `⚠️ <b>${errs.length}개 음소</b>를 다르게 발음했습니다.` +
+        (nr.length? ` 추가로 ${nr.length}개는 모델이 못 알아들어 지적에서 뺐습니다.`:'')
+      : (nr.length? `지적할 오류는 없습니다. 다만 ${nr.length}개 음소를 못 알아들었습니다.`
+                  : `표준 발음과 일치합니다.`)) + `</div>`;
+
+  // 정렬표를 alignHTML 형식에 맞춰 ops 를 재구성한다
+  const eAt=new Map(errs.filter(e=>e.kind!=='ins').map(e=>[e.pos,e]));
+  const nAt=new Map(nr.filter(e=>e.kind!=='ins').map(e=>[e.pos,e]));
+  const ops = canon.map((p,i)=>{
+    const e=eAt.get(i), n=nAt.get(i);
+    if(e) return {kind:'sub', target:p, actual:e.actual, tpos:i, apos:null};
+    if(n) return {kind:'del', target:p, actual:null, tpos:i, apos:null};
+    return {kind:'match', target:p, actual:p, tpos:i, apos:null};
+  });
+  const fake = {canon_ph:canon_ph};
+  const mm = {ops:ops, pred_ph:d.recognized.phones||[]};
+
+  $('panel').innerHTML =
+    `<div class="stats">
+       <div class="stat"><b class="hl">${Math.round(m.match_rate*100)}%</b><span>표준발음 일치율</span></div>
+       <div class="stat"><b>${errs.length}</b><span>지적한 오류</span></div>
+       <div class="stat"><b>${nr.length}</b><span>못 알아들음 (지적 제외)</span></div>
+     </div>` + alignHTML(fake, mm) +
+    `<div class="mono">인식  ${(d.recognized.jamo||[]).join(' ')||'(없음)'}</div>`;
+}
+
+async function loadSession(){
+  const r = await fetch(api('/session/'+SID)); if(!r.ok) return;
+  const d = await r.json(); NS = d.n_utts;
+  $('sesstag').textContent = `${d.n_utts}문장`;
+  const names=['발음숙달','이해가능','유창성'];
+  $('scores').innerHTML = names.map(n=>{
+    const s = d.scores && d.scores[n];
+    if(!s) return `<div class="panel"><div class="ptitle">${n}<span class="k">문장이 더 필요합니다</span></div>
+       <div class="stats"><div class="stat"><b>–</b><span>1~5점</span></div></div></div>`;
+    return `<div class="panel"><div class="ptitle">${n}<span class="k">화자단위 PCC ${s.pcc}</span></div>
+      <div class="stats"><div class="stat"><b class="hl">${s.score.toFixed(2)}</b><span>1~5점</span></div></div></div>`;
+  }).join('');
+  $('sessmsg').textContent = d.message || (d.confidence ? `신뢰도 ${d.confidence} · 권장 ${d.reliable_at}문장 이상` : '');
+}
+
+async function runSample(i){
+  $('status').textContent = `샘플 ${i+1} 분석 중…`;
+  const fd = new FormData(); fd.append('i', i); fd.append('session_id', SID);
+  const r = await fetch(api('/diagnose_sample'), {method:'POST', body:fd});
+  if(!r.ok){ $('status').textContent='오류 '+r.status; return; }
+  const d = await r.json();
+  render(d, api('/sample_audio/'+i));
+  $('sent').value = d.sentence||'';
+  $('status').textContent = `샘플 ${i+1} 완료`;
+  await loadSession();
+}
+
+async function send(file){
+  const s=$('sent').value.trim();
+  if(!s){ $('status').textContent='문장을 먼저 입력하세요'; return; }
+  $('status').textContent='분석 중…';
+  const fd=new FormData(); fd.append('audio',file,'a.wav');
+  fd.append('sentence',s); fd.append('session_id',SID);
+  const r=await fetch(api('/diagnose'),{method:'POST',body:fd});
+  if(!r.ok){ $('status').textContent='오류 '+r.status; return; }
+  const d=await r.json();
+  render(d, URL.createObjectURL(file));
+  $('status').textContent='완료';
+  await loadSession();
+}
+
+async function init(){
+  const r=await fetch(api('/samples')); const ss=await r.json();
+  $('samples').innerHTML='';
+  ss.forEach(s=>{
+    const c=document.createElement('button');
+    c.className='chip'+(s.n_err>0?' sel':'');
+    c.innerHTML = `${s.prompt.slice(0,20)}${s.prompt.length>20?'…':''}
+                   <span class="meta">${s.task}${s.n_err>0?' · 오류'+s.n_err:''}</span>`;
+    c.onclick=()=>runSample(s.i);
+    $('samples').appendChild(c);
+  });
+  $('loadall').dataset.n = ss.length;
+  $('loadall').textContent = `▶ 샘플 ${ss.length}개 전체 넣기`;
+  await loadSession();
+}
+
+$('loadall').onclick = async e=>{
+  const n=+e.target.dataset.n||9; e.target.disabled=true;
+  for(let i=0;i<n;i++) await runSample(i);
+  e.target.disabled=false;
+  $('status').textContent=`샘플 ${n}개 반영 완료 — 위 점수를 확인하세요`;
+};
+$('reset').onclick = async ()=>{ await fetch(api('/session/'+SID),{method:'DELETE'}).catch(()=>{}); location.reload(); };
+$('upbtn').onclick = ()=>$('file').click();
+$('file').addEventListener('change', e=>{ if(e.target.files[0]) send(e.target.files[0]); });
+$('recbtn').onclick = async function(){
+  if(rec && rec.state==='recording'){ rec.stop(); this.textContent='🎙️ 녹음 시작'; return; }
+  try{
+    const st=await navigator.mediaDevices.getUserMedia({audio:true});
+    rec=new MediaRecorder(st); chunks=[];
+    rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=()=>{ st.getTracks().forEach(t=>t.stop()); send(new Blob(chunks)); };
+    rec.start(); this.textContent='⏹ 녹음 중지'; $('status').textContent='녹음 중…';
+  }catch(e){ $('status').textContent='마이크 권한이 필요합니다'; }
+};
+init();
+</script>
