@@ -1,0 +1,27 @@
+version	1
+repo_root	/home/tta/tools/aris
+project_root	/home/tta/speech-ai-project
+generated	2026-08-02T10:59:57Z
+kind	name	source_rel	target_rel	mode
+skill	analyze-results	skills/analyze-results	.claude/skills/analyze-results	symlink
+skill	arxiv	skills/arxiv	.claude/skills/arxiv	symlink
+skill	citation-audit	skills/citation-audit	.claude/skills/citation-audit	symlink
+skill	claims-drafting	skills/claims-drafting	.claude/skills/claims-drafting	symlink
+skill	deepxiv	skills/deepxiv	.claude/skills/deepxiv	symlink
+skill	experiment-audit	skills/experiment-audit	.claude/skills/experiment-audit	symlink
+skill	experiment-plan	skills/experiment-plan	.claude/skills/experiment-plan	symlink
+skill	kill-argument	skills/kill-argument	.claude/skills/kill-argument	symlink
+skill	mermaid-diagram	skills/mermaid-diagram	.claude/skills/mermaid-diagram	symlink
+skill	novelty-check	skills/novelty-check	.claude/skills/novelty-check	symlink
+skill	paper-claim-audit	skills/paper-claim-audit	.claude/skills/paper-claim-audit	symlink
+skill	paper-figure	skills/paper-figure	.claude/skills/paper-figure	symlink
+skill	paper-plan	skills/paper-plan	.claude/skills/paper-plan	symlink
+skill	paper-write	skills/paper-write	.claude/skills/paper-write	symlink
+skill	render-html	skills/render-html	.claude/skills/render-html	symlink
+skill	research-lit	skills/research-lit	.claude/skills/research-lit	symlink
+skill	research-refine	skills/research-refine	.claude/skills/research-refine	symlink
+skill	research-review	skills/research-review	.claude/skills/research-review	symlink
+skill	research-wiki	skills/research-wiki	.claude/skills/research-wiki	symlink
+skill	result-to-claim	skills/result-to-claim	.claude/skills/result-to-claim	symlink
+skill	semantic-scholar	skills/semantic-scholar	.claude/skills/semantic-scholar	symlink
+support	shared-references	skills/shared-references	.claude/skills/shared-references	symlink
