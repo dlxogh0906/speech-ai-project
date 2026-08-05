@@ -60,7 +60,8 @@ def main():
     classes = sorted(set(lab_en.tolist())); c2i = {c: i for i, c in enumerate(classes)}
     y = np.array([c2i[c] for c in lab_en], np.int64)
     items = [{"speaker_id": s, "label_name": l, "num_frames": 0} for s, l in zip(sps, lab_en)]
-    split = np.array([assign_speakers(items, [8, 1, 1], seed=42)[s] for s in sps])
+    assign = assign_speakers(items, [8, 1, 1], seed=42)      # 1회만! (행마다 호출하면 이차 폭발)
+    split = np.array([assign[s] for s in sps])
     t_items = [{"speaker_id": s, "label_name": l, "num_frames": 0}
                for s, l, d in zip(sps, lab, dom) if d != "asia043"]
     t_assign = assign_speakers(t_items, [8, 1, 1], seed=42)
