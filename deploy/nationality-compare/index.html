@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>국적 분류 · 3모델 동시 비교</title>
+<style>
+:root{--bg:#0f1420;--card:#1a2232;--tx:#e6ecf7;--sub:#8fa1bf;--ac:#5b9dff;--ok:#39d98a;--warn:#f0b429;--bd:#2a3550}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Pretendard',system-ui,sans-serif;min-height:100vh;padding:24px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px}
+.sub{color:var(--sub);font-size:13px;margin-bottom:20px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:14px}
+button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:14px;cursor:pointer}
+button.gray{background:#2a3550}
+button:disabled{opacity:.45;cursor:default}
+input[type=file]{color:var(--sub);font-size:13px}
+select{background:#111827;border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:6px 8px;font-size:13px;max-width:320px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.lbl{color:var(--sub);font-size:13px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.mcard{background:#111a2c;border:1px solid var(--bd);border-radius:12px;padding:16px}
+.mcard.best{border-color:#2f7a52;background:#101f18}
+.mhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.mname{font-size:17px;font-weight:700}
+.mtag{font-size:11px;color:var(--sub)}
+.mspec{color:var(--sub);font-size:11px;margin-bottom:12px}
+.top1{font-size:24px;font-weight:700;margin:8px 0 2px}
+.top1 .p{font-size:14px;color:var(--sub);font-weight:400;margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+td{padding:5px 0;border-bottom:1px solid #202b45}
+td:last-child{text-align:right;color:var(--sub);width:64px}
+.bar{height:6px;border-radius:3px;background:#233049;margin-top:3px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ac)}
+.ms{margin-top:12px;font-size:12px;color:var(--sub)}
+.verdict{padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:14px}
+.verdict.same{background:#14301f;color:var(--ok);border:1px solid #205c39}
+.verdict.diff{background:#33270d;color:var(--warn);border:1px solid #6b5219}
+.note{color:var(--sub);font-size:12px;line-height:1.7;margin-top:16px;border-top:1px solid var(--bd);padding-top:14px}
+.err{color:#ff8080;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>외국인 한국어 발화 → 국적 분류 · 3모델 동시 비교</h1>
+  <div class="sub">
+    같은 오디오를 <b>KD · 300m · 2B</b> 세 모델에 한 번에 태웁니다. 41개 국적.<br>
+    성능 수치는 모두 <b>같은 test 셋</b>(135,770발화 · 043 아시아 포함) 기준입니다.
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button id="rec">🎙 녹음 시작</button>
+      <span class="lbl">또는</span>
+      <input type="file" id="file" accept="audio/*">
+      <span class="lbl">또는 샘플</span>
+      <select id="sampleSel"></select>
+      <button class="gray" id="runSample">실행</button>
+    </div>
+    <div class="lbl" id="st">대기 중 — 한국어로 몇 초 말하거나 파일·샘플을 고르세요 (최대 12초)</div>
+  </div>
+
+  <div id="verdict"></div>
+  <div class="cols" id="out"></div>
+
+  <div class="note" id="foot"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+
+// 앱은 `/` 와 `/compare` 두 군데에 붙어 있다(funnel --set-path 가 프리픽스를 안 벗긴다).
+// 상대경로로 두면 `/compare` 로 들어왔을 때 fetch 가 `/predict` 로 풀려 서버에 안 닿는다.
+const BASE = location.pathname.replace(/\/$/, '').endsWith('/compare') ? '/compare/' : '/';
+const U = p => BASE + p;
+const SPEC = {
+  KD:   {tag:'2B→300m 지식증류 · 신규 최고', top1:0.8245, top5:0.9584, macro5:0.7124, size:'916 MB'},
+  '300m':{tag:'현재 배포본',                 top1:0.7510, top5:0.9331, macro5:0.6170, size:'915 MB'},
+  '2B': {tag:'정확도 참고용',                top1:0.7849, top5:0.9422, macro5:0.6321, size:'25 GB'},
+};
+const ORDER = ['KD', '300m', '2B'];
+
+fetch(U('samples')).then(r => r.json()).then(d => {
+  $('#sampleSel').innerHTML = d.samples.map((s, i) => `<option value="${i}">${s}</option>`).join('');
+});
+fetch(U('health')).then(r => r.json()).then(d => {
+  $('#foot').innerHTML =
+    `<b>실행 장치</b> — ` + Object.entries(d.models).map(([k, v]) => `${k}: ${v.device}`).join(' · ') +
+    `<br><b>평가 기준</b> — ${d['테스트셋']}` +
+    `<br>⚠️ 문서에 자주 인용되는 2B top-5 <b>0.950</b> 은 043 아시아가 빠진 다른 셋(133,509)에서 나온 값입니다. ` +
+    `여기 표시된 <b>0.9422</b> 가 세 모델과 같은 셋의 값입니다.`;
+});
+
+function render(data) {
+  const R = data && data.results;
+  if (!R) { $('#st').innerHTML = `<span class="err">서버 응답 형식이 예상과 다릅니다: ` +
+    `${JSON.stringify(data).slice(0, 300)}</span>`; return; }
+  const tops = ORDER.filter(k => R[k] && R[k].top5).map(k => R[k].top5[0].label);
+  const same = tops.length > 1 && new Set(tops).size === 1;
+  $('#verdict').innerHTML = tops.length < 2 ? '' :
+    `<div class="verdict ${same ? 'same' : 'diff'}">${same
+      ? `✅ 세 모델이 <b>${tops[0]}</b> 로 일치했습니다`
+      : `⚠️ 모델별로 다르게 예측했습니다 — ${ORDER.filter(k=>R[k]&&R[k].top5).map(k => `${k}: <b>${R[k].top5[0].label}</b>`).join(' · ')}`}</div>`;
+
+  $('#out').innerHTML = ORDER.filter(k => R[k]).map(k => {
+    const m = R[k], s = SPEC[k];
+    if (m.error) return `<div class="mcard"><div class="mname">${k}</div><div class="err">${m.error}</div></div>`;
+    const best = same || (tops.length && m.top5[0].label === R.KD?.top5[0].label);
+    return `<div class="mcard${k === 'KD' ? ' best' : ''}">
+      <div class="mhead"><span class="mname">${k}</span><span class="mtag">${m.device}</span></div>
+      <div class="mspec">${s.tag} · ${s.size} · test top1 ${s.top1} / top5 ${s.top5}</div>
+      <div class="top1">${m.top5[0].label}<span class="p">${(m.top5[0].prob * 100).toFixed(1)}%</span></div>
+      <table>${m.top5.map(t => `<tr><td>${t.label}<div class="bar"><i style="width:${t.prob * 100}%"></i></div></td>
+        <td>${(t.prob * 100).toFixed(1)}%</td></tr>`).join('')}</table>
+      <div class="ms">인코더 ${m.ms} ms</div>
+    </div>`;
+  }).join('');
+}
+
+async function send(blob, name) {
+  $('#st').textContent = `${name} 처리 중… (세 모델 순차 실행)`;
+  const fd = new FormData(); fd.append('audio', blob, 'a.wav');
+  const t0 = performance.now();
+  try {
+    const res = await fetch(U('predict'), {method: 'POST', body: fd});
+    const d = await res.json();
+    if (d.error) { $('#st').innerHTML = `<span class="err">${d.error}</span>`; return; }
+    render(d);
+    $('#st').textContent = `${name} · 발화 ${d.sec}초 · 전체 ${d.total_ms} ms (왕복 ${Math.round(performance.now() - t0)} ms)`;
+  } catch (e) {
+    $('#st').innerHTML = `<span class="err">요청 실패: ${e}</span>`;
+  }
+}
+
+$('#file').onchange = e => { const f = e.target.files[0]; if (f) send(f, f.name); };
+$('#runSample').onclick = async () => {
+  const i = $('#sampleSel').value;
+  const b = await (await fetch(U('sample/' + i))).blob();
+  send(b, $('#sampleSel').selectedOptions[0].textContent);
+};
+
+let mr = null, chunks = [];
+$('#rec').onclick = async () => {
+  if (mr && mr.state === 'recording') { mr.stop(); $('#rec').textContent = '🎙 녹음 시작'; return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    mr = new MediaRecorder(stream); chunks = [];
+    mr.ondataavailable = e => chunks.push(e.data);
+    mr.onstop = () => { stream.getTracks().forEach(t => t.stop()); send(new Blob(chunks), '녹음'); };
+    mr.start(); $('#rec').textContent = '⏹ 녹음 종료';
+    $('#st').textContent = '녹음 중… 한국어로 몇 초 말한 뒤 종료를 누르세요';
+  } catch (e) { $('#st').innerHTML = `<span class="err">마이크 접근 실패: ${e}</span>`; }
+};
+</script>
+</body>
+</html>

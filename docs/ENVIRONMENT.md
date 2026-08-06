@@ -71,9 +71,42 @@ print("{:14}".format("모델 \\ 데이터"))
 산출물 경로가 `/data`(2 TB)를 가리키면 파일 감시자가 전부 훑다가 확장 호스트가 죽는다.
 `.vscode/settings.json` 의 `files.watcherExclude` 를 지우지 말 것.
 
+## 함정 7 — CPU 에서 fp16 은 없다 (있는 게 아니라 느린 게 아니다)
+
+```
+matmul float32       6.84 ms
+matmul float16   실패 — "addmm_impl_cpu_" not implemented for 'Half'
+matmul bfloat16   8,615 ms   ← fp32 대비 1,260배
+```
+
+이 서버 CPU 는 AMD EPYC 7H12(Zen 2). `f16c` 는 있지만 **변환** 명령어일 뿐이고
+`avx512_fp16` · `avx512_bf16` · `amx` 가 없다. **CPU 경로는 fp32 가 정답이다.**
+
+int8 동적 양자화도 이 모델엔 안 먹힌다 — fairseq `MultiheadAttention` 이 `q_proj.bias`
+를 직접 읽어 어텐션은 양자화가 깨지고, FFN 만 바꾸면 **1.05배**뿐이다(conv 특징
+추출기가 병목이라 Transformer 만 줄여봐야 벽시계가 안 준다).
+
+## 함정 8 — GPU 가 없어도 돌아가야 한다
+
+`Decoder.__init__` 과 `forward_lprobs` 가 `.cuda().half()` 를 무조건 걸고 있어서
+GPU 없는 머신에서는 **적재 단계에서 죽었다**(2026-08-06 수정). 지금은 장치·정밀도를
+모델 파라미터에서 읽는다 — GPU 가 있으면 fp16 GPU, 없으면 fp32 CPU.
+
+```bash
+MDD_FORCE_CPU=1 $PY deploy/mdd-api/mdd_infer_api.py --port 8916   # 강제 CPU
+```
+
+새로 쓰는 코드도 `.cuda()` 를 박지 말 것. `next(model.parameters()).device` 를 읽는다.
+
+## 함정 9 — 벤치마크는 단독 실행으로
+
+여러 벤치마크를 동시에 돌렸다가 값이 **4~25배** 부풀려진 적이 있다
+(국적 2B CPU 21,254 ms → 단독 실행 실측 1,832 ms). CPU 를 나눠 쓰기 때문이다.
+속도를 잴 때는 다른 작업이 없는지 `uptime` 으로 확인하고 시작한다.
+
 ## 디스크
 
 ```
-/       96G 중 5.2G 남음   ← 여유 없음. 큰 산출물을 홈에 만들지 말 것
-/data  2.0T 중  45G 남음
+/       96G 중 3.5G 남음   ← 여유 없음. 큰 산출물을 홈에 만들지 말 것
+/data  2.0T 중  21G 남음   ← 2026-08-07 기준. 체크포인트 정리가 필요한 시점
 ```
