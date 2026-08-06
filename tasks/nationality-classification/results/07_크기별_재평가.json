@@ -3,14 +3,24 @@
  "manifest": "/home/tta/data/aihub_country41_811/test.csv",
  "n_utt": 1000,
  "threads": 4,
+ "정확도": {
+  "fp32": {
+   "top1": 0.807,
+   "top5": 0.963
+  },
+  "int8": {
+   "top1": 0.804,
+   "top5": 0.961
+  }
+ },
  "int8_vs_fp32": {
   "top1_일치율": 0.918,
   "top5집합_일치율": 0.382,
   "특징_최대절대차_중앙": 0.4889
  },
  "지연_발화1건_ms": {
-  "onnx_fp32": 1255.3,
-  "onnx_int8": 1179.8,
+  "onnx_fp32": 1342.6,
+  "onnx_int8": 1264.0,
   "speedup": 1.06
  },
  "용량_MB": {

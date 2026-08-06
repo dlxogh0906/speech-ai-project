@@ -81,10 +81,19 @@ def main():
         x = (x - mu) / sd
         return head(x).softmax(-1)[0].topk(5).indices.tolist()
 
+    # 정답 대비 정확도도 재려면 한글 라벨을 헤드의 영문 라벨로 옮겨야 한다.
+    # 두 label2id 는 같은 인덱스를 공유하므로 인덱스로 사상한다(전 행 100% 매핑 확인).
+    KO = json.load(open(f"{NAT_OUTPUTS}/0702_country41_sent_best/label2id.json", encoding="utf-8"))
+    EN = json.load(open(f"{NAT_OUTPUTS}/0702_country41_sent_best/label2id_en.json", encoding="utf-8"))
+    i2ko = {v: k for k, v in KO.items()}; i2en = {v: k for k, v in EN.items()}
+    ko2en = {i2ko[i]: i2en[i] for i in sorted(i2ko) if i in i2en}
+    lab2idx = {c: i for i, c in enumerate(d["labels"])}
+
     rows = list(csv.DictReader(open(A.manifest, encoding="utf-8")))
     rng = np.random.default_rng(42)
     rng.shuffle(rows)
 
+    acc = {"fp32": [0, 0], "int8": [0, 0]}      # [top1 맞은 수, top5 맞은 수]
     n = t1 = t5 = 0
     dt32 = dt8 = 0.0
     feat_err = []
@@ -102,6 +111,10 @@ def main():
         k32, k8 = top5(p32), top5(p8)
         t1 += int(k32[0] == k8[0])
         t5 += int(set(k32) == set(k8))
+        gold = lab2idx.get(ko2en.get(r["label_name"]))
+        if gold is not None:
+            for nm, k in (("fp32", k32), ("int8", k8)):
+                acc[nm][0] += int(k[0] == gold); acc[nm][1] += int(gold in k)
         n += 1
         if n % 100 == 0:
             print(f"  {n}/{A.n}  top1일치 {t1/n:.4f}", flush=True)
@@ -112,6 +125,8 @@ def main():
     res = {
         "_설명": "int8 양자화가 예측을 바꾸는지 + 크기별 지연. 정확도 자체는 각 metrics.json 참조.",
         "manifest": A.manifest, "n_utt": n, "threads": A.threads,
+        "정확도": {nm: {"top1": round(v[0] / n, 4), "top5": round(v[1] / n, 4)}
+                 for nm, v in acc.items()},
         "int8_vs_fp32": {
             "top1_일치율": round(t1 / n, 4),
             "top5집합_일치율": round(t5 / n, 4),
@@ -127,15 +142,21 @@ def main():
             "onnx_int8": round(os.path.getsize(int8) / 1e6),
         },
     }
-    os.makedirs(os.path.dirname(os.path.abspath(A.out)), exist_ok=True)
-    json.dump(res, open(A.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-
+    # 40분짜리 측정이라 **먼저 출력하고 나중에 저장한다**. 저장이 실패해도
+    # (경로·권한) 결과가 화면에 남는다 — 반대 순서였다가 1,000발화를 통째로 날렸다.
     q, l = res["int8_vs_fp32"], res["지연_발화1건_ms"]
     print(f"\n===== 국적 분류 크기별 재평가 · {n:,}발화 =====")
+    for nm, v in res["정확도"].items():
+        print(f"{nm:5} 정답 대비  top-1 {v['top1']:.4f}  top-5 {v['top5']:.4f}")
     print(f"int8 vs fp32   top-1 일치 {q['top1_일치율']*100:.2f}%  top-5 집합 일치 {q['top5집합_일치율']*100:.2f}%")
     print(f"지연(12초 상한, {A.threads}스레드)  fp32 {l['onnx_fp32']:.0f} ms  int8 {l['onnx_int8']:.0f} ms  ({l['speedup']}배)")
     print(f"용량  fp32 {res['용량_MB']['onnx_fp32']} MB  int8 {res['용량_MB']['onnx_int8']} MB")
-    print(f"→ {A.out}")
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(A.out)), exist_ok=True)
+        json.dump(res, open(A.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"→ {A.out}")
+    except OSError as e:
+        print(f"[저장 실패] {e}\n위 수치를 직접 옮겨 적을 것")
 
 
 if __name__ == "__main__":
