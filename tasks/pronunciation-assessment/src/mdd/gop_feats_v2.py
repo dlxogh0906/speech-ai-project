@@ -71,6 +71,15 @@ PAUSE_SEC = 0.25
 
 @torch.inference_mode()
 def forward_lprobs(dec, wavs):
+    """모델이 올라가 있는 장치·정밀도를 따라간다.
+
+    예전에는 `.half().cuda()` 가 박혀 있어 GPU 가 없으면 그대로 죽었다. 장치를
+    모델 파라미터에서 읽어 CPU 도 태운다 — CPU 에서 fp16 은 느리거나 미지원이라
+    dtype 도 모델을 따른다. **GPU 경로의 수치는 그대로다**(모델이 half().cuda() 면
+    이전과 완전히 동일한 연산).
+    """
+    p = next(dec.model.parameters())
+    dev, dt = p.device, p.dtype
     lens = [len(w) for w in wavs]; mx = max(lens)
     src = torch.zeros(len(wavs), mx); pm = torch.zeros(len(wavs), mx, dtype=torch.bool)
     for i, w in enumerate(wavs):
@@ -78,7 +87,7 @@ def forward_lprobs(dec, wavs):
         if dec.normalize:
             t = F.layer_norm(t, t.shape)
         src[i, :len(w)] = t; pm[i, len(w):] = True
-    net = dec.model(source=src.half().cuda(), padding_mask=pm.cuda())
+    net = dec.model(source=src.to(device=dev, dtype=dt), padding_mask=pm.to(dev))
     lp = dec.model.get_normalized_probs(net, log_probs=True).transpose(0, 1).float().cpu()
     opm = net.get("padding_mask")
     Ls = [(int((~opm[b]).sum()) if opm is not None else lp.shape[1]) for b in range(len(wavs))]

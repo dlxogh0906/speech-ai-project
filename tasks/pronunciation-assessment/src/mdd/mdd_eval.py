@@ -39,9 +39,20 @@ def load_wav(path):
 
 
 class Decoder:
+    """GPU 가 있으면 fp16 GPU, 없으면 fp32 CPU 로 올린다.
+
+    예전에는 `.cuda().half()` 가 무조건 걸려 GPU 없는 머신에서 적재 자체가 죽었다.
+    CPU 에서 fp16 은 느리거나 미지원이라 CPU 일 때만 fp32 로 간다 —
+    **GPU 경로는 이전과 완전히 동일하다.**
+    `MDD_FORCE_CPU=1` 로 GPU 가 있어도 CPU 를 강제할 수 있다(속도 측정·검증용).
+    """
+
     def __init__(self):
         models, cfg, task = checkpoint_utils.load_model_ensemble_and_task([CKPT])
-        self.model = models[0].eval().cuda().half()
+        m = models[0].eval()
+        use_cuda = torch.cuda.is_available() and os.environ.get("MDD_FORCE_CPU") != "1"
+        self.model = m.cuda().half() if use_cuda else m.float()
+        self.device = "cuda" if use_cuda else "cpu"
         self.task = task
         self.d = task.target_dictionary
         self.blank = self.d.index(task.blank_symbol) if hasattr(task, "blank_symbol") else 0
@@ -57,7 +68,8 @@ class Decoder:
             if self.normalize:
                 t = F.layer_norm(t, t.shape)
             src[i, :len(w)] = t; pm[i, len(w):] = True
-        src = src.half().cuda(); pm = pm.cuda()
+        q = next(self.model.parameters())
+        src = src.to(device=q.device, dtype=q.dtype); pm = pm.to(q.device)
         net = self.model(source=src, padding_mask=pm)
         lprobs = self.model.get_normalized_probs(net, log_probs=True).transpose(0, 1).float().cpu()  # (B,T,C)
         opm = net.get("padding_mask")
