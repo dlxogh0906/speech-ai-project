@@ -7,7 +7,7 @@
 | 0 | **`archive/` 코드는 되살리려면 손봐야 한다** — 경로가 `os.path.expandvars("$VAR")` 로 바뀌어 있어 환경변수를 설정해야 동작한다 | 되살릴 때만 문제 | 의도적. 죽은 코드에 시간을 쓰지 않는다 |
 | 1 | **골든 수치 테스트가 없다.** `tests/test_imports.py` 는 import 만 본다 | 리팩터링·재학습 후 성능 회귀를 자동으로 못 잡는다 | MDD F1 **0.9558** / PCC **0.671·0.688·0.764** (2026-08-05 native 교체 후)를 캐시된 예측으로 재계산해 대조하는 테스트 추가. GPU 불필요 |
 | 2 | ~~**funnel `/mdd` 가 502**~~ | — | ✅ **해결(2026-08-05)** — `/mdd` → 8914(`deploy/mdd-api`)로 재지정. MDD 진단 + PCC 점수를 한 화면에서 낸다 |
-| 3 | **fairseq 수정 사본의 출처가 기록돼 있지 않다** | 새 머신에서 완전 재현 불가 | upstream 커밋 해시 + `git diff` 를 `docs/` 에 남기고 `tools/create_env.sh` 에서 그 커밋을 고정 |
+| 3 | ~~**fairseq 수정 사본의 출처가 기록돼 있지 않다**~~ | — | ✅ **해결(2026-08-08)** — 수정 사본이 아니었다. upstream **main** 커밋 `3d262bb` 다(태그 v0.12.2 보다 200+ 커밋 앞). fairseq 은 v0.12.2 이후 버전을 안 올려서 main 도 `__version__=="0.12.2"` 라 "수정본" 으로 오인돼 있었다. 태그로 깔면 체크포인트의 `multi_corpus_keys` 때문에 `ConfigKeyError` 로 죽는다. 순정 upstream 으로 두 task 추론 전 구간 검증(RTX A6000). `tools/create_env.sh` 가 커밋을 고정한다 |
 | 4 | **원본 코드가 아직 그대로 있다** (`scripts/`, `runs/demo/`, `taeho*/`) | 같은 코드가 두 벌 → 어느 쪽을 고쳐야 하는지 혼란 | 운영 서비스 4개를 저장소 사본으로 옮겨 검증한 뒤 원본 코드만 삭제 (데이터는 유지) |
 | 5 | **국적 산출물이 3곳에 흩어져 있다** — `taeho/`, `runs/`, `data/` | 어느 게 최신인지 판정이 어렵다 | `metrics.json` 을 훑어 실험 인덱스를 자동 생성 |
 | 6 | **`data/` 의 구 split 6종 용도 불명** (`*_from_validation*`, `*_train_quarter_*` 등) | `HANDOFF.md` 도 "확인 필요"로 남겨둠 | archive 이동 후 1개월 미사용이면 삭제 |

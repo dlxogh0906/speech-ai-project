@@ -71,7 +71,7 @@ python scripts/extract_audio.py --split 1.Training --only-ext .wav
 
 ```bash
 cd $HOME
-bash scripts/create_env.sh
+bash tools/create_env.sh
 conda activate fairseq_xlsr
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 python -c "import fairseq; print('fairseq ok')"
@@ -98,7 +98,7 @@ cd $HOME
 conda activate fairseq_xlsr
 
 # 1) 환경
-bash scripts/create_env.sh
+bash tools/create_env.sh
 
 # 2) 매니페스트 점검 (오디오 없어도 동작; 라벨분포/화자누수/경로 확인)
 python scripts/inspect_manifests.py \

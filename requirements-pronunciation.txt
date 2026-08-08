@@ -1,7 +1,8 @@
 # 발음 진단(MDD) + 점수 3종 — 이 서버 fairseq_xlsr 환경(python 3.8.20)의 실측 버전
 # 설치:  $PY -m pip install -r requirements-pronunciation.txt
 #
-# ⚠️ fairseq 은 여기 없다 (editable 수정 사본). → tools/create_env.sh
+# ⚠️ fairseq 은 여기 없다 (upstream 소스를 editable 로). → tools/create_env.sh
+#    v0.12.2 **태그로 깔면 체크포인트 로드가 죽는다.** main 브랜치 커밋을 고정해야 한다.
 # ⚠️ KoG2P 는 pip 패키지가 아니라 클론이다. G2P_TOOLS 환경변수로 위치를 지정한다.
 #    https://github.com/scarletcho/KoG2P
 

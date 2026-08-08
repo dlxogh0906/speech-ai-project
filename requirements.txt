@@ -1,12 +1,26 @@
-# 통합 requirements — 두 task(국적 분류 + 발음 진단) 의존성 합집합.
+# 통합 requirements — 두 task(국적 분류 + 발음 진단)를 **한 환경**에서 돌린다.
 # 겹치는 패키지의 버전 핀은 두 파일에서 동일하므로 충돌 없이 함께 설치된다.
-# 한쪽만 쓸 거면 requirements-nationality.txt / requirements-pronunciation.txt 를 따로 설치해도 된다.
+# 한쪽만 쓸 거면 requirements-nationality.txt / requirements-pronunciation.txt 를 따로 써도 된다.
 #
-# ⚠️ fairseq 은 여기 없다 — PyPI 판이 아니라 editable 설치된 수정 사본을 쓴다.
-#    `pip install fairseq` 로는 이 코드가 안 돌아간다 → tools/create_env.sh · docs/ENVIRONMENT.md
-# ⚠️ torch 는 CUDA 11.8 휠이다:  pip install 시 --extra-index-url https://download.pytorch.org/whl/cu118
-# ⚠️ omegaconf 2.0.6 이 legacy 메타데이터라서 pip<24.1 이 필요하다.
-# ⚠️ KoG2P 는 pip 패키지가 아니라 클론이다 (.env 의 G2P_TOOLS 로 위치 지정).
+# 설치 (환경 전체를 자동으로 만들려면 `bash tools/create_env.sh` 를 쓰는 편이 낫다):
+#     python -m pip install "pip<24.1"          # omegaconf 2.0.6 이 legacy 메타데이터다
+#     python -m pip install -r requirements.txt
+#
+# 아래 두 가지는 pip 로 못 받는다. `tools/create_env.sh` 가 대신 해 준다.
+#
+# ⚠️ fairseq — PyPI 판(`pip install fairseq`)으로는 안 된다. upstream 소스를 editable 로 깐다.
+#    **v0.12.2 태그도 안 된다** — 체크포인트 설정의 `multi_corpus_keys` 필드가 태그에 없어서
+#    로드가 ConfigKeyError 로 죽는다. main 브랜치 커밋을 고정해 쓴다:
+#        git clone https://github.com/facebookresearch/fairseq.git $FAIRSEQ_ROOT
+#        git -C $FAIRSEQ_ROOT checkout 3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99
+#        pip install -e $FAIRSEQ_ROOT --no-deps --no-build-isolation
+#    소스 수정은 필요 없다(순정 upstream 으로 검증 완료, 2026-08-08 · docs/ENVIRONMENT.md).
+#
+# ⚠️ KoG2P — pip 패키지가 아니라 클론이다. 발음 진단에만 필요하다.
+#        git clone https://github.com/scarletcho/KoG2P.git $G2P_TOOLS/KoG2P
+#
+# torch 는 CUDA 11.8 휠이라 별도 인덱스가 필요하다. 아래 줄이 그걸 처리한다.
+--extra-index-url https://download.pytorch.org/whl/cu118
 
 -r requirements-nationality.txt
 -r requirements-pronunciation.txt

@@ -1,8 +1,9 @@
 # 국적 분류 — 이 서버 fairseq_xlsr 환경(python 3.8.20)의 실측 버전
 # 설치:  $PY -m pip install -r requirements-nationality.txt
 #
-# ⚠️ fairseq 은 여기 없다. editable 설치된 수정 사본을 쓴다 → tools/create_env.sh
-#    (`pip install fairseq` 로는 이 코드가 안 돌아간다. docs/ENVIRONMENT.md 참고)
+# ⚠️ fairseq 은 여기 없다. upstream 소스를 editable 로 깐다 → tools/create_env.sh
+#    (`pip install fairseq` 도, v0.12.2 **태그**도 안 된다. docs/ENVIRONMENT.md 참고)
+# ℹ️ 국적 배포 경로(ONNX·CPU)는 fairseq·torch 없이도 돈다. onnxruntime 만 있으면 된다.
 
 torch==2.1.2+cu118        # --index-url https://download.pytorch.org/whl/cu118
 numpy==1.24.4

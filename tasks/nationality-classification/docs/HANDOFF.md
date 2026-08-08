@@ -379,7 +379,7 @@ linear baseline(overall top1 0.792 / macro-F1 0.201)이 SupCon·적대학습 등
 ### 6-0. 사전 준비 (한 번만)
 ```bash
 # 환경 빌드 (conda ToS accept + activate 가드 포함)
-bash scripts/create_env.sh
+bash tools/create_env.sh
 export PY=python
 
 # (필요 시) AIHub corpus 추출 — plain unzip 금지, 반드시 이 스크립트로
@@ -492,7 +492,7 @@ $PY decouple_eval_62class.py --durations 12s --extra_train_npz runs/features_aug
 
 ### 환경/운영 주의
 - [ ] fairseq 설치가 fragile(editable `--no-deps` + `omegaconf==2.0.6`/`hydra-core==1.0.7`, `pip<24.1` 필요).
-      재구축은 `scripts/create_env.sh`로만. 임의 pip upgrade 금지.
+      재구축은 `tools/create_env.sh`로만. 임의 pip upgrade 금지.
 - [ ] 테스트 스위트 없음 — `scripts/smoke_test.py` 가 사실상 유일한 통합 점검 수단.
 - [ ] 장시간 잡(추출·feature 캐시·파인튜닝)은 반드시 `tmux`에서.
 

@@ -21,21 +21,60 @@ fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더
 
 ```bash
 git clone <this-repo> && cd speech-ai-project
-
-# 1) 경로 설정 — 자기 환경의 코퍼스·모델·fairseq 소스 위치를 채운다
-#    (2단계가 여기서 FAIRSEQ_ROOT 를 읽으므로 순서를 지킬 것)
-cp .env.example .env && ${EDITOR:-vi} .env
-
-# 2) 파이썬 환경 (python 3.8 · torch 2.1.2+cu118 · fairseq editable --no-deps)
-bash tools/create_env.sh
-
-# 3) 의존성
-pip install -r requirements-nationality.txt      # 국적 분류
-pip install -r requirements-pronunciation.txt    # 발음 진단
-
-# 4) 확인 (30초, GPU 불필요)
-python tests/test_imports.py
+bash tools/setup.sh <가중치폴더>
 ```
+
+**이 한 줄이 전부다.** 손으로 채울 설정 파일이 없다. 하는 일:
+
+| | |
+|---|---|
+| 1 | 가중치 폴더 검사 + SHA256 대조 — 빠진 파일이 있으면 여기서 멈춘다 |
+| 2 | conda env(python 3.8.20) + torch 2.1.2+cu118 + `requirements.txt` 전부 |
+| 3 | fairseq(upstream 커밋 고정, editable) + KoG2P 클론 — 둘 다 pip 로는 못 받는다 |
+| 4 | `.env` 자동 작성 |
+| 5 | **자체검증** — 두 추론 스크립트를 실제로 돌려 JSON 이 나오는지 확인한다 |
+
+**두 task 가 한 환경에서 돈다.** `requirements.txt` 가 둘의 합집합이고 버전 핀이 서로
+충돌하지 않는다. 끝나면 바로:
+
+```bash
+bash deploy/infer_nationality.sh <오디오>                    # 국적 top-5 (ONNX·CPU)
+bash deploy/infer_mdd.sh <오디오> "안녕하세요 만나서 반갑습니다"  # 발음 진단 + 점수
+```
+
+<details>
+<summary>필요한 가중치 (배포 번들의 <code>final/</code> 2.1 GB 면 충분)</summary>
+
+```
+<가중치폴더>/final/pronunciation/mdd_tag_all_native.pt          발음 진단 모델 (1.18 GB)
+                              /dict.ltr.txt                   자모 사전 — 없으면 디코딩 불가
+                              /score_models_v2_native.joblib  점수 3종 회귀기
+              /nationality/encoder_kd_l17.onnx                국적 인코더 (916 MB)
+                          /head_np.npz                        국적 헤드 (41클래스)
+```
+
+XLS-R 사전학습 백본(`xlsr2_300m.pt` · `xlsr2_2B_1000k.pt`)은 **추론에 필요 없다.**
+체크포인트에 인코더가 통째로 들어 있고 ONNX 는 자체 완결이다. 재학습이나 국적 2B
+헤드를 쓸 때만 받으면 된다.
+
+⚠️ 파일명이 서로 비슷해서 **잘못 골라도 에러 없이 답만 틀리는** 조합이 있다
+(`encoder_kd_l17.onnx` vs `encoder_l17.onnx`, `_native` 접미사 등).
+가중치를 옮기거나 교체하기 전에 **`docs/WEIGHTS.md`** 를 볼 것.
+</details>
+
+<details>
+<summary>수동 설치 / 부분 설치</summary>
+
+```bash
+bash tools/create_env.sh          # 환경만 (가중치 없이도 된다)
+cp .env.example .env && vi .env   # 경로를 직접 채운다
+python tests/test_imports.py      # 30초, GPU 불필요
+```
+
+**국적 분류만 쓸 거면 훨씬 가볍다.** 배포 경로가 ONNX·CPU라 torch·fairseq·GPU 가 전부
+불필요하다 — `onnxruntime`·`fastapi`(`requirements-nationality.txt`)와 `ffmpeg` 면 된다.
+발음 진단은 fairseq 가 필요하다.
+</details>
 
 `pip install -e .` 도 지원하지만 필수는 아니다. 모든 스크립트 상단에 5줄짜리 부트스트랩이
 있어 설치 없이도 어디서 실행하든 저장소 패키지를 찾는다.
@@ -68,7 +107,7 @@ speech-ai-project/
 ├── archive/             중단된 실험. 삭제하지 않고 보관
 ├── tools/               환경 구축
 ├── tests/               저장소 전체 import 스모크
-└── docs/                환경 · 설계 결정 · 남은 문제
+└── docs/                환경 · 가중치 · 설계 결정 · 남은 문제
 ```
 
 ### 데이터와 모델은 저장소에 없다
