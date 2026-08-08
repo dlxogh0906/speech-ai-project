@@ -79,6 +79,9 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
 - **`tasks/pronunciation-assessment/configs/*.yaml` 삭제** — 학습 재현의 유일한 기록.
 - **`quality_flag != ok` 를 평가에서 제외** — `usable_for_aggregation=false` 는 "통계 집계에서
   빼라"는 뜻이지 "평가에서 빼라"가 아니다. 제외했던 25,146발화에 진짜 단어누락의 69.6%가 있었다.
+- **가중치 파일 짝을 섞지 말 것** — `encoder_kd_l17.onnx`↔`head_np.npz`,
+  `encoder_l17.onnx`↔`head.pt`, `mdd_tag_all_native`↔`score_models_v2_native.joblib`.
+  shape 가 같아서 **예외 없이 답만 틀린다.** 옮기기 전에 `docs/WEIGHTS.md`.
 - **`tailscale serve`** — funnel 이 꺼진다. `funnel --bg --set-path` 를 쓴다.
 - **이미 쓰는 포트 재사용** — 검증은 다른 포트로 띄워 응답을 대조한 뒤 교체한다.
 
