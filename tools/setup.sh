@@ -75,12 +75,17 @@ else
 fi
 
 # 방금 만든 환경의 파이썬을 찾는다.
+# `conda run` 출력은 파싱하지 않는다 — 경로 뒤에 빈 줄을 붙이는 버전이 있다(실측).
 if [ -n "${ENV_PREFIX:-}" ]; then
     PY_BIN="$ENV_PREFIX/bin/python"
 else
-    PY_BIN="$(conda run -n "${ENV_NAME:-speech-ai}" python -c 'import sys;print(sys.executable)' 2>/dev/null | tail -1)"
+    _cb="$(conda info --base 2>/dev/null)" \
+        && . "$_cb/etc/profile.d/conda.sh" \
+        && conda activate "${ENV_NAME:-speech-ai}" \
+        || { echo "[fatal] conda activate 실패: ${ENV_NAME:-speech-ai}" >&2; exit 1; }
+    PY_BIN="$CONDA_PREFIX/bin/python"
 fi
-[ -x "$PY_BIN" ] || { echo "[fatal] 환경의 python 을 못 찾았다: $PY_BIN" >&2; exit 1; }
+[ -x "$PY_BIN" ] || { echo "[fatal] 환경의 python 을 못 찾았다: [$PY_BIN]" >&2; exit 1; }
 ok "python: $PY_BIN"
 
 # ── 3. .env 작성 ──────────────────────────────────────────────────────────

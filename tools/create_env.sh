@@ -73,13 +73,19 @@ conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/ma
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r    2>/dev/null || true
 
 step "1/5 conda env (python ${PY_VERSION})"
+# `conda run` 의 출력을 파싱하지 않는다 — 경로 뒤에 빈 줄을 덧붙이는 버전이 있어서
+# `tail -1` 이 빈 문자열을 집는다(실측). activate 후 $CONDA_PREFIX 를 쓰는 게 확실하다.
 if [ -n "${ENV_PREFIX:-}" ]; then
     conda create -p "$ENV_PREFIX" "python=${PY_VERSION}" -y || exit 1
-    PY="$ENV_PREFIX/bin/python"
+    conda activate "$ENV_PREFIX" || exit 1
 else
     conda create -n "$ENV_NAME" "python=${PY_VERSION}" -y || exit 1
-    PY="$(conda run -n "$ENV_NAME" python -c 'import sys;print(sys.executable)')" || exit 1
+    conda activate "$ENV_NAME" || exit 1
 fi
+# activate 가 실패하면 base 로 흘러가 base 를 pip 로 오염시킨다. 그 전에 멈춘다.
+[ "${CONDA_PREFIX:-}" != "$CONDA_BASE" ] || { echo "[fatal] activate 실패 — base 오염 직전에 멈췄다" >&2; exit 1; }
+PY="$CONDA_PREFIX/bin/python"
+[ -x "$PY" ] || { echo "[fatal] 환경의 python 을 못 찾았다: [$PY]" >&2; exit 1; }
 echo "python: $PY"
 
 step "2/5 pip 상한"
