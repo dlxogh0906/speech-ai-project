@@ -146,7 +146,12 @@ def main():
         z = ((x - mu) / sd) @ W.T + b
         return labels[int(z.argmax())]
     agree = tot = 0
-    for wav in sorted(glob.glob("/home/tta/test_samples/*.wav"))[:10]:
+    # 학습 서버의 절대경로가 박혀 있었다. 실발화 대조는 선택 단계라, 없으면 건너뛴다.
+    _sd = os.environ.get("SAMPLE_WAV_DIR", "")
+    _wavs = sorted(glob.glob(os.path.join(_sd, "*.wav")))[:10] if _sd else []
+    if not _wavs:
+        print("[실발화] SAMPLE_WAV_DIR 미설정 — 실발화 대조를 건너뛴다")
+    for wav in _wavs:
         raw = subprocess.run([FFMPEG, "-hide_banner", "-loglevel", "error", "-i", wav,
                               "-f", "f32le", "-ac", "1", "-ar", str(SR), "-t", "12", "pipe:1"],
                              stdout=subprocess.PIPE).stdout

@@ -141,7 +141,9 @@ def run_all(wav):
     return out
 
 
-SAMPLES = sorted(glob.glob("/home/tta/test_samples/*.wav"))
+# 학습 서버의 절대경로가 박혀 있었다. 없으면 빈 목록이고 비교 본체는 정상 동작한다.
+_SD = os.environ.get("SAMPLE_WAV_DIR", "")
+SAMPLES = sorted(glob.glob(os.path.join(_SD, "*.wav"))) if _SD else []
 
 
 def make_app():
@@ -187,6 +189,9 @@ def make_app():
 
     @r.get("/sample/{idx}")
     def sample(idx: int):
+        if not SAMPLES:      # SAMPLE_WAV_DIR 미설정 — 0 나누기로 죽지 않게
+            return JSONResponse({"error": "샘플 오디오가 없다. SAMPLE_WAV_DIR 을 설정할 것"},
+                                status_code=404)
         return Response(open(SAMPLES[idx % len(SAMPLES)], "rb").read(), media_type="audio/wav")
 
     app.include_router(r)

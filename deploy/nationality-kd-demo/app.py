@@ -47,9 +47,14 @@ _stats = {"requests": 0, "errors": 0, "busy": 0}
 
 
 def decode(raw_bytes):
+    # 반환코드를 봐야 한다. ffmpeg 자체가 죽어도 stdout 은 빈 바이트라서, 확인하지 않으면
+    # "오디오가 너무 짧다"로 오진된다 (conda LD_LIBRARY_PATH 함정 — ENVIRONMENT.md 함정 10).
     p = subprocess.run([FFMPEG, "-hide_banner", "-loglevel", "error", "-i", "pipe:0",
                         "-f", "f32le", "-ac", "1", "-ar", str(SR), "-t", "12", "pipe:1"],
-                       input=raw_bytes, stdout=subprocess.PIPE)
+                       input=raw_bytes, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if p.returncode != 0:
+        raise RuntimeError(f"ffmpeg 실패 (rc={p.returncode}): "
+                           f"{p.stderr.decode('utf-8', 'replace').strip()[:500]}")
     return np.frombuffer(p.stdout, np.float32).copy()
 
 
@@ -71,7 +76,9 @@ def classify(wav):
 
 
 # ── 샘플 오디오 (부하 테스트·원클릭 데모용) ──
-SAMPLES = sorted(glob.glob("/home/tta/test_samples/*.wav"))[:10]
+# 학습 서버의 절대경로가 박혀 있었다. 없으면 그냥 빈 목록이고 데모 본체는 정상 동작한다.
+_SD = os.environ.get("SAMPLE_WAV_DIR", "")
+SAMPLES = sorted(glob.glob(os.path.join(_SD, "*.wav")))[:10] if _SD else []
 
 
 def make_app():
@@ -95,7 +102,11 @@ def make_app():
         _stats["requests"] += 1
         t0 = time.perf_counter()
         raw = await audio.read()
-        wav = await run_in_threadpool(decode, raw)
+        try:
+            wav = await run_in_threadpool(decode, raw)
+        except RuntimeError as e:      # ffmpeg 자체가 못 도는 경우 — 오디오 탓이 아니다
+            _stats["errors"] += 1
+            return JSONResponse({"error": str(e)}, status_code=500)
         if wav.size < SR // 2:
             _stats["errors"] += 1
             return JSONResponse({"error": "오디오가 너무 짧거나 해석 불가"}, status_code=400)
@@ -109,6 +120,9 @@ def make_app():
 
     @r.get("/sample/{idx}")
     def sample(idx: int):
+        if not SAMPLES:      # SAMPLE_WAV_DIR 미설정 — 0 나누기로 죽지 않게
+            return JSONResponse({"error": "샘플 오디오가 없다. SAMPLE_WAV_DIR 을 설정할 것"},
+                                status_code=404)
         return Response(open(SAMPLES[idx % len(SAMPLES)], "rb").read(), media_type="audio/wav")
 
     app.include_router(r)
