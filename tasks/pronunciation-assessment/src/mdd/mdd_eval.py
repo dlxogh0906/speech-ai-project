@@ -48,7 +48,10 @@ class Decoder:
     """
 
     def __init__(self):
-        models, cfg, task = checkpoint_utils.load_model_ensemble_and_task([CKPT])
+        # 체크포인트에 박힌 data 경로는 학습 서버 것이라 다른 머신엔 없다.
+        # dict.ltr.txt 가 있는 폴더를 MDD_DATA_DIR 로 지정하면 그쪽을 쓴다.
+        ov = {"data": os.environ["MDD_DATA_DIR"]} if os.environ.get("MDD_DATA_DIR") else None
+        models, cfg, task = checkpoint_utils.load_model_ensemble_and_task([CKPT], arg_overrides=ov)
         m = models[0].eval()
         use_cuda = torch.cuda.is_available() and os.environ.get("MDD_FORCE_CPU") != "1"
         self.model = m.cuda().half() if use_cuda else m.float()
