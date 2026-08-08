@@ -25,6 +25,20 @@ python deploy/mdd-api/mdd_infer_api.py --port $PORT
 curl -s localhost:$PORT/health
 ```
 
+### 셸 스크립트 (단건 추론 · 서버 기동)
+
+```bash
+# 단건 CLI — 서버를 임시로 띄워 추론하고 끈다 (--keep 으로 유지, --url 로 재사용)
+bash deploy/infer_mdd.sh sample.wav "안녕하세요 만나서 반갑습니다"   # 발음 진단 + 점수
+bash deploy/infer_nationality.sh sample.wav                         # 국적 top-5 (ONNX·CPU)
+
+# 서버 기동 (포그라운드 — tmux 안에서)
+bash deploy/serve.sh mdd --port 8914     # POST /diagnose
+bash deploy/serve.sh nat --port 8905     # POST /predict
+```
+
+옵션은 각 스크립트의 `--help` 참조.
+
 ### mdd-api 엔드포인트
 
 | | |

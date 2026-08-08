@@ -1,0 +1,12 @@
+# 통합 requirements — 두 task(국적 분류 + 발음 진단) 의존성 합집합.
+# 겹치는 패키지의 버전 핀은 두 파일에서 동일하므로 충돌 없이 함께 설치된다.
+# 한쪽만 쓸 거면 requirements-nationality.txt / requirements-pronunciation.txt 를 따로 설치해도 된다.
+#
+# ⚠️ fairseq 은 여기 없다 — PyPI 판이 아니라 editable 설치된 수정 사본을 쓴다.
+#    `pip install fairseq` 로는 이 코드가 안 돌아간다 → tools/create_env.sh · docs/ENVIRONMENT.md
+# ⚠️ torch 는 CUDA 11.8 휠이다:  pip install 시 --extra-index-url https://download.pytorch.org/whl/cu118
+# ⚠️ omegaconf 2.0.6 이 legacy 메타데이터라서 pip<24.1 이 필요하다.
+# ⚠️ KoG2P 는 pip 패키지가 아니라 클론이다 (.env 의 G2P_TOOLS 로 위치 지정).
+
+-r requirements-nationality.txt
+-r requirements-pronunciation.txt
