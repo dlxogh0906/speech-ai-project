@@ -19,12 +19,23 @@ fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더
 이 저장소에는 **코드와 문서만** 있다(약 12 MB). 코퍼스·모델·산출물은 전부 저장소 밖에 있고
 위치는 환경마다 다르므로 `.env` 로 지정한다.
 
+**미리 있어야 하는 것**
+
+| | |
+|---|---|
+| `conda` | miniconda / anaconda 아무거나 |
+| `git` · `ffmpeg` | `sudo apt install ffmpeg` |
+| **가중치 폴더** | 저장소에 없다. 별도로 받아야 한다 (아래 접기 참고) |
+| GPU | **발음 진단에만** 필요. 국적 분류는 CPU 로 돈다 |
+
 ```bash
-git clone <this-repo> && cd speech-ai-project
+git clone https://github.com/dlxogh0906/speech-ai-project.git
+cd speech-ai-project
 bash tools/setup.sh <가중치폴더>
 ```
 
-**이 한 줄이 전부다.** 손으로 채울 설정 파일이 없다. 하는 일:
+**이 한 줄이 전부다.** 손으로 채울 설정 파일이 없다. 10~15분 걸린다(torch 2.3 GB 등 내려받는다).
+하는 일:
 
 | | |
 |---|---|
@@ -35,11 +46,12 @@ bash tools/setup.sh <가중치폴더>
 | 5 | **자체검증** — 두 추론 스크립트를 실제로 돌려 JSON 이 나오는지 확인한다 |
 
 **두 task 가 한 환경에서 돈다.** `requirements.txt` 가 둘의 합집합이고 버전 핀이 서로
-충돌하지 않는다. 끝나면 바로:
+충돌하지 않는다. 마지막에 이게 나오면 성공이다:
 
-```bash
-bash deploy/infer_nationality.sh <오디오>                    # 국적 top-5 (ONNX·CPU)
-bash deploy/infer_mdd.sh <오디오> "안녕하세요 만나서 반갑습니다"  # 발음 진단 + 점수
+```
+✓ 국적 분류 동작 — 1순위 ...
+✓ 발음 진단 동작 — 음소 30개 판정
+━━━ 완료 — 두 task 모두 동작한다 ━━━
 ```
 
 <details>
@@ -78,6 +90,60 @@ python tests/test_imports.py      # 30초, GPU 불필요
 
 `pip install -e .` 도 지원하지만 필수는 아니다. 모든 스크립트 상단에 5줄짜리 부트스트랩이
 있어 설치 없이도 어디서 실행하든 저장소 패키지를 찾는다.
+
+---
+
+## 실행
+
+### 파일 하나씩 — CLI
+
+```bash
+bash deploy/infer_nationality.sh 음성.wav                    # 국적 top-5 (ONNX·CPU, ~1초)
+bash deploy/infer_mdd.sh 음성.wav "화자가 읽은 문장"           # 발음 진단 + 점수 (GPU)
+```
+
+오디오는 ffmpeg 이 읽는 포맷이면 전부 된다(국적은 앞 12초만 쓴다).
+두 스크립트 모두 **API 서버를 잠깐 띄웠다 끄는 방식**이라 모델 적재(수십 초~수 분)를
+매번 낸다. 여러 파일을 돌릴 거면 `--keep` 으로 서버를 남기고 `--url` 로 재사용한다:
+
+```bash
+bash deploy/infer_mdd.sh a.wav "문장1" --keep --session spk1      # 서버·세션 유지
+bash deploy/infer_mdd.sh b.wav "문장2" --url http://127.0.0.1:8931 --session spk1
+```
+
+옵션은 각 스크립트의 `--help` 를 볼 것.
+
+### 서비스로 — API 서버
+
+긴 세션은 **tmux 안에서** 띄운다. 포그라운드로 돈다.
+
+```bash
+bash deploy/serve.sh nat --port 8905     # POST /predict   오디오 → 국적 top-5
+bash deploy/serve.sh mdd --port 8914     # POST /diagnose  오디오 + 문장 → 진단·점수
+curl -s localhost:8905/health
+```
+
+엔드포인트 상세는 [`deploy/README.md`](deploy/README.md).
+**인증이 없다.** 외부에 열 때는 앞단에 접근 제어를 두어야 한다.
+
+### 실행 전에 알아야 할 것
+
+- **발음 점수는 화자 단위로만 유효하다.** 발화 1개 PCC 는 0.43 이고 20~30문장을 모아야
+  포화한다. 같은 `--session` 으로 누적해야 하며, **5발화 미만이면 점수 없이 진단만** 나온다.
+- **발음 진단은 학습에 쓴 287문장 안에서 강하다.** 안 본 문장은 weighted F1 0.9509 → 0.8218
+  로 떨어진다. 정해진 문장을 읽게 하는 서비스면 문제없고, 자유 발화로 넓힐 때 걸린다
+  → [`08_문장암기_일반화.md`](tasks/pronunciation-assessment/results/08_문장암기_일반화.md).
+- **국적 정확도 수치가 문서마다 다르다** — 0.798(2B) / 0.751(300m 구버전) /
+  **0.8245**(현재 배포 KD). 셋 다 사실이지만 다른 모델이다 → [`docs/WEIGHTS.md`](docs/WEIGHTS.md).
+
+### 안 될 때
+
+| 증상 | 원인 |
+|---|---|
+| `ffmpeg 실패 (rc=127)` | conda 의 `LD_LIBRARY_PATH` 가 시스템 ffmpeg 를 깨뜨린다. `env -u LD_LIBRARY_PATH` 로 우회 → [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) 함정 10 |
+| `포트 N 이 이미 사용 중이다` | 쓰는 포트를 뺏지 않는다. `--port <빈 포트>` 또는 `--url` 로 기존 서버 재사용 |
+| `ConfigKeyError: multi_corpus_keys` | fairseq 을 v0.12.2 **태그**로 깔았다. main 커밋을 써야 한다 → `tools/create_env.sh` |
+| `ModuleNotFoundError: g2p` | KoG2P 클론이 없다. `.env` 의 `G2P_TOOLS` 확인 |
 
 > `.env` 없이도 **import 와 문법 점검은 전부 통과한다.** 미설정 경로는
 > `<SPEECH_AI_DATA 미설정>/...` 같은 값으로 조립되다가, 실제로 파일을 열려는 순간
@@ -165,10 +231,10 @@ python tests/test_imports.py # 문법 166 · 경로 상수 · 라이브러리 im
 | [`tasks/nationality-classification/README.md`](tasks/nationality-classification/README.md) | 국적 분류 — 성능·라벨·실행·함정 |
 | [`tasks/pronunciation-assessment/README.md`](tasks/pronunciation-assessment/README.md) | 발음 진단 — 성능·모델 계보·라벨 3종·실행·함정 |
 | [`tasks/*/results/`](tasks/pronunciation-assessment/results/) | **실험 기록** — 문서 수치의 근거 파일 |
-| [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) | 환경 구축과 함정 6가지 |
+| [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) | 환경 구축과 함정 10가지 |
+| [`docs/WEIGHTS.md`](docs/WEIGHTS.md) | **어느 가중치 파일이 무엇인가** — 짝을 섞으면 조용히 틀린다 |
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | 왜 이렇게 설계했는가 (다시 뒤집지 않도록) |
 | [`docs/REMAINING_ISSUES.md`](docs/REMAINING_ISSUES.md) | 알려진 한계와 미해결 과제 |
-| [`MIGRATION.md`](MIGRATION.md) | 이전 디렉터리 구조에서 옮겨온 내역 |
 
 ---
 
