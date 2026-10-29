@@ -20,6 +20,8 @@ editdistance==0.8.1       # PER
 
 # 오디오 디코드 (src/mdd/pipeline.py decode_audio) — 원 서버 환경에 있었으나 여기 누락돼 있었다
 imageio-ffmpeg
+# 학습 데이터 로더 (fairseq RawAudioDataset 이 import 한다) — 추론 경로엔 필요 없어 누락을 몰랐다
+soundfile==0.12.1
 
 # fairseq 가 요구하는 핀
 omegaconf==2.0.6
