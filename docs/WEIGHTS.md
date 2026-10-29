@@ -152,3 +152,33 @@ cd <가중치>          && sha256sum -c --ignore-missing SHA256SUMS.txt
 > `encoder_kd_l17.onnx` 와 `head_np.npz` 는 **어느 매니페스트에도 없다**(나중에 추가됨).
 > 정작 서비스가 쓰는 두 파일이라 해시 보증이 없는 지점이니, 다음 내보내기 때
 > 매니페스트에 포함시킬 것.
+> → 2026-10-29 백업(§7)의 `SHA256SUMS.txt` 에는 NPU 배포본의 두 파일 해시가 들어 있다.
+
+---
+
+## 7. 백업 — Hugging Face 비공개 저장소 (2026-10-29)
+
+NPU 에서 서비스 중인 배포본 · 학습 원본 · 위 9월 번들을 비공개 저장소 **`dongwonlim/speech-ai-weights`** 에 올렸다(40.1 GB · 235개).
+**비공개 유지 · 외부 공유 금지** — AI 허브 데이터로 학습한 모델이다. 구성 · 복원 절차는 그 저장소의 `README.md`,
+파일별 sha256 은 맨 위 `SHA256SUMS.txt` 다. 올린 파일은 NPU 원본과 바이트 단위로 같다(10-29 대조).
+
+| 폴더 | 내용 | 짝 태그 (git · HF 같은 이름) |
+|---|---|---|
+| `deploy/nat-npu-20261010/` | NPU 국적 8905 — run_zeroth + 원어민 게이트(onnx · .rbln · `head_np.npz`), 앱 코드 · 실행 스크립트 · systemd | `deploy-nat-npu-20261010` |
+| `deploy/pron-npu-20261022/` | NPU 발음 8932 — `ft3000_2026-10-19`(HF 체크포인트 + .rbln) · 점수 회귀기 · L1 prior · 앱 코드 | `deploy-pron-npu-20261022` |
+| `deploy/dialect-npu-20261028/` | NPU 사투리 8907 — `pure_fp16.pt` · `head.npz` · .rbln, 코드 · systemd · 컴파일 · 대조 로그 | `deploy-dialect-npu-20261028` |
+| `rollback/pron-mix-20261016/` | 발음 10-17~10-21 운영 모델(`mix_2026-10-16`)과 그때 코드 | — |
+| `train/` | 사투리 EAT · 2B `best.pt`(학습한 블록 차이분 — 공개 사전학습 백본이 따로 필요), 국적 300m 전체학습 · run_zeroth `best.pt` | — |
+| `legacy/weights-20260914/` | §1 의 9월 번들 그대로 | — |
+
+- **넣지 않은 것:** 사용자 녹음(국적 번들 `samples/`), 대조용 음성 · 특징(`parity*.npz`, 발음 `ref/`), 매니페스트 · 특징 캐시,
+  `resume.pt`, `.env` · 토큰 파일, `*.bak*`, 공개 사전학습 백본.
+- **되돌리기:** 코드는 git 태그로, 가중치는 같은 이름의 HF 태그로 받는다.
+  ```bash
+  git checkout deploy-dialect-npu-20261028
+  huggingface-cli download dongwonlim/speech-ai-weights --revision deploy-dialect-npu-20261028 \
+      --include "deploy/dialect-npu-20261028/*" --local-dir ./w && (cd ./w && sha256sum -c --ignore-missing SHA256SUMS.txt)
+  ```
+- 발음 · 국적은 NPU 배포 코드 일부가 저장소와 다르다(태그 메시지에 파일 목록). 그대로 되돌리려면 HF 쪽 `app/` · `bundle/` 의 코드를 쓴다.
+- 국적 번들 안의 `SHA256SUMS.txt`(09-25)는 그 뒤 바뀐 `app/app.py` · `deployed_gate/encoder_kd_l17_static12s.ts.pt` 와 맞지 않는다.
+  NPU 원본도 같다 — 기준은 HF 맨 위 `SHA256SUMS.txt`.
