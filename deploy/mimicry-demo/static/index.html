@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>성대모사 교정 데모</title>
+<style>
+:root{--bg:#f7f6f2;--fg:#1c1c1e;--muted:#6c6c72;--card:#fff;--line:#e4e1d8;--acc:#2b63d9;--rec:#d83b3b;--ok:#2f9a5a;
+--okbg:#e6f4ec;--warn:#b98a0c;--warnbg:#fbf2d9;--bad:#cf3f3f;--badbg:#fbe5e3;--sel:#eaf0fd}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121214;--fg:#ececef;--muted:#9c9ca6;--card:#1c1c20;
+--line:#2d2d34;--acc:#77a1ff;--rec:#ff6b6b;--ok:#5fd08f;--okbg:#17301f;--warn:#f0c14b;--warnbg:#332a12;--bad:#ff7a73;
+--badbg:#3a1b1a;--sel:#1d2840}}
+:root[data-theme="dark"]{--bg:#121214;--fg:#ececef;--muted:#9c9ca6;--card:#1c1c20;--line:#2d2d34;--acc:#77a1ff;--rec:#ff6b6b;
+--ok:#5fd08f;--okbg:#17301f;--warn:#f0c14b;--warnbg:#332a12;--bad:#ff7a73;--badbg:#3a1b1a;--sel:#1d2840}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
+main{max-width:880px;margin:0 auto;padding:24px 16px 72px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px;word-break:keep-all}
+h2{font-size:15px;margin:0 0 10px}
+.step{color:var(--acc);font-weight:700;margin-right:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.clip{border:2px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;background:var(--bg)}
+.clip.on{border-color:var(--acc);background:var(--sel)}
+.clip .l{font-size:17px;font-weight:700;word-break:keep-all}
+.clip .t{font-size:12px;color:var(--muted)}
+.own{display:none;margin-top:12px}
+.own.on{display:block}
+input[type=text]{font:inherit;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg)}
+button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.big{font-size:17px;font-weight:700;padding:12px 20px;border-radius:12px}
+.rec{background:var(--rec);border-color:var(--rec);color:#fff}
+.go{background:var(--acc);border-color:var(--acc);color:#fff}
+.timer{font-variant-numeric:tabular-nums;color:var(--muted);min-width:44px}
+.msg{margin-top:10px;color:var(--muted);word-break:keep-all}
+.err{color:var(--bad)}
+.first .what{font-size:21px;font-weight:800;word-break:keep-all}
+.first .how{font-size:16px;margin-top:4px;word-break:keep-all}
+.first .detail{color:var(--muted);font-size:13px;margin-top:6px}
+.ba{margin-top:12px;display:grid;gap:8px}
+.ba div{border-radius:10px;padding:9px 12px;word-break:keep-all}
+.ba .good{background:var(--okbg)}.ba .near{background:var(--warnbg)}.ba .not{background:var(--badbg)}
+.ask{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}
+.ask .q{color:var(--muted);font-size:13px}
+.ask .it{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ask .it span{flex:1 1 220px;word-break:keep-all}
+.ask button{padding:5px 10px;font-size:13.5px}
+iframe{width:100%;border:0;border-radius:14px;margin-top:14px;background:transparent;min-height:400px}
+.foot{color:var(--muted);font-size:12.5px;margin-top:22px;word-break:keep-all}
+audio{max-width:100%}
+</style>
+</head>
+<body>
+<main>
+<h1>성대모사 교정 데모</h1>
+<p class="sub">원본을 듣고 따라 녹음하면, 어느 글자가 어떻게 어긋났는지와 고치는 법을 알려 드려요. Phase 0 시험판이라 지적이 틀릴 수 있어요 — 들어 보고 맞는지 알려 주세요.</p>
+
+<section class="card">
+<h2><span class="step">1</span>대사 고르기</h2>
+<div class="clips" id="clips"></div>
+<div class="own" id="own">
+<div class="row"><input type="text" id="ownText" placeholder="대사를 한글로 적어 주세요 (예: 니가 가라 하와이)"></div>
+<div class="row"><label>원본 음성 파일 <input type="file" id="ownFile" accept="audio/*"></label>
+<span class="msg" style="margin:0">또는</span><button id="ownRec">● 원본 녹음</button><span class="timer" id="ownTimer"></span></div>
+<div class="row"><audio id="ownAudio" controls hidden></audio></div>
+</div>
+<div class="row"><audio id="refAudio" controls hidden></audio><button id="mixBtn" hidden>배경음 포함으로 듣기</button></div>
+</section>
+
+<section class="card">
+<h2><span class="step">2</span>따라 녹음하기</h2>
+<div class="row"><button class="big rec" id="rec" disabled>● 녹음</button><span class="timer" id="timer"></span>
+<button id="again" hidden>다시 분석</button></div>
+<div class="row"><audio id="takeAudio" controls hidden></audio></div>
+<div class="msg" id="msg">먼저 대사를 고르세요.</div>
+</section>
+
+<section class="card first" id="first" hidden></section>
+<iframe id="report" title="결과 보고서" hidden></iframe>
+
+<p class="foot"><span id="note">견본 대사는 TTS 로 만든 것이라 원작 음성이 아니에요.</span> 녹음은 서버에 저장하지 않아요(분석 후 바로 버려요).
+마이크 설정에서 소음 제거·자동 음량을 끄고 녹음해요(세기·숨소리 비교가 망가지지 않게).</p>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let clip = null, own = false, takeBlob = null, ownBlob = null, prev = null, labelsOn = false;
+
+function setMsg(t, err) { const m = $('#msg'); m.textContent = t; m.className = 'msg' + (err ? ' err' : ''); }
+
+async function loadClips() {
+  const box = $('#clips');
+  let list = [];
+  try { const j = await (await fetch('api/clips')).json(); list = j.clips; labelsOn = !!j.labels; } catch (e) {}
+  if (list.some(c => c.kind === 'original')) $('#note').textContent = '원작 대사는 장면에서 목소리만 분리해 자른 발췌예요 — 내부 시험용이라 밖으로 공유하지 마세요.';
+  list.forEach(c => { const d = document.createElement('div'); d.className = 'clip';
+    d.innerHTML = '<div class="l"></div><div class="t"></div><div class="t c"></div>'; d.querySelector('.l').textContent = c.line;
+    d.querySelector('.t').textContent = c.title; d.querySelector('.c').textContent = c.credit || '';
+    d.onclick = () => pick(c, d); box.appendChild(d); });
+  const d = document.createElement('div'); d.className = 'clip';
+  d.innerHTML = '<div class="l">내 원본 쓰기</div><div class="t">원본 음성을 올리거나 직접 녹음</div>';
+  d.onclick = () => pick(null, d); box.appendChild(d);
+}
+
+function pick(c, el) {
+  document.querySelectorAll('.clip').forEach(x => x.classList.remove('on')); el.classList.add('on');
+  clip = c; own = !c; prev = null; $('#first').hidden = true; $('#report').hidden = true;
+  $('#own').classList.toggle('on', own);
+  const ra = $('#refAudio');
+  const mb = $('#mixBtn'); mb.hidden = !(c && c.has_mix); mb.textContent = '배경음 포함으로 듣기';
+  if (c) { ra.src = 'api/clips/' + c.id + '/ref.wav'; ra.hidden = false; setMsg('원본을 들어 보고 녹음 버튼을 누르세요.'); }
+  else { ra.hidden = true; setMsg('대사를 적고 원본 음성을 올리거나 녹음한 뒤, 따라 녹음하세요.'); }
+  $('#rec').disabled = false;
+}
+
+// 녹음 — 소음 제거·자동 음량을 끈다(세기·숨소리 비교가 망가지지 않게)
+async function recorder() {
+  const stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: false, noiseSuppression: false,
+    autoGainControl: false, channelCount: 1}});
+  const type = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
+  const mr = new MediaRecorder(stream, type ? {mimeType: type} : undefined);
+  const chunks = []; mr.ondataavailable = e => e.data.size && chunks.push(e.data);
+  const done = new Promise(res => mr.onstop = () => { stream.getTracks().forEach(t => t.stop()); res(new Blob(chunks, {type: mr.mimeType || type || 'audio/webm'})); });
+  mr.start(); return {mr, done};
+}
+
+function bindRec(btn, timerEl, onBlob) {
+  let cur = null, t0 = 0, iv = null; const label = btn.textContent;
+  btn.onclick = async () => {
+    if (!cur) {
+      try { cur = await recorder(); } catch (e) { setMsg('마이크를 열 수 없어요: ' + e.message + ' (https 또는 localhost 에서만 열려요)', true); return; }
+      t0 = Date.now(); btn.textContent = '■ 멈춤';
+      iv = setInterval(() => { const s = (Date.now() - t0) / 1000; timerEl.textContent = s.toFixed(1) + '초'; if (s > 15) btn.click(); }, 100);
+    } else {
+      clearInterval(iv); cur.mr.stop(); const blob = await cur.done; cur = null; btn.textContent = label; onBlob(blob);
+    }
+  };
+}
+
+$('#mixBtn').onclick = () => { const ra = $('#refAudio'), mb = $('#mixBtn'), mix = mb.textContent.indexOf('배경음 포함') === 0;
+  ra.src = 'api/clips/' + clip.id + (mix ? '/mix.wav' : '/ref.wav'); mb.textContent = mix ? '목소리만 듣기' : '배경음 포함으로 듣기'; ra.play(); };
+bindRec($('#ownRec'), $('#ownTimer'), b => { ownBlob = b; const a = $('#ownAudio'); a.src = URL.createObjectURL(b); a.hidden = false; });
+$('#ownFile').onchange = e => { ownBlob = e.target.files[0] || null; if (ownBlob) { const a = $('#ownAudio'); a.src = URL.createObjectURL(ownBlob); a.hidden = false; } };
+bindRec($('#rec'), $('#timer'), b => { takeBlob = b; const a = $('#takeAudio'); a.src = URL.createObjectURL(b); a.hidden = false; analyze(); });
+$('#again').onclick = () => analyze();
+
+function key() { return clip ? 'clip:' + clip.id : 'own:' + $('#ownText').value.trim(); }
+
+async function analyze() {
+  if (!takeBlob) return;
+  const fd = new FormData(); fd.append('take', takeBlob, 'take');
+  if (clip) fd.append('clip', clip.id);
+  else {
+    const t = $('#ownText').value.trim();
+    if (!t || !ownBlob) { setMsg('내 원본을 쓰려면 대사와 원본 음성이 둘 다 필요해요.', true); return; }
+    fd.append('text', t); fd.append('ref', ownBlob, 'ref');
+  }
+  setMsg('분석 중…'); $('#rec').disabled = true;
+  let r;
+  try { const res = await fetch('api/compare', {method: 'POST', body: fd}); r = await res.json(); if (!res.ok) throw new Error(r.error || res.status); }
+  catch (e) { setMsg('분석하지 못했어요: ' + e.message, true); $('#rec').disabled = false; return; }
+  $('#rec').disabled = false; $('#again').hidden = false;
+  setMsg('분석 ' + (r.ms / 1000).toFixed(1) + '초. 지적한 곳을 원본·내 녹음으로 번갈아 들어 보고, 다시 녹음해 보세요.');
+  showFirst(r);
+  const f = $('#report'); f.hidden = false; f.srcdoc = r.html;
+  f.onload = () => { try { f.style.height = (f.contentDocument.documentElement.scrollHeight + 8) + 'px'; } catch (e) {} };
+  prev = {key: key(), r: r};
+}
+
+// 첫 지적 + 지난 시도와 비교(계획서 5.3)
+function worst(r, it) { let m = null; for (let i = it.i; i <= (it.i_end == null ? it.i : it.i_end); i++) {
+  const c = r.rows[i] && r.rows[i].checks[it.type]; if (c && (m == null || c.ratio > m.ratio)) m = c; } return m; }
+function fmt(type, c) { if (!c) return '못 잼';
+  if (type === 'duration') return c.diff.toFixed(2) + '배';
+  if (type === 'pause') return Math.abs(c.diff).toFixed(2) + '초 차이';
+  if (type === 'energy') return Math.abs(c.diff).toFixed(0) + 'dB 차이';
+  return Math.abs(c.diff).toFixed(1) + '반음 차이'; }
+function showFirst(r) {
+  const box = $('#first'); box.hidden = false; box.innerHTML = '';
+  const before = prev && prev.key === key() ? prev.r : null;
+  if (before && before.selected.length) {
+    const ba = document.createElement('div'); ba.className = 'ba';
+    ba.innerHTML = '<b>지난번 지적은 어떻게 됐나요?</b>';
+    before.selected.forEach(it => { if (it.i == null) return; const a = worst(before, it), b = worst(r, it);
+      const d = document.createElement('div'); let cls = 'not', word = '아직 비슷해요';
+      if (!b) { cls = 'near'; word = '이번엔 확실히 못 쟀어요 — 한 번 더 녹음해 보세요'; }
+      else if (b.ratio <= 1) { cls = 'good'; word = '좋아요 — 원본에 가까워졌어요'; }
+      else if (a && b && b.ratio < a.ratio * 0.7) { cls = 'near'; word = '가까워졌어요'; }
+      d.className = cls; d.textContent = it.say.where + ' ' + ({pitch_level: '음높이', pitch_dir: '끝 억양', duration: '길이', pause: '쉼', energy: '세기'})[it.type] +
+        ': 이전 ' + fmt(it.type, a) + ' → 지금 ' + fmt(it.type, b) + ' · ' + word;
+      ba.appendChild(d); });
+    box.appendChild(ba);
+  }
+  const h = document.createElement('div');
+  if (!r.quality.ok) { const s = r.quality.say || {what: '녹음을 원본과 확실히 맞추지 못했어요', how: '조용한 곳에서, 같은 대사를 끝까지 다시 녹음해 주세요'};
+    h.innerHTML = '<div class="what"></div><div class="how"></div>';
+    h.querySelector('.what').textContent = s.what; h.querySelector('.how').textContent = s.how + '.'; }
+  else if (!r.selected.length) { h.innerHTML = '<div class="what">원본과 거의 같아요!</div><div class="how"></div>';
+    h.querySelector('.how').textContent = r.minor && r.minor.length ? '더 다듬으려면: ' + r.minor[0].say.what + ' → ' + r.minor[0].say.how : '어긋난 곳을 찾지 못했어요.'; }
+  else { const s = r.selected[0].say; h.innerHTML = '<div class="what"></div><div class="how"></div><div class="detail"></div>';
+    h.querySelector('.what').textContent = '❶ ' + s.what; h.querySelector('.how').textContent = s.how; h.querySelector('.detail').textContent = s.detail +
+      (r.selected.length > 1 ? ' · 다음: ' + r.selected[1].say.what : ''); }
+  box.appendChild(h);
+  if (r.quality.note) { const n = document.createElement('div'); n.className = 'detail'; n.textContent = '※ ' + r.quality.note; box.appendChild(n); }
+  if (labelsOn) box.appendChild(askBox(r));
+}
+
+// 사람 판단 모으기 — 원본·내 녹음을 들어 보고 지적이 맞는지(허용치 보정 · Phase 0 귀 확인)
+function askBox(r) {
+  const wrap = document.createElement('div'); wrap.className = 'ask';
+  const items = r.selected.map(s => ({s: s, tier: 'main'})).concat((r.minor || []).slice(0, 1).map(s => ({s: s, tier: 'minor'})));
+  if (r.quality.ok && !r.selected.length) items.unshift({s: {type: 'pass', say: {what: '원본과 거의 같다는 판정'}}, tier: 'pass'});
+  if (!items.length) return wrap;
+  const q = document.createElement('div'); q.className = 'q'; q.textContent = '원본과 내 녹음을 번갈아 들어 보고, 지적이 귀로 들어도 맞는지 골라 주세요.';
+  wrap.appendChild(q);
+  items.forEach(({s, tier}) => { const row = document.createElement('div'); row.className = 'it';
+    const t = document.createElement('span'); t.textContent = (tier === 'minor' ? '(다듬을 곳) ' : '') + s.say.what; row.appendChild(t);
+    [['yes', '맞아요'], ['no', '아니에요'], ['unsure', '모르겠어요']].forEach(([v, label]) => { const b = document.createElement('button');
+      b.textContent = label; b.onclick = async () => { row.querySelectorAll('button').forEach(x => x.disabled = true);
+        try { await fetch('api/label', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+          result: r.result, clip: clip ? clip.id : 'own', line: r.line, verdict: v, item: {type: s.type, i: s.i, i_end: s.i_end,
+          dir: s.dir, diff: s.diff, ratio: s.ratio, what: s.say.what, tier: tier}})}); b.textContent = label + ' ✓'; }
+        catch (e) { b.textContent = '보내지 못했어요'; } };
+      row.appendChild(b); });
+    wrap.appendChild(row); });
+  return wrap;
+}
+loadClips();
+</script>
+</body>
+</html>
