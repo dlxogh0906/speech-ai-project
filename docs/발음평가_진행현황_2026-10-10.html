@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>발음평가 진행 현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 레이아웃: 한 줄 보고서(최대 1080px). 맨 위 두 갈래(한국어·영어) 요약 카드 → 갈래별 상세 → 공통 과제 → 출처.
+   두 갈래는 색으로만 구분한다(한국어 = 청록, 영어 = 코발트). 상태는 별도 의미색(운영·주의·막힘). */
+:root {
+  --bg: #f4f6f5;
+  --surface: #ffffff;
+  --sunken: #eaeeec;
+  --ink: #17211e;
+  --muted: #586560;
+  --line: #d6ddd9;
+  --ko: #12705b;
+  --ko-soft: #dcefe8;
+  --en: #2b58a6;
+  --en-soft: #e0e8f6;
+  --good: #2c7a3f;
+  --good-soft: #e1f1e5;
+  --warn: #9a5b00;
+  --warn-soft: #f8ead2;
+  --bad: #b02a22;
+  --bad-soft: #f8e1df;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --f-mono: "IBM Plex Mono", "IBM Plex Sans KR", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Apple SD Gothic Neo", "Malgun Gothic", monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1412; --surface: #151d1a; --sunken: #1b2522; --ink: #e5ebe8; --muted: #9aa8a2; --line: #2a3632;
+    --ko: #4fc4a3; --ko-soft: #183a31; --en: #86abf2; --en-soft: #1c2b47;
+    --good: #72c584; --good-soft: #193524; --warn: #f0b660; --warn-soft: #3a2c14; --bad: #f2908a; --bad-soft: #3d1e1c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1412; --surface: #151d1a; --sunken: #1b2522; --ink: #e5ebe8; --muted: #9aa8a2; --line: #2a3632;
+  --ko: #4fc4a3; --ko-soft: #183a31; --en: #86abf2; --en-soft: #1c2b47;
+  --good: #72c584; --good-soft: #193524; --warn: #f0b660; --warn-soft: #3a2c14; --bad: #f2908a; --bad-soft: #3d1e1c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.65; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(26px, 4.2vw, 36px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 23px; font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+a { color: inherit; }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--sunken); padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* 머리 */
+header.top { display: flex; flex-direction: column; gap: 10px; }
+header.top .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 14px; }
+
+/* 고정 목차 */
+nav.toc { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  margin-inline: -20px; padding-inline: 20px; padding-block: 10px; display: flex; gap: 6px; overflow-x: auto; }
+nav.toc a { text-decoration: none; font-size: 14px; padding: 4px 10px; border-radius: 999px; white-space: nowrap; color: var(--muted); }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--sunken); color: var(--ink); outline: none; }
+
+/* 갈래 표시 */
+.tag { display: inline-flex; align-self: flex-start; width: fit-content; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 12px; font-weight: 500;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: 0.04em; }
+.tag.ko { background: var(--ko-soft); color: var(--ko); }
+.tag.en { background: var(--en-soft); color: var(--en); }
+.pill { display: inline-block; font-size: 12.5px; font-weight: 500; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* 한눈에 */
+.glance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.card .head h3 { font-size: 19px; }
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+.kpi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi b { font-family: var(--f-mono); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.card.ko .kpi b { color: var(--ko); }
+.card.en .kpi b { color: var(--en); }
+.kpi span { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.card dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; font-size: 14px; }
+.card dt { color: var(--muted); }
+.card dd { margin: 0; min-width: 0; }
+
+/* 갈래 절 */
+section.track { display: flex; flex-direction: column; gap: 26px; }
+section.track > .sec-head { display: flex; flex-direction: column; gap: 6px; padding-bottom: 12px; border-bottom: 2px solid var(--line); }
+section.track.ko > .sec-head { border-bottom-color: var(--ko); }
+section.track.en > .sec-head { border-bottom-color: var(--en); }
+.block { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.note { font-size: 13.5px; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 4px; max-width: 76ch; }
+
+/* 타임라인 */
+ol.timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+ol.timeline li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; padding-block: 9px; border-top: 1px solid var(--line); }
+ol.timeline li:first-child { border-top: 0; }
+ol.timeline time { font-family: var(--f-mono); font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 1px; }
+ol.timeline li > div { min-width: 0; }
+
+/* 표 */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 8px 12px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+thead th { border-top: 0; background: var(--sunken); font-size: 12.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.cur td { background: var(--en-soft); }
+.track.ko tr.cur td { background: var(--ko-soft); }
+td .sub { display: block; font-size: 12.5px; color: var(--muted); }
+td.up { color: var(--good); font-weight: 500; }
+td.down { color: var(--bad); font-weight: 500; }
+
+/* 막대 */
+.bars { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 56px; gap: 8px 12px; align-items: center; font-size: 14px; }
+.bars .lab { min-width: 0; overflow-wrap: anywhere; }
+.bars .track-bg { position: relative; height: 14px; background: var(--sunken); border-radius: 3px; }
+.bars .fill { position: absolute; inset: 0 auto 0 0; background: var(--en); border-radius: 3px; }
+.bars .fill.ref { background: var(--ko); }
+.bars .val { font-family: var(--f-mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+.axis { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 56px; gap: 0 12px; font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); }
+.axis .ticks { position: relative; height: 16px; }
+.axis .ticks span { position: absolute; top: 0; transform: translateX(-50%); }
+.axis .ticks span:first-child { transform: none; }
+.axis .ticks span:last-child { transform: translateX(-100%); }
+
+/* 문제 목록 */
+.issues { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.issue { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); }
+.issue:first-child { border-top: 0; }
+.issue h4 { margin: 0 0 2px; font-size: 15px; }
+.issue p { font-size: 14px; color: var(--muted); max-width: none; }
+
+/* 다음 할 일 */
+.next { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.next .card { gap: 8px; }
+.next .card h3 { font-size: 16px; }
+.next .card p { font-size: 14px; color: var(--muted); }
+
+footer { font-size: 13px; color: var(--muted); }
+footer ul { margin: 6px 0 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 2px; }
+
+@media (max-width: 760px) {
+  .glance, .next { grid-template-columns: minmax(0, 1fr); }
+  ol.timeline li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .bars, .axis { grid-template-columns: minmax(0, 96px) minmax(0, 1fr) 48px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 56px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">음성 AI · 발음평가</span>
+  <h1>발음평가 진행 현황</h1>
+  <p class="muted">외국인의 한국어 발음평가와 한국인의 영어 발음평가, 두 갈래로 지금까지 한 일과 수치, 남은 문제를 정리했다.</p>
+  <div class="meta"><span>2026-10-10 기준</span><span>수치마다 측정 모델과 데이터를 함께 적었다</span></div>
+</header>
+
+<nav class="toc" aria-label="목차">
+  <a href="#glance">한눈에</a><a href="#ko">한국어</a><a href="#en">영어</a><a href="#next">다음 할 일</a><a href="#src">출처</a>
+</nav>
+
+<section id="glance" class="block">
+  <div class="glance">
+    <article class="card ko">
+      <div class="head"><span class="tag ko">KO</span><h3>외국인 → 한국어</h3><span class="pill good">운영 중</span></div>
+      <div class="kpis">
+        <div class="kpi"><b>0.496</b><span>오류 검출 F1<br>정밀도 0.477 · 재현율 0.518</span></div>
+        <div class="kpi"><b>44%</b><span>틀린 소리를 들린 그대로 받아씀<br>(48%는 표준발음으로 덮음)</span></div>
+        <div class="kpi"><b>2.26%</b><span>맞게 읽은 자리를 틀렸다고 함</span></div>
+        <div class="kpi"><b>0.67·0.69·0.76</b><span>점수 상관(화자 단위)<br>발음 · 이해 · 유창</span></div>
+      </div>
+      <dl>
+        <dt>모델</dt><dd>w2v-BERT 2.0 CTC (<code>step_38000</code>, 5.8억)</dd>
+        <dt>서비스</dt><dd>8932 API(SpeechSuper <code>sent.eval.kr</code> 호환) · GPU 서버와 NPU 서버</dd>
+        <dt>측정</dt><dd>학습에 쓴 문항을 새 화자가 읽은 184,074발화</dd>
+        <dt>큰 과제</dt><dd>처음 보는 문장, 현장 소음</dd>
+      </dl>
+    </article>
+    <article class="card en">
+      <div class="head"><span class="tag en">EN</span><h3>한국인 → 영어</h3><span class="pill warn">내부 시험</span></div>
+      <div class="kpis">
+        <div class="kpi"><b>0.61</b><span>발음 점수와 사람 점수 상관<br>5문장 평균이면 0.83</span></div>
+        <div class="kpi"><b>16%</b><span>사람이 틀렸다고 한 단어 중 지적<br>(지적의 66%가 실제 오류)</span></div>
+        <div class="kpi"><b>22%</b><span>틀린 소리를 들린 그대로 받아씀</span></div>
+        <div class="kpi"><b>1.8%</b><span>맞게 읽은 소리에 지적·힌트가 붙음</span></div>
+      </div>
+      <dl>
+        <dt>모델</dt><dd>공개 음소 인식기 + 한국인 오류 합성 음성 + AIHub 037 (<code>synth-d</code>) · 037 문장 점수기</dd>
+        <dt>서비스</dt><dd>8952 API(한국어 API와 같은 형식) · 이 서버 안에서만 열림</dd>
+        <dt>측정</dt><dd>점수: 037 한국인 882명(새 화자) · 지적: L2-ARCTIC 한국인 4명(개발용)</dd>
+        <dt>큰 과제</dt><dd>오류를 많이 놓침, 한국인 정답지 없음, 앱 연결 전</dd>
+      </dl>
+    </article>
+  </div>
+</section>
+
+<section class="track ko" id="ko">
+  <div class="sec-head">
+    <span class="tag ko">KO · 외국인 → 한국어</span>
+    <h2>한국어 발음평가</h2>
+    <p class="muted">외국인이 읽은 한국어 문장에서 자모 단위로 어디를 어떤 소리로 냈는지 찾고, 발음·이해·유창을 1~5점으로 매긴다. SpeechSuper 형식의 API로 앱에 붙어 있다.</p>
+  </div>
+
+  <div class="block">
+    <h3>걸어온 길</h3>
+    <ol class="timeline">
+      <li><time>2026-07-11</time><div>XLS-R 300m + CTC 음소 인식기(자모 46종) 첫 버전.</div></li>
+      <li><time>2026-07-18</time><div>4개 언어권 TAG 통합 학습(<code>tag_all</code>)에 이어 LAR 이어학습(<code>tag_all_lar</code>). 보고용 수치(weighted F1 0.9547)의 기준 모델이다.</div></li>
+      <li><time>2026-07-22</time><div>평가 잣대를 TAG(사람이 들은 실제 발음)로 확정. gold로 재면 TAG에서 0.965인 공식 모델도 F1 0.42로 떨어진다.</div></li>
+      <li><time>2026-07-29</time><div>저장소 정리, 고정 정답지 감사, 문장 암기 원인 규명(홀드아웃 실험).</div></li>
+      <li><time>2026-08-05</time><div>배포 모델을 <code>tag_all_native</code>로 교체. 사용자 화면에서 삭제·삽입형 지적을 숨김.</div></li>
+      <li><time>2026-09-15</time><div>ONNX 경량화, 실제 발음 CTC 실험, 2단계 학습, 백본 비교(300m, 1B).</div></li>
+      <li><time>2026-09-20</time><div>w2v-BERT 2.0 학습, <code>step_38000</code> 선택. 지금 서비스 모델이다(날짜는 체크포인트 파일 시각).</div></li>
+      <li><time>2026-09-23</time><div>8932 API를 SpeechSuper <code>sent.eval.kr</code> 호환으로 정리.</div></li>
+      <li><time>2026-09-25</time><div>SpeechSuper와 같은 녹음 30건 비교. 9월 26일에 점수 눈금(백분위), 속도·쉼 유창성, 0점 → null을 정리했다.</div></li>
+      <li><time>2026-09-27</time><div>MDD 오류 분석, 자리 단위 보정기, NPU 서버 운영 시작(토큰 인증), NPU와 GPU 비교.</div></li>
+      <li><time>2026-09-28</time><div>처음 보는 문항 일반화 실험(H0·H4, 학습률·층 고정·마스킹 S1~S6, 의사라벨).</div></li>
+      <li><time>2026-10-01</time><div>발음 챌린지(단어 PERFECT/MISS) 데모와 GPU·NPU 실측, 사람 TAG 라벨링 파일럿 설계.</div></li>
+      <li><time>2026-10-04</time><div>NPU 서버 공개 입구에 발음 API 연결, 이튿날 재부팅 자동 시작(systemd).</div></li>
+      <li><time>2026-10-08</time><div>서비스 모델 소음 강건성 측정(아래 표).</div></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>모델</h3>
+    <p class="note">수치마다 평가셋을 붙였다. "본 문항"은 학습에 쓴 문항을 새 화자가 읽은 조건이다. 모델마다 평가셋이 달라 줄끼리 바로 비교하면 안 된다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>모델</th><th>쓰임</th><th>핵심 수치</th><th>평가셋</th></tr></thead>
+      <tbody>
+        <tr class="cur"><td class="mono">step_38000<span class="sub">w2v-BERT 2.0 · 5.8억</span></td><td><span class="pill good">지금 서비스</span><span class="sub">8932 API(GPU) · NPU 서버 · 챌린지</span></td><td>오류 검출 F1 0.4964 (정밀도 0.4768 · 재현율 0.5177)<br>들린 그대로 43.98% · 표준으로 덮음 48.23%<br>맞게 읽은 자리 헛지적 2.26% · 자모 오인식 4.71%</td><td>본 문항, 184,074발화</td></tr>
+        <tr><td class="mono">tag_all_native<span class="sub">XLS-R 300m</span></td><td>이전 서비스(8월 5일~)<span class="sub">serve.sh · mdd-api</span></td><td>weighted F1 0.9558 · 오류 F1 0.4518<br>MDD F1 0.4565 · 헛지적 1.65% · 표준으로 덮음 58.4%</td><td>TAG test 178,049 / 본 문항 23,562</td></tr>
+        <tr><td class="mono">tag_all_lar<span class="sub">XLS-R 300m</span></td><td>보고용 수치 기준</td><td>weighted F1 0.9547 · 오류 F1 0.4319 (정밀도 0.4663 · 재현율 0.4022)</td><td>TAG test 178,049</td></tr>
+        <tr><td>문장 독립 판별기</td><td>실험(데모 내림)</td><td>F1 0.514 · 헛지적 2.45% · AUC 0.946</td><td>처음 보는 문항 23,562</td></tr>
+        <tr><td>자리 단위 보정기</td><td>서비스 미연결</td><td>같은 지적 수에서 정밀도 0.557 → 0.648. 처음 보는 문항에서는 0.665 → 0.304로 무너진다</td><td>TAG test 178,049</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">w2v-BERT로 바꾼 효과(본 문항 23,562): F1 0.4565 → 0.4928, 들린 그대로 35.5% → 43.2%, 표준으로 덮음 58.4% → 49.6%. 대신 헛지적이 1.65% → 2.21%로 늘었다.</p>
+  </div>
+
+  <div class="block">
+    <h3>점수 (1~5)</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>모델</th><th class="n">발화 1개<span class="sub">발음 · 이해 · 유창</span></th><th class="n">화자 전체 평균<span class="sub">발음 · 이해 · 유창</span></th></tr></thead>
+      <tbody>
+        <tr><td class="mono">tag_all_lar</td><td class="n">0.425 · 0.427 · 0.607</td><td class="n">0.662 · 0.683 · 0.762</td></tr>
+        <tr><td class="mono">tag_all_native</td><td class="n">0.431 · 0.431 · 0.608</td><td class="n">0.671 · 0.688 · 0.764</td></tr>
+        <tr class="cur"><td class="mono">step_38000</td><td class="n">—</td><td class="n">0.671 · 0.687 · 0.762</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="plain">
+      <li>라벨 분산의 74~94%가 화자 차이라서, 점수는 여러 발화를 모은 화자 단위로만 믿을 수 있다.</li>
+      <li>API 화면 점수: 발음 = 음소 점수 평균, 유창 = 속도·쉼 규칙(사람과 상관 0.44 / 화자 0.68), 이해 = 학습자 분포 백분위(80 = 상위 20%), 종합 = 0.6·발음 + 0.2·유창 + 0.2·이해.</li>
+      <li>백분위를 쓴 이유: 사람 점수 평균이 3.30/5라서 5점 비례로 바꾸면 잘 읽어도 76점이 천장이었다.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>핵심 발견</h3>
+    <div class="tbl"><table>
+      <tbody>
+        <tr><td>weighted F1의 함정</td><td>정상 자리가 95.86%라서 전부 "정상"으로 찍어도 0.9384가 나온다. 0.9547의 실제 개선폭은 +0.0163이고, 오류만 보면 F1 0.43이다.</td></tr>
+        <tr><td>문장 암기</td><td>학습 155만 발화가 287문장뿐이다(문장당 5,398회). 홀드아웃 실험에서 본 문장 weighted F1 0.9509 · 오탐 1.93% → 안 본 문장 0.8218 · 25.31%. 화자 일반화는 정상이다. 문장 다양성만 효과가 있었다(격차 −43%). w2v-BERT도 안 본 문항에서 헛지적이 2.95배로 늘었고, 학습률·층 고정·마스킹은 효과가 없었다.</td></tr>
+        <tr><td>약한 오류 종류</td><td>step_38000은 삽입형의 74.6%를 놓치고 모음 F1이 0.37이다. 세기 차이를 표준으로 덮는다: ㅅ→ㅆ 88.6% · ㅈ→ㅊ 74.5% · ㄱ→ㅋ 63.6%. 20초가 넘는 입력은 출력이 빠진다.</td></tr>
+        <tr><td>SpeechSuper 비교</td><td>같은 녹음 27건(정답 라벨 없음, 9월 26일 눈금 정리 전). 종합 82.9 대 84.9, 발음 93.6 대 94.7, 유창 66.3 대 92.1. 어느 쪽이 맞는지는 판정하지 않았다.</td></tr>
+        <tr><td>NPU 대 GPU</td><td>앱 녹음 161건 중 157건의 인식 결과가 같고 점수 차이는 평균 0.007점. 모델 계산 중앙값 NPU 28 ms · GPU 34 ms(20초 입력은 429 ms · 45 ms).</td></tr>
+        <tr><td>발음 챌린지</td><td>맞게 읽어도 MISS가 뜨는 비율: 학습 단어 2.2% · 처음 보는 단어 22%(느슨 판정). 엄격 판정이면 12.0% · 69.0%.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>소음에 얼마나 버티나 (2026-10-08)</h3>
+    <p class="note">서비스 모델에 API와 같은 처리 경로로 외국인 발화 1,200개(사람 라벨)를 넣고 소음을 섞었다. dB는 말소리가 소음보다 얼마나 큰지다. 웅성거림은 부스·전시장, 저주파 소음은 기차·차량을 흉내 냈다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>조건</th><th class="n">틀린 소리를 들린 그대로</th><th class="n">맞게 읽은 곳 헛지적</th><th class="n">자모 오인식</th><th class="n">배경 말소리를 받아 적음</th><th class="n">발음 점수 변화</th></tr></thead>
+      <tbody>
+        <tr><td>소음 없음</td><td class="n">42%</td><td class="n">3.2%</td><td class="n">6%</td><td class="n">0.2%</td><td class="n">—</td></tr>
+        <tr><td>웅성거림 20 dB</td><td class="n">40%</td><td class="n">3.3%</td><td class="n">6%</td><td class="n">0.5%</td><td class="n">−0.01</td></tr>
+        <tr><td>웅성거림 10 dB</td><td class="n">34%</td><td class="n down">6.0%</td><td class="n down">28%</td><td class="n down">20%</td><td class="n">−0.25</td></tr>
+        <tr><td>웅성거림 5 dB</td><td class="n">29%</td><td class="n down">13.9%</td><td class="n down">62%</td><td class="n down">46%</td><td class="n">−0.48</td></tr>
+        <tr><td>웅성거림 0 dB</td><td class="n">18%</td><td class="n down">37%</td><td class="n down">126%</td><td class="n down">87%</td><td class="n">−0.82</td></tr>
+        <tr><td>저주파 소음 0 dB</td><td class="n">31%</td><td class="n">10.5%</td><td class="n">14%</td><td class="n">0.5%</td><td class="n">−0.19</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="plain">
+      <li>20 dB는 소음이 없을 때와 같고, 10 dB부터 무너진다. 모델이 주변 사람 말소리까지 받아 적기 때문이다.</li>
+      <li>서버 성능(NPU·GPU)은 원인이 아니다. 현장에서는 휴대폰을 입에서 5~10 cm 안에 두거나 헤드셋 마이크를 쓰는 것이 가장 효과가 크다.</li>
+      <li>"주변이 시끄러워요, 다시 녹음" 판정(모델 확신도 + 받아 적은 배경 말소리 비율)으로 망가진 녹음의 79%를 잡고 멀쩡한 녹음은 3.6%만 거절했다. 합성 소음 기준이며, API에는 아직 넣지 않았다.</li>
+      <li>브라우저·휴대폰 잡음 억제는 웅성거림에서 배경 말소리 받아 적기를 줄이지만(5 dB에서 46% → 11%), 틀린 소리를 짚는 능력은 되살리지 못한다.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>서비스·데모</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>이름</th><th class="n">포트</th><th>하는 일</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>발음 API</td><td class="n">8932</td><td>SpeechSuper <code>sent.eval.kr</code> 호환 + 확인용 화면, 토큰 인증</td><td><span class="pill good">운영</span> GPU 서버 · NPU 서버(공개 입구, 자동 시작)</td></tr>
+        <tr><td>발음 챌린지</td><td class="n">8946</td><td>단어 하나씩 PERFECT/GOOD/MISS, 녹음 저장 안 함</td><td>내부</td></tr>
+        <tr><td>SpeechSuper 비교 · 결과 열람</td><td class="n">8934 · 8940</td><td>같은 녹음을 두 API에 보내 비교</td><td>내부</td></tr>
+        <tr><td>TAG 라벨링 파일럿</td><td class="n">8948</td><td>사람이 들은 발음 전사 화면(40발화, 전사자 2명)</td><td>내부</td></tr>
+        <tr><td>녹음 수집</td><td class="n">8923</td><td>실기기 녹음 수집, 부스용</td><td>운영</td></tr>
+        <tr><td>예전 계열</td><td class="n">8914 · 8901 · 8902 · 8921 · 8930</td><td>mdd-api, 진단 화면, 모델 비교, 판별기, 나란히 듣기</td><td class="muted">내려감</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>남은 문제</h3>
+    <div class="issues">
+      <div class="issue"><span><span class="pill bad">큼</span></span><div><h4>처음 보는 문장에 약하다</h4><p>학습 문항이 226종뿐이라 모델이 문장을 외운다. 서비스 모델의 깨끗한 "안 본 문장" 성능은 아직 재지 못했다(문항을 빼고 다시 학습해야 한다). 검증된 처방은 문장 다양성이고, 사람 TAG 라벨링이 1순위다.</p></div></div>
+      <div class="issue"><span><span class="pill bad">큼</span></span><div><h4>현장 소음</h4><p>웅성거림 10 dB부터 무너진다. "다시 녹음" 판정은 만들어 재 봤지만 API에 넣지 않았고, 소음을 섞은 추가 학습도 아직이다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>검출력</h4><p>재현율이 0.5 안팎이고 맞게 읽은 자리 헛지적이 2.2%(10문장에 두 번꼴)다. 삽입·모음·세기 차이가 약하고, 허용 발음('의' → [에])을 처리하지 않는다. 보정기는 서비스에 붙이지 않았다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>점수</h4><p>발화 1개로는 상관 0.43 수준이다. 세션(여러 발화) 기준이 문서마다 5발화·10발화·30발화로 다르다. 억양·강세·어휘·문법은 평가하지 않는다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>운영</h4><p>요청을 하나씩 처리하고 세션이 프로세스 메모리에만 있다. 모니터링이 없고 녹음 보관 기간이 정해지지 않았다. 앱 화면에 AI허브 출처 표기가 필요하다.</p></div></div>
+    </div>
+    <p class="note">결정이 필요한 것: 서비스 모델 교체 여부, 고정 문장과 자유 문장 중 어디까지 지원할지, AIHub 데이터의 상용 범위, 말하기 평가 시작 여부.</p>
+  </div>
+</section>
+
+<section class="track en" id="en">
+  <div class="sec-head">
+    <span class="tag en">EN · 한국인 → 영어</span>
+    <h2>영어 발음평가</h2>
+    <p class="muted">한국인 학습자의 영어 문장 발음을 채점한다. 요청·응답 형식은 한국어 API와 같아서 앱이 주소와 문장만 바꿔 붙일 수 있다.</p>
+  </div>
+
+  <div class="block">
+    <h3>걸어온 길</h3>
+    <ol class="timeline">
+      <li><time>2026-10-04</time><div>공개 자원 조사. 상업적으로 쓸 수 있으면서 실제 L2 발음 전사로 학습한 영어 인식기는 하나도 없었다. Meta 공개 음소 인식기(wav2vec2 lv-60-espeak, Apache-2.0)를 골라 한국어 엔진과 같은 구조로 감쌌다. 점수는 speechocean762(CC BY 4.0) 사람 점수로 맞추고, 한국어 API와 같은 형식의 영어 API를 만들었다.</div></li>
+      <li><time>2026-10-04</time><div>SpeechSuper 영어와 비교하려 했으나 우리 키에 영어 권한이 없었다(<code>errId 41030</code>). 비교 스크립트만 준비해 두었다.</div></li>
+      <li><time>2026-10-05</time><div>코드 리뷰와 수정. AIHub 037(교육용 한국인의 영어 음성) 120개 파일, 81 GB를 받아 풀었다(112 GB). 한국인 882명, 문장별 사람 조음·운율 점수가 있다.</div></li>
+      <li><time>2026-10-06</time><div>037로 추가 학습(<code>en037-v1</code>). 037의 음소 라벨이 사람 전사가 아니라 STT로 자동 생성된 것이어서 "들린 그대로" 받아쓰기는 나아지지 않았다. 점수의 한국인 오류 판별력만 올랐다(AUC 0.711 → 0.769).</div></li>
+      <li><time>2026-10-06</time><div>한국인 대표 오류(f→p, v→b, r↔l, θ→s 등)를 넣은 합성 음성 41시간(Kokoro-82M, Apache-2.0)과 037 자가 학습 라벨로 다시 학습했다(<code>synth-a/b/d</code>). 들린 그대로 받아쓰는 비율이 15% → 22~48%로 올랐다.</div></li>
+      <li><time>2026-10-06</time><div>전문가 리뷰(5개 분야)에서 받아쓰기만 고치고 "틀린 곳 표시"와 점수는 한국인 기준으로 재지 않았다는 지적을 받았다. 표시 규칙 v2로 바꾸고 문서 수치를 바로잡았다. 녹음 → 점수 → "v를 b로 발음했어요" 피드백을 보여 주는 데모 페이지를 만들었다.</div></li>
+      <li><time>2026-10-10</time><div>문장 점수를 037 한국인 사람 점수로 다시 맞췄다(<code>synth-d-ko037</code>). 발음 점수와 사람 점수의 상관이 0.41 → 0.61, 5문장 평균 0.83이 됐고 서버(8952)에 반영했다.</div></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>받아쓰기 모델 버전</h3>
+    <p class="note">L2-ARCTIC 한국인 4명(사람이 들은 발음을 적은 라벨) 기준이다. 이 데이터로 모델과 규칙을 고르기도 했으므로 개발용 수치다. speechocean762 수치는 synth-* 쪽이 일부 오염됐다(합성 문장에 test 문장 포함).</p>
+    <div class="tbl"><table>
+      <thead><tr><th>버전</th><th>만든 방법</th><th class="n">들린 그대로</th><th class="n">표준으로 덮음</th><th class="n">맞게 읽은 곳을 다르게</th><th class="n">오류 판별 F1</th><th class="n">한국인 오류 AUC</th><th class="n">so762 음소 PCC</th><th class="n">so762 종합 PCC</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">lv60-espeak</td><td>Meta 공개 모델 그대로</td><td class="n">15.4%</td><td class="n">76.1%</td><td class="n">8.7%</td><td class="n">0.232</td><td class="n">0.711</td><td class="n">0.598</td><td class="n">0.751</td></tr>
+        <tr><td class="mono">en037-v1</td><td>+ 037 자동 라벨 123시간</td><td class="n">14.1%</td><td class="n">76.2%</td><td class="n">8.3%</td><td class="n">0.235</td><td class="n">0.769</td><td class="n">0.641</td><td class="n">0.754</td></tr>
+        <tr><td class="mono">synth-a</td><td>+ 한국인 오류 합성 음성 41시간</td><td class="n">47.6%</td><td class="n">40.6%</td><td class="n">13.0%</td><td class="n">0.418</td><td class="n">0.812</td><td class="n">0.631</td><td class="n">0.772</td></tr>
+        <tr><td class="mono">synth-b</td><td>합성 + 037 자동 라벨</td><td class="n">21.7%</td><td class="n">68.4%</td><td class="n">8.3%</td><td class="n">0.299</td><td class="n">0.793</td><td class="n">0.645</td><td class="n">0.754</td></tr>
+        <tr class="cur"><td class="mono">synth-d <span class="pill good">서버</span></td><td>합성 + 037 자가 학습 라벨</td><td class="n">21.9%</td><td class="n">72.5%</td><td class="n">6.3%</td><td class="n">0.292</td><td class="n">0.788</td><td class="n">0.655</td><td class="n">0.755</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">synth-a는 오류를 가장 많이 잡지만 헛지적도 가장 많다. synth-d는 헛지적이 가장 적어서 서버에 올렸다. 비교만 하고 서비스에 못 쓰는 공개 모델(xlsr53, charsiu, huper, slplab)은 라이선스 문제가 있다.</p>
+  </div>
+
+  <div class="block">
+    <h3>들린 그대로 받아쓰는 비율</h3>
+    <p class="note">사람이 오류라고 적은 자리에서 모델도 그 소리로 적은 비율. 나머지는 대부분 표준발음으로 덮어 적는다.</p>
+    <div class="bars" role="img" aria-label="들린 그대로 받아쓰는 비율 막대 그래프">
+      <span class="lab mono">lv60-espeak</span><span class="track-bg"><span class="fill" style="width:25.67%"></span></span><span class="val">15.4%</span>
+      <span class="lab mono">en037-v1</span><span class="track-bg"><span class="fill" style="width:23.5%"></span></span><span class="val">14.1%</span>
+      <span class="lab mono">synth-a</span><span class="track-bg"><span class="fill" style="width:79.33%"></span></span><span class="val">47.6%</span>
+      <span class="lab mono">synth-b</span><span class="track-bg"><span class="fill" style="width:36.17%"></span></span><span class="val">21.7%</span>
+      <span class="lab mono">synth-d (서버)</span><span class="track-bg"><span class="fill" style="width:36.5%"></span></span><span class="val">21.9%</span>
+      <span class="lab">참고: 한국어 서비스</span><span class="track-bg"><span class="fill ref" style="width:73.33%"></span></span><span class="val">44.0%</span>
+    </div>
+    <div class="axis" aria-hidden="true"><span></span><span class="ticks"><span style="left:0%">0</span><span style="left:33.333%">20%</span><span style="left:66.667%">40%</span><span style="left:100%">60%</span></span><span></span></div>
+  </div>
+
+  <div class="block">
+    <h3>틀린 곳 표시 규칙 v1 → v2</h3>
+    <p class="note">synth-d, L2-ARCTIC 한국인 600문장, 단어 단위. v2는 "점수가 낮거나, 한국인 대표 오류 소리가 확실히 들리면" 지적한다. ð→d는 구분이 안 돼(AUC 0.50) 끄고, 근거 없는 소리는 지어내지 않으며, 모음 삽입은 숨긴다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>항목</th><th class="n">v1</th><th class="n">v2 (지금)</th></tr></thead>
+      <tbody>
+        <tr><td>지적한 단어 중 실제 오류</td><td class="n">68%</td><td class="n">66%</td></tr>
+        <tr><td>실제 오류 단어 중 지적한 비율</td><td class="n">7.8%</td><td class="n up">15.7%</td></tr>
+        <tr><td>맞게 읽은 단어를 지적</td><td class="n">1.5%</td><td class="n">3.4%</td></tr>
+        <tr><td>맞게 읽은 소리에 지적·힌트가 붙음</td><td class="n">3.5%</td><td class="n up">1.8%</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl"><table>
+      <thead><tr><th>사람이 들은 오류를 같은 소리로 지적</th><th class="n">θ→s</th><th class="n">r→l</th><th class="n">v→b</th><th class="n">ɛ→æ</th><th class="n">ɪ→iː</th><th class="n">ɝ→ʌ</th><th class="n">oʊ→ɔ</th><th class="n">z→s</th><th class="n">ð→d</th></tr></thead>
+      <tbody>
+        <tr><td>v1</td><td class="n">11%</td><td class="n">14%</td><td class="n">0%</td><td class="n">1%</td><td class="n">0%</td><td class="n">7%</td><td class="n">6%</td><td class="n">1%</td><td class="n">—</td></tr>
+        <tr class="cur"><td>v2</td><td class="n">50%</td><td class="n">43%</td><td class="n">37%</td><td class="n">29%</td><td class="n">23%</td><td class="n">17%</td><td class="n">14%</td><td class="n">6%</td><td class="n">판정 안 함</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>문장 점수 재보정 (2026-10-10)</h3>
+    <p class="note">speechocean762(중국인 학습자) 기준 점수기는 한국인에게 발음 점수가 96 ± 3에 몰려 사람을 거의 가르지 못했다. 037 낭독 26,444문장(882명)의 사람 조음·운율 점수로 다시 맞췄다. 모든 수치는 학습에 없던 화자에서 쟀다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>사람 점수와의 상관</th><th class="n">이전</th><th class="n">지금</th></tr></thead>
+      <tbody>
+        <tr><td>발음 vs 사람 조음, 문장 1개</td><td class="n">0.41</td><td class="n up">0.61</td></tr>
+        <tr><td>발음, 화자도 문장도 처음 보는 경우</td><td class="n">0.46</td><td class="n up">0.59</td></tr>
+        <tr><td>발음, 같은 화자 5문장 평균</td><td class="n">0.63</td><td class="n up">0.83</td></tr>
+        <tr><td>종합 vs 사람 조음·운율 평균</td><td class="n">0.52</td><td class="n up">0.64</td></tr>
+        <tr><td>운율 vs 사람 운율</td><td class="n">0.49</td><td class="n up">0.64</td></tr>
+        <tr><td>별도 검증: 037 말하기 평가(SPK, 879명) 종합 · 발음<span class="sub">자유 발화, 사람 점수는 말하기 전반 1개라 이전 대 지금으로만 읽는다</span></td><td class="n">0.51 · 0.42</td><td class="n up">0.57 · 0.57</td></tr>
+        <tr><td>speechocean762(중국인) 종합 · 발음</td><td class="n">0.756 · 0.640</td><td class="n">0.732 · 0.706</td></tr>
+        <tr><td>발음 점수 분포(0~100)</td><td class="n">96 ± 3</td><td class="n up">76 ± 18</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="plain">
+      <li>사람 조음 점수별 발음 점수 평균: 1점 37 · 2점 51 · 3점 66 · 4점 79 · 5점 89. 이전에는 91~97에 다 몰려 있었다.</li>
+      <li>종합 = 0.6·발음 + 0.2·유창성 + 0.2·운율. 한국어 API와 같은 비율이다.</li>
+      <li>눈금은 사람 점수 눈금(사람 4점 ≈ 80)으로 했다. 037 사람 점수가 평균 3.8/5로 높아서, 백분위로 펴면 사람이 4점 준 문장이 45 근처로 내려간다.</li>
+      <li>단어·음소 판정과 틀린 곳 표시는 바뀌지 않았다(비교 16문장 모두 같음).</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>지금 상태</h3>
+    <div class="tbl"><table>
+      <tbody>
+        <tr><td>API</td><td>포트 8952 · <code>/sent.eval</code>(같은 처리: <code>/sent.eval.promax</code>, <code>/sent.eval.en</code>) · 한국어 API와 같은 응답 모양 · 음소 기호는 ARPAbet·IPA · 한국인 대표 오류에는 <code>errorRule</code>·<code>errorHint</code>("f → p")</td></tr>
+        <tr><td>서버 구성</td><td>synth-d 받아쓰기 + 표시 규칙 v2 + 037 문장 점수기 · <span class="pill warn">이 서버 안에서만 열림</span> 앱은 아직 못 붙는다</td></tr>
+        <tr><td>처리 시간</td><td class="num">GPU 중앙값 약 56 ms(3초 문장) · CPU 약 0.7초</td></tr>
+        <tr><td>데모 페이지</td><td>문장 세트(f/p · v/b · r/l · th · z/s · 모음 · 직접 입력) → 녹음 → 점수와 "v를 b로 발음했어요" 피드백 → 연습 평균</td></tr>
+        <tr><td>코드</td><td><span class="pill warn">아직 커밋 안 함</span> 합성·자가 학습 순서 일부는 저장소 밖 스크립트에 있다</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>남은 문제</h3>
+    <div class="issues">
+      <div class="issue"><span><span class="pill bad">큼</span></span><div><h4>틀린 발음을 많이 놓친다</h4><p>사람이 틀렸다고 한 단어 중 16%만 지적한다. 들린 그대로 받아쓰는 비율이 22%로 한국어 서비스(44%)의 절반이다. th(ð→d)는 판정을 못 하고, 모음 끼워 넣기(desk → 데스크)는 정확도가 낮아 숨겼다. 오류 규칙이 사람이 표시한 오류의 63%만 다룬다.</p></div></div>
+      <div class="issue"><span><span class="pill bad">큼</span></span><div><h4>한국인 기준 정답지가 없다</h4><p>오류 판정 수치는 L2-ARCTIC 한국인 4명(상급 성인)뿐이고 개발에도 썼다. 037 음소 라벨은 기계가 만든 것이라 쓸 수 없다. 실제 앱 사용자(10대, 초급)에서 얼마나 맞는지 모른다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>점수의 한계</h4><p>문장 1개 상관은 0.6 수준이라 실력 판단은 여러 문장 평균으로 해야 한다. 운율이 발음과 상관 0.97이라 따로 주는 정보가 거의 없다. 유창성은 한국인 라벨이 없어 그대로다. 단어 점수(90점대)와 문장 발음 점수(70점대)의 눈금이 다르다. 강세·억양은 재지 않는다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>현장 소음과 외부 비교</h4><p>영어 쪽 소음 테스트는 아직 안 했다. 한국어에서는 웅성거림 10 dB부터 무너졌다. SpeechSuper 영어 비교는 권한이 없어 못 했다.</p></div></div>
+      <div class="issue"><span><span class="pill warn">중간</span></span><div><h4>운영과 법무</h4><p>외부 접속·NPU 이식 전이라 앱 연결이 안 된다. 요청을 하나씩 처리하고 세션 점수 API가 없다. L2-ARCTIC(비상업)을 모델 선택에 쓴 점과 Kokoro 학습 데이터 출처는 법무 확인이 남았다.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="next" class="block">
+  <h2>다음 할 일</h2>
+  <div class="next">
+    <article class="card"><h3>사람 라벨 만들기</h3><p>한국어는 처음 보는 문장을 사람이 들은 발음으로 전사한다(파일럿 화면이 있다). 영어는 모델이 의심한 자리를 뽑아 맞음/틀림만 표시한다. 두 갈래 모두 정확도를 제대로 재고 판정 기준을 고치려면 이게 먼저다.</p></article>
+    <article class="card"><h3>소음 대응</h3><p>현장에서는 휴대폰을 입 가까이 두거나 헤드셋 마이크를 쓴다. 소프트웨어로는 "다시 녹음" 판정을 API에 넣고(한국어 API 변경은 승인 필요), 소음을 섞어 추가 학습한다. 영어 쪽 소음 측정도 남았다.</p></article>
+    <article class="card"><h3>영어 앱 연결</h3><p>외부 접속(토큰)을 열거나 NPU 서버로 옮긴다. 여러 문장을 모아 점수를 내는 세션 API를 만들고, 단어 점수와 문장 점수의 눈금을 맞춘다. SpeechSuper 영어 권한을 받으면 외부 비교도 한다.</p></article>
+    <article class="card"><h3>정리와 확인</h3><p>코드를 커밋하고 학습 순서를 저장소로 옮긴다. 골든 수치 회귀 테스트를 만든다. 법무 확인: L2-ARCTIC(비상업)을 모델 선택에 쓴 점, Kokoro 학습 데이터 출처, AIHub 데이터의 상용 범위. 앱 화면에 AI허브 출처를 표기한다.</p></article>
+  </div>
+</section>
+
+<footer id="src">
+  <h3>출처</h3>
+  <p>수치는 모두 저장소 문서와 산출물에서 옮겼다. 경로는 저장소 기준이다.</p>
+  <ul>
+    <li>한국어: <code>CLAUDE.md</code> · <code>tasks/pronunciation-assessment/results/</code>의 01·03·08·15·16·17·18·19·20·22번 문서 · <code>deploy/pronunciation-demo/API.md</code> · <code>docs/NPU_GPU_성능비교.md</code></li>
+    <li>소음 측정(10-08): <code>$MDD_OUTPUTS/analysis/noise_robustness_2026-10-08/summary.txt</code> (결과 문서에는 아직 안 옮김)</li>
+    <li>영어: <code>results/23_영어발음평가_공개모델_구축_2026-10-04.md</code> §1~§12 · <code>deploy/pronunciation-en/API.md</code> · <code>README.md</code> · <code>$MDD_OUTPUTS/english/scorer/synth-d-ko037/sent_scorer_ko.md</code> · <code>sent_scorer_ko_spk.md</code></li>
+    <li>문서끼리 다른 값: 문장 암기 홀드아웃(results/08은 0.9509 → 0.8218, <code>docs/REMAINING_ISSUES.md</code> #9는 0.9567 → 0.8305), 응답 시간(API.md 약 0.7초, 진행현황 §5 약 150 ms). 이 페이지는 앞의 값을 썼다.</li>
+  </ul>
+</footer>
+
+</div>
+</body>
+</html>
