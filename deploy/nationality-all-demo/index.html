@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>국적 모델 전부 비교</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --muted: #6b6a64; --line: #e3e1da; --soft: #f0efea;
+  --accent: #2f4f8f; --accent-ink: #ffffff; --warn-bg: #fff6e0; --warn-ink: #7a5300;
+  --bar: #2f4f8f; --bar-bg: #ecebe6; --rec: #c2412d; --err-bg: #fdecea; --err-ink: #8a1f11;
+  --chip-l: 90%; --chip-ink-l: 24%; --chip-s: 65%;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151618; --card: #1e1f22; --ink: #ecebe6; --muted: #a2a19b; --line: #33343a; --soft: #26272b;
+    --accent: #8fb0f0; --accent-ink: #0f1a30; --warn-bg: #3a2f14; --warn-ink: #f2d38c;
+    --bar: #8fb0f0; --bar-bg: #2b2c30; --rec: #ef7a63; --err-bg: #3d1d18; --err-ink: #f5b5aa;
+    --chip-l: 24%; --chip-ink-l: 84%; --chip-s: 40%;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151618; --card: #1e1f22; --ink: #ecebe6; --muted: #a2a19b; --line: #33343a; --soft: #26272b;
+  --accent: #8fb0f0; --accent-ink: #0f1a30; --warn-bg: #3a2f14; --warn-ink: #f2d38c;
+  --bar: #8fb0f0; --bar-bg: #2b2c30; --rec: #ef7a63; --err-bg: #3d1d18; --err-ink: #f5b5aa;
+  --chip-l: 24%; --chip-ink-l: 84%; --chip-s: 40%;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 56px; }
+h1 { font-size: 1.5rem; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.card h2 { font-size: 1.05rem; margin: 0 0 12px; }
+.sent { font-size: 1.35rem; font-weight: 600; line-height: 1.45; margin: 4px 0 12px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button.btn { padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 0.95rem; cursor: pointer; }
+button.btn.on { background: var(--rec); border-color: var(--rec); color: #fff; }
+button.go { width: 100%; padding: 13px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-size: 1.02rem; font-weight: 600; cursor: pointer; margin-top: 14px; }
+button.go:disabled { opacity: 0.45; cursor: default; }
+audio { width: 100%; height: 36px; margin-top: 10px; }
+label.check { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; font-size: 0.92rem; }
+label.check input { margin-top: 4px; }
+label.check small { display: block; color: var(--muted); }
+details.file { margin-top: 12px; font-size: 0.92rem; color: var(--muted); }
+details.file summary { cursor: pointer; }
+input[type=password], input[type=file], select { display: block; width: 100%; margin-top: 6px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 0.95rem; }
+.row { display: flex; gap: 8px; align-items: end; }
+.row > :first-child { flex: 1; }
+.notice { font-size: 0.85rem; color: var(--muted); margin: 10px 0 0; }
+.status { font-size: 0.88rem; color: var(--muted); margin-top: 10px; }
+.err { background: var(--err-bg); color: var(--err-ink); border-radius: 10px; padding: 12px 14px; margin-top: 12px; font-size: 0.92rem; }
+.warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; }
+.warn ul { margin: 6px 0 0; padding-left: 18px; }
+.hidden { display: none !important; }
+
+.headline { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.hl { background: var(--soft); border-radius: 10px; padding: 12px 14px; }
+.hl .k { font-size: 0.82rem; color: var(--muted); }
+.hl .v { font-size: 1.25rem; font-weight: 700; margin-top: 2px; }
+.hl .v small { font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-left: 6px; }
+.votes { margin-top: 14px; }
+.vbar { display: grid; grid-template-columns: minmax(96px, 150px) 1fr 64px; gap: 10px; align-items: center; margin: 5px 0; font-size: 0.92rem; }
+.vbar .track { height: 12px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
+.vbar .fill { height: 100%; background: var(--bar); border-radius: 6px; }
+.vbar .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.meta { color: var(--muted); font-size: 0.82rem; margin-top: 12px; word-break: break-all; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.toolbar select { width: auto; display: inline-block; margin: 0; }
+.group { margin-top: 18px; }
+.group h3 { font-size: 0.98rem; margin: 0 0 6px; display: flex; justify-content: space-between; gap: 8px; }
+.group h3 span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+.model { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 6px 16px; padding: 10px 0; border-top: 1px solid var(--line); }
+.model .name { font-weight: 600; }
+.model .desc { font-size: 0.8rem; color: var(--muted); }
+.model .test { font-size: 0.8rem; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.model .test b { color: var(--ink); font-weight: 600; }
+.model .res { display: flex; flex-direction: column; gap: 4px; }
+.top1 { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; border-radius: 999px; padding: 3px 11px;
+  background: hsl(var(--h, 220) var(--chip-s) var(--chip-l)); color: hsl(var(--h, 220) 60% var(--chip-ink-l)); font-weight: 600; font-variant-numeric: tabular-nums; }
+.rest { font-size: 0.82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: 0.72rem; border: 1px solid var(--line); border-radius: 6px; padding: 0 5px; margin-left: 6px; color: var(--muted); font-weight: 500; vertical-align: 1px; }
+.tag.leak { border-color: var(--warn-ink); color: var(--warn-ink); }
+.lowc { color: var(--warn-ink); font-size: 0.8rem; }
+@media (max-width: 640px) {
+  .model { grid-template-columns: 1fr; }
+  .vbar { grid-template-columns: 96px 1fr 52px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>국적 모델 전부 비교</h1>
+  <p class="sub">문장 하나를 읽으면 서버에 있는 국적 모델이 각각 어느 나라 말투로 듣는지 나란히 보여 줍니다.</p>
+
+  <div class="card hidden" id="keyCard">
+    <h2>접근 키</h2>
+    <div class="row">
+      <label style="font-size:0.92rem;color:var(--muted)">전달받은 키를 넣어 주세요
+        <input type="password" id="keyInput" autocomplete="off">
+      </label>
+      <button class="btn" id="keySave" type="button">저장</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>이 문장을 소리 내어 읽어 주세요</h2>
+    <p class="sent" id="sent"></p>
+    <div class="controls">
+      <button class="btn" id="rec" type="button">녹음</button>
+      <button class="btn" id="next" type="button">다른 문장</button>
+    </div>
+    <audio controls class="hidden" id="play"></audio>
+    <details class="file">
+      <summary>녹음 파일로 올리기</summary>
+      <input type="file" id="fileInput" accept="audio/*,.m4a,.webm,.wav,.mp3">
+    </details>
+    <label class="check"><input type="checkbox" id="norm" checked>
+      <span>무음 정규화 (NPU 서비스와 같게)
+        <small>녹음 앞뒤 무음을 같은 룸톤으로 바꿉니다. 끄면 평가 때처럼 원본 그대로 넣습니다. 서비스 구성 행은 이 설정과 상관없이 서비스대로 계산합니다.</small></span></label>
+    <button class="go" id="go" type="button" disabled>모든 모델로 판정</button>
+    <div class="status" id="status"></div>
+    <p class="notice">앞 12초만 봅니다. 녹음과 판정 결과는 품질 분석을 위해 서버에 저장됩니다.</p>
+    <div class="err hidden" id="err"></div>
+  </div>
+
+  <div class="card hidden" id="summary">
+    <h2>한눈에</h2>
+    <div class="headline" id="headline"></div>
+    <div class="votes" id="votes"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+
+  <div class="card" id="listCard">
+    <div class="toolbar">
+      <h2 style="margin:0">모델별 판정</h2>
+      <label style="font-size:0.88rem;color:var(--muted)">정렬
+        <select id="sort">
+          <option value="group">그룹 순</option>
+          <option value="test">test 문장 top-1 높은 순</option>
+          <option value="conf">1위 확률 높은 순</option>
+        </select>
+      </label>
+    </div>
+    <div class="notice" style="margin-top:0">test = 화자 분할 8:1:1 test 의 웹마이크 문장 발화(코퍼스). 9월 모델은 다른 분할로 학습해 같은 잣대가 없습니다.</div>
+    <div id="list"></div>
+  </div>
+
+  <div class="warn">
+    <strong>알아 둘 점</strong>
+    <ul>
+      <li>test 수치는 AI 허브 코퍼스 안의 값입니다. 폰·노트북 녹음에서는 모델마다 순위가 달라질 수 있습니다. 서버에 저장된 한국인 녹음 34개에서 300m 전체학습이 Korea 를 1위로 고른 것은 원본 2개 · 무음 정규화 19개뿐이었습니다(10-26 점검). 서비스에 쓰려면 앞에 원어민 게이트가 필요합니다.</li>
+      <li>run_zeroth 의 test 수치는 누수 의심입니다. 화자 분할 전 목록으로 학습해 이 test 화자 일부를 봤을 수 있습니다.</li>
+      <li>GPU 모델은 bf16 으로 돕니다. 평가 로짓과 대조하면 300m 계열은 1위가 거의 같고, 2B 는 bf16 자체의 흔들림 때문에 일부 발화에서 1위가 바뀝니다.</li>
+      <li>빠진 것: 언어식별 모델 그대로(107개 언어 출력이라 국적 분류기가 아님), 2B 첫 시도(학습이 멈춘 run_2b_lr5e-6_l24), 운율 점수를 나중에 합친 조합(따로 학습한 모델이 없음).</li>
+    </ul>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var BASE = location.pathname.endsWith("/") ? location.pathname : location.pathname + "/";
+  var SENTS = ["오늘은 평소보다 조금 일찍 집을 나섰다.", "창밖으로 보이는 하늘이 유난히 맑았다.", "점심에는 따뜻한 국수를 먹고 싶다.",
+    "책상 위에 읽다 만 책이 한 권 놓여 있다.", "주말에는 친구와 영화를 보기로 했다.", "작은 습관이 모이면 큰 변화를 만들 수 있다.",
+    "비가 그친 뒤 공기가 한층 시원해졌다.", "새로운 일을 시작할 때는 언제나 조금 긴장된다.", "음악을 들으면서 산책하면 기분이 좋아진다.",
+    "내일은 오늘보다 더 여유로운 하루였으면 좋겠다."];
+  var KO = {Bangladesh:["방글라데시","🇧🇩"],Brazil:["브라질","🇧🇷"],Bulgaria:["불가리아","🇧🇬"],Cambodia:["캄보디아","🇰🇭"],Chile:["칠레","🇨🇱"],China:["중국","🇨🇳"],Colombia:["콜롬비아","🇨🇴"],Ethiopia:["에티오피아","🇪🇹"],France:["프랑스","🇫🇷"],Germany:["독일","🇩🇪"],"Hong Kong":["홍콩","🇭🇰"],India:["인도","🇮🇳"],Indonesia:["인도네시아","🇮🇩"],Iran:["이란","🇮🇷"],Italy:["이탈리아","🇮🇹"],Japan:["일본","🇯🇵"],Kazakhstan:["카자흐스탄","🇰🇿"],Korea:["한국","🇰🇷"],Kyrgyzstan:["키르기스스탄","🇰🇬"],Malaysia:["말레이시아","🇲🇾"],Mongolia:["몽골","🇲🇳"],Myanmar:["미얀마","🇲🇲"],Nepal:["네팔","🇳🇵"],Pakistan:["파키스탄","🇵🇰"],Peru:["페루","🇵🇪"],Philippines:["필리핀","🇵🇭"],Romania:["루마니아","🇷🇴"],Russia:["러시아","🇷🇺"],Rwanda:["르완다","🇷🇼"],Singapore:["싱가포르","🇸🇬"],Spain:["스페인","🇪🇸"],Tajikistan:["타지키스탄","🇹🇯"],Thailand:["태국","🇹🇭"],Turkey:["튀르키예","🇹🇷"],Turkmenistan:["투르크메니스탄","🇹🇲"],Ukraine:["우크라이나","🇺🇦"],"United Kingdom":["영국","🇬🇧"],"United States":["미국","🇺🇸"],Uzbekistan:["우즈베키스탄","🇺🇿"],Vietnam:["베트남","🇻🇳"],Zambia:["잠비아","🇿🇲"],Azerbaijan:["아제르바이잔","🇦🇿"],Hungary:["헝가리","🇭🇺"],Poland:["폴란드","🇵🇱"],"Czech Republic":["체코","🇨🇿"]};
+  var ORDER = Object.keys(KO);
+  var MAX_REC_SEC = 15;
+  var key = "", info = null, last = null, clip = null, sentIdx = Math.floor(Math.random() * SENTS.length);
+
+  function $(id) { return document.getElementById(id); }
+  function store(op, k, v) {
+    try { return op === "get" ? localStorage.getItem(k) : (v ? localStorage.setItem(k, v) : localStorage.removeItem(k)); }
+    catch (e) { return null; }
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+  function ko(l) { return KO[l] ? KO[l][0] : l; }
+  function flag(l) { return KO[l] ? KO[l][1] : "🏳️"; }
+  function hue(l) { var i = ORDER.indexOf(l); return i < 0 ? 0 : Math.round((i * 137.5) % 360); }
+  function pct(p) { return (p * 100).toFixed(p >= 0.995 || p < 0.1 ? 1 : 0) + "%"; }
+
+  // 링크로 받은 키(?key=)는 저장하고 주소창에서 지운다
+  var params = new URLSearchParams(location.search);
+  if (params.get("key")) {
+    key = params.get("key");
+    store("set", "natall_key", key);
+    params.delete("key");
+    history.replaceState(null, "", location.pathname + (params.toString() ? "?" + params : ""));
+  } else {
+    key = store("get", "natall_key") || "";
+  }
+  function showKeyCard(show) { $("keyCard").classList.toggle("hidden", !show); }
+  showKeyCard(!key);
+  $("keySave").onclick = function () { key = $("keyInput").value.trim(); store("set", "natall_key", key); showKeyCard(!key); refresh(); };
+
+  function showSent() { $("sent").textContent = SENTS[sentIdx]; }
+  $("next").onclick = function () { sentIdx = (sentIdx + 1) % SENTS.length; showSent(); };
+  showSent();
+
+  // ── 녹음 ──
+  function pickMime() {
+    var types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+    for (var i = 0; i < types.length; i++) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) return types[i];
+    }
+    return "";
+  }
+  function extFor(mime) { return mime.indexOf("mp4") >= 0 ? "m4a" : mime.indexOf("ogg") >= 0 ? "ogg" : "webm"; }
+  var recorder = null, timer = null;
+  $("rec").onclick = function () {
+    if (recorder && recorder.state === "recording") { recorder.stop(); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showErr("이 브라우저에서는 녹음을 쓸 수 없습니다. 파일로 올려 주세요."); return; }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      var mime = pickMime(), chunks = [], t0 = Date.now(), btn = $("rec");
+      recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      btn.classList.add("on");
+      timer = setInterval(function () {
+        var s = Math.floor((Date.now() - t0) / 1000);
+        btn.textContent = "멈춤 " + s + "초";
+        if (s >= MAX_REC_SEC && recorder.state === "recording") recorder.stop();
+      }, 250);
+      recorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+      recorder.onstop = function () {
+        clearInterval(timer);
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        btn.classList.remove("on");
+        btn.textContent = "다시 녹음";
+        var type = recorder.mimeType || mime || "audio/webm";
+        clip = { blob: new Blob(chunks, { type: type }), name: "read." + extFor(type) };
+        $("fileInput").value = "";
+        $("play").src = URL.createObjectURL(clip.blob);
+        $("play").classList.remove("hidden");
+        refresh();
+      };
+      recorder.start();
+      hideErr();
+    }).catch(function () { showErr("마이크를 쓸 수 없습니다. 브라우저의 마이크 권한을 확인해 주세요."); });
+  };
+  $("fileInput").onchange = function () {
+    var f = $("fileInput").files[0];
+    if (f) { clip = { blob: f, name: f.name }; $("play").src = URL.createObjectURL(f); $("play").classList.remove("hidden"); }
+    refresh();
+  };
+
+  function loadingNow() { return !info || info.loading; }
+  function refresh() { $("go").disabled = !(key && clip && !loadingNow()); }
+  function showErr(msg) { var e = $("err"); e.textContent = msg; e.classList.remove("hidden"); }
+  function hideErr() { $("err").classList.add("hidden"); }
+
+  // ── 모델 목록 (/health) ──
+  function poll() {
+    fetch(BASE + "health").then(function (r) { return r.json(); }).then(function (h) {
+      info = h;
+      if (h.loading) {
+        $("status").textContent = "모델을 올리는 중입니다 (" + h.loaded + "/" + h.total + "). 몇 분 걸립니다.";
+        setTimeout(poll, 4000);
+      } else if (h.error) {
+        $("status").textContent = "모델을 올리지 못했습니다: " + h.error;
+      } else {
+        $("status").textContent = "모델 " + (h.models.length - h.failed.length) + "개 준비됨" + (h.failed.length ? " · 못 올린 모델 " + h.failed.length + "개" : "");
+      }
+      renderList();
+      refresh();
+    }).catch(function () { $("status").textContent = "서버 상태를 읽지 못했습니다."; setTimeout(poll, 8000); });
+  }
+
+  $("go").onclick = function () {
+    var form = new FormData();
+    form.append("audio", clip.blob, clip.name);
+    form.append("norm", $("norm").checked ? "1" : "0");
+    form.append("sentence", SENTS[sentIdx]);
+    form.append("session", sessionId());
+    var go = $("go");
+    go.disabled = true; go.textContent = "판정 중…";
+    hideErr();
+    var t0 = performance.now();
+    fetch(BASE + "predict", { method: "POST", body: form, headers: { "X-API-Key": key } })
+      .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
+      .then(function (res) {
+        if (res.status === 401) { store("set", "natall_key", ""); key = ""; showKeyCard(true); showErr("키가 맞지 않습니다. 다시 넣어 주세요."); return; }
+        if (res.status !== 200) { showErr((res.body && res.body.error) || ("오류 " + res.status)); return; }
+        last = res.body; last.wall = performance.now() - t0;
+        renderSummary(); renderList();
+        $("summary").scrollIntoView({ behavior: "smooth", block: "start" });
+      })
+      .catch(function () { showErr("서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요."); })
+      .then(function () { go.textContent = "모든 모델로 판정"; refresh(); });
+  };
+  function sessionId() {
+    var s = store("get", "natall_session");
+    if (!s) { s = Math.random().toString(36).slice(2, 10); store("set", "natall_session", s); }
+    return s;
+  }
+
+  function byId() { var o = {}; if (last) last.results.forEach(function (r) { o[r.id] = r; }); return o; }
+  function nameOf(id) { var m = info && info.models.filter(function (x) { return x.id === id; })[0]; return m ? m.name : id; }
+
+  function renderSummary() {
+    var b = last, R = byId();
+    $("summary").classList.remove("hidden");
+    var cells = [];
+    [["service", "NPU 서비스 구성이 하는 답"], ["full300m", "300m 전체학습 (최종 추천)"]].forEach(function (x) {
+      var r = R[x[0]];
+      if (r) cells.push('<div class="hl"><div class="k">' + esc(x[1]) + '</div><div class="v">' + flag(r.top5[0].label) + " " + esc(ko(r.top5[0].label)) +
+        "<small>" + pct(r.top5[0].prob) + "</small></div></div>");
+    });
+    var nk = b.results.filter(function (r) { return r.top5[0].label === "Korea"; }).length;
+    var top = b.votes[0];
+    cells.push('<div class="hl"><div class="k">가장 많은 모델이 고른 1위</div><div class="v">' + flag(top.label) + " " + esc(ko(top.label)) +
+      "<small>" + top.n + " / " + b.n_models + "개</small></div></div>");
+    cells.push('<div class="hl"><div class="k">한국어 원어민(Korea)으로 판정</div><div class="v">' + nk + "<small>/ " + b.n_models + "개 모델</small></div></div>");
+    $("headline").innerHTML = cells.join("");
+    var maxN = b.votes[0].n;
+    $("votes").innerHTML = '<div class="notice" style="margin:0 0 6px">모델별 1위 집계</div>' + b.votes.slice(0, 10).map(function (v) {
+      return '<div class="vbar"><span>' + flag(v.label) + " " + esc(ko(v.label)) + '</span><div class="track"><div class="fill" style="width:' +
+        Math.max(2, 100 * v.n / maxN) + '%"></div></div><span class="n">' + v.n + "개</span></div>";
+    }).join("") + (b.votes.length > 10 ? '<div class="notice">그 밖 ' + (b.votes.length - 10) + "개 나라</div>" : "");
+    $("meta").textContent = "녹음 " + b.sec + "초 · 말소리 " + b.voiced_sec + "초 · 무음 정규화 " + (b.norm ? "켬" : "끔") + " · 모델 " + b.n_models +
+      "개 계산 " + b.infer_ms + "ms · 서버 " + b.total_ms + "ms · 왕복 " + Math.round(b.wall) + "ms · 요청 번호 " + (b.rid || "-");
+  }
+
+  function modelRow(m, r, showGroup) {
+    var t = m.test;
+    var test = t ? "test 문장 top-1 <b>" + t.t1.toFixed(3) + "</b> · top-5 <b>" + t.t5.toFixed(3) + "</b>" + (m.leak ? '<span class="tag leak">누수 의심</span>' : "")
+                 : (m.group === "service" ? "test: 주 모델 = run_zeroth" : "test: 같은 잣대 없음");
+    var res = '<span class="rest">' + (info && info.failed.indexOf(m.id) >= 0 ? "못 올림" : (last ? "결과 없음" : "판정 전")) + "</span>";
+    if (r) {
+      var t1 = r.top5[0];
+      res = '<span class="top1" style="--h:' + hue(t1.label) + '">' + flag(t1.label) + " " + esc(ko(t1.label)) + " " + pct(t1.prob) + "</span>" +
+        '<span class="rest">' + r.top5.slice(1, 5).map(function (x) { return esc(ko(x.label)) + " " + pct(x.prob); }).join(" · ") + "</span>" +
+        '<span class="rest">Korea ' + (r.korea == null ? "-" : pct(r.korea)) + (r.gate_korea != null ? " · 게이트 Korea " + pct(r.gate_korea) : "") + " · " + r.ms + "ms</span>" +
+        (r.low_confidence ? '<span class="lowc">확신 낮음 (서비스라면 다시 녹음 안내)</span>' : "");
+    }
+    var gname = showGroup && info ? info.groups.filter(function (g) { return g.id === m.group; })[0] : null;
+    return '<div class="model"><div><div class="name">' + esc(m.name) + (gname ? '<span class="tag">' + esc(gname.name) + "</span>" : "") +
+      '</div><div class="desc">' + esc(m.note || "") + '</div><div class="test">' + test + '</div></div><div class="res">' + res + "</div></div>";
+  }
+
+  function renderList() {
+    if (!info) return;
+    var R = byId(), mode = $("sort").value, html = "";
+    if (mode === "group") {
+      info.groups.forEach(function (g) {
+        var ms = info.models.filter(function (m) { return m.group === g.id; });
+        if (!ms.length) return;
+        html += '<div class="group"><h3>' + esc(g.name) + "<span>" + ms.length + "개</span></h3>" + ms.map(function (m) { return modelRow(m, R[m.id], false); }).join("") + "</div>";
+      });
+    } else {
+      var ms = info.models.slice();
+      ms.sort(function (a, b) {
+        if (mode === "test") return (b.test ? b.test.t1 : -1) - (a.test ? a.test.t1 : -1);
+        return (R[b.id] ? R[b.id].top5[0].prob : -1) - (R[a.id] ? R[a.id].top5[0].prob : -1);
+      });
+      html = '<div class="group">' + ms.map(function (m) { return modelRow(m, R[m.id], true); }).join("") + "</div>";
+    }
+    $("list").innerHTML = html;
+  }
+  $("sort").onchange = renderList;
+
+  poll();
+  refresh();
+})();
+</script>
+</body>
+</html>

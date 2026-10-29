@@ -39,7 +39,7 @@ th:first-child,td:first-child{text-align:left}
 <body>
 <div class="wrap">
   <h1>외국인 한국어 발화 → 국적 분류 <span class="badge">KD 인코더 · ONNX · CPU-only</span></h1>
-  <div class="sub">지식증류(2B→300m) 최종 모델 · test top1 <b>0.8245</b> / top5 <b>0.9584</b> (기존 배포본 top1 0.7510 대비 +7.4%p) · 41개 국적</div>
+  <div class="sub" id="model-sub">지식증류(2B→300m) 최종 모델 · test top1 <b>0.8245</b> / top5 <b>0.9584</b> (기존 배포본 top1 0.7510 대비 +7.4%p) · 41개 국적</div>
 
   <div class="tabs">
     <div class="tab on" data-t="demo">🎙 데모</div>
@@ -99,12 +99,18 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   $('#t-load').style.display=t.dataset.t==='load'?'':'none';
 });
 // 샘플 목록
+// 서버가 모델 설명(summary)을 주면 부제를 바꾼다. 없으면(옛 서버) 위의 고정 문구를 그대로 둔다.
+fetch(BASE+'/health').then(r=>r.json()).then(h=>{
+  if(h.summary){document.getElementById('model-sub').textContent=h.summary;}
+}).catch(()=>{});
 fetch(BASE+'/samples').then(r=>r.json()).then(d=>{
   d.samples.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.slice(0,28);$('#sampleSel').appendChild(o)});
 });
 function show(d){
   $('#resCard').style.display='';
-  $('#top1').textContent='🌏 '+d.top5[0].label;
+  if(d.low_confidence){$('#top1').textContent='🔁 잘 안 들렸어요 — 한 문장을 조금 더 또렷하게 다시 말해 주세요';}
+  else if(d.native){$('#top1').textContent='🇰🇷 한국어 원어민';}
+  else{$('#top1').textContent='🌏 '+d.top5[0].label;}
   $('#meta').textContent=`${d.sec}s 입력 · 인코더 ${d.encode_ms}ms · 총 ${d.total_ms}ms`;
   const tb=$('#top5 tbody');tb.innerHTML='';
   d.top5.forEach(t=>{const tr=document.createElement('tr');

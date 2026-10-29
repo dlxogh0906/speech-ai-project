@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BeaverTalk · 내 한국어, AI 귀에는?</title>
+<meta name="description" content="문장 하나를 읽으면 AI 비버가 어느 나라 말투로 들리는지 알려 드려요.">
+<meta name="theme-color" content="#00FFB2">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BeaverTalk">
+<meta property="og:title" content="내 한국어, AI 귀에는 어느 나라 사람일까?">
+<meta property="og:description" content="문장 하나 읽고 3초 만에 확인해 보세요 · BeaverTalk">
+<meta property="og:image" content="/read/og.jpg">
+<link rel="icon" type="image/png" href="/read/logo.png">
+<link rel="apple-touch-icon" href="/read/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --bg:#fff; --bg-normal:#f1f1f5; --card:#f5f6f8; --border:#e5e5ec; --line:#70737c24;
+  --text:#111; --text-2:#333; --sub:#505050; --muted:#767676;
+  --primary:#007a55; --primary-hover:#00694a; --primary-active:#005c41; --primary-dim:#008c621a;
+  --neon:#00ffb2; --mint:#e6f6f0; --danger:#e52222; --warn-bg:#fff4e2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-normal)}
+body{color:var(--text);font-family:Pretendard,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+  min-height:100vh;padding:0 16px calc(32px + env(safe-area-inset-bottom))}
+.app{max-width:480px;margin:0 auto}
+.bar{display:flex;align-items:center;gap:10px;padding:18px 2px 10px}
+.bar img{width:34px;height:34px;border-radius:10px}
+.bar b{font-family:Poppins,Pretendard,sans-serif;font-weight:700;font-size:19px;letter-spacing:-.2px}
+.bar span{margin-left:auto;font-size:12px;color:var(--muted)}
+.hero{padding:14px 2px 18px}
+.hero h1{font-size:26px;line-height:1.3;font-weight:800;letter-spacing:-.6px}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 60%,#00ffb266 60%)}
+.hero p{margin-top:8px;color:var(--sub);font-size:15px;line-height:1.55}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:20px;margin-bottom:12px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--sub);line-height:1.55}
+.consent input{margin-top:3px;width:18px;height:18px;accent-color:var(--primary);flex:none}
+.consent a{color:var(--primary)}
+.who{display:flex;gap:8px;margin-top:14px}
+.chip{flex:1;border:1px solid var(--border);background:var(--bg);color:var(--text-2);border-radius:999px;padding:10px 8px;
+  font:600 14px Pretendard,sans-serif;cursor:pointer}
+.chip.on{border-color:var(--primary);background:var(--primary-dim);color:var(--primary)}
+.prog{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:10px}
+.prog .dots{display:flex;gap:4px}
+.prog .dots i{width:14px;height:4px;border-radius:2px;background:var(--border)}
+.prog .dots i.done{background:var(--primary)}
+.prog .dots i.cur{background:var(--neon)}
+.sent{font-size:22px;line-height:1.5;font-weight:700;letter-spacing:-.4px;word-break:keep-all;min-height:66px}
+.hint{margin-top:8px;font-size:13px;color:var(--muted)}
+.recwrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 0 6px}
+.rec{position:relative;width:92px;height:92px;border-radius:50%;border:0;background:var(--primary);color:#fff;cursor:pointer;
+  display:grid;place-items:center;box-shadow:0 8px 24px #007a5540;transition:transform .15s,background .15s}
+.rec:active{transform:scale(.96)}
+.rec:disabled{background:#b9c7c1;box-shadow:none;cursor:default}
+.rec svg{width:36px;height:36px}
+.rec.on{background:var(--danger);box-shadow:0 8px 24px #e5222240}
+.rec.on::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid #e5222255;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{transform:scale(.92);opacity:1}100%{transform:scale(1.18);opacity:0}}
+.timer{font-family:Poppins,sans-serif;font-variant-numeric:tabular-nums;font-size:14px;color:var(--sub);height:20px}
+.meter{width:160px;height:6px;border-radius:3px;background:var(--bg-normal);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--neon);transition:width .08s}
+.status{text-align:center;font-size:14px;color:var(--sub);min-height:20px}
+.status.err{color:var(--danger)}
+.result{display:none}
+.result.show{display:block;animation:up .25s ease-out}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.big{display:flex;align-items:center;gap:14px}
+.flag{font-size:44px;line-height:1}
+.big .t{font-size:13px;color:var(--muted)}
+.big .v{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
+.bars{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:96px 1fr 44px;gap:10px;align-items:center;font-size:13px}
+.bar-row .n{color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .p{text-align:right;font-family:Poppins,sans-serif;color:var(--sub)}
+.track{height:8px;border-radius:4px;background:var(--bg-normal);overflow:hidden}
+.track i{display:block;height:100%;background:var(--primary);border-radius:4px}
+.retry{background:var(--warn-bg);border-radius:16px;padding:14px;font-size:14px;line-height:1.55;color:#6b4b00}
+.btns{display:flex;gap:8px;margin-top:16px}
+.btn{flex:1;border:0;border-radius:16px;padding:15px 10px;font:700 15px Pretendard,sans-serif;cursor:pointer}
+.btn.pri{background:var(--primary);color:#fff}.btn.pri:hover{background:var(--primary-hover)}
+.btn.sec{background:var(--bg-normal);color:var(--text-2)}
+.sum h2{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.sum p{margin-top:6px;font-size:14px;color:var(--sub);line-height:1.55}
+.foot{text-align:center;font-size:12px;color:var(--muted);margin-top:18px;line-height:1.7}
+.foot a{color:var(--primary);font-weight:600;text-decoration:none}
+.foot .src{display:block;font-size:11px;margin-top:4px}
+.foot .src a{font-weight:500}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar"><img src="/read/logo.png" alt=""><b>BeaverTalk</b><span>AI 발음 실험실</span></div>
+
+  <div class="hero">
+    <h1>내 한국어,<br><em>AI 귀에는</em> 어느 나라 사람일까?</h1>
+    <p>아래 문장 하나를 소리 내어 읽으면 AI 비버가 말투를 듣고 알려 드려요.</p>
+  </div>
+
+  <!-- 시작 -->
+  <div class="card" id="start">
+    <label class="consent"><input type="checkbox" id="agree">
+      <span><b>(필수)</b> 녹음한 음성과 결과를 BeaverTalk의 AI 모델 개선 연구에만 사용하는 데 동의해요. 이름·연락처는 받지 않으며, 만 14세 이상만 참여할 수 있어요.</span></label>
+    <div class="who" id="who">
+      <button class="chip" data-v="korean">한국어가 모국어예요</button>
+      <button class="chip" data-v="learner">한국어를 배우고 있어요</button>
+    </div>
+    <div class="btns"><button class="btn pri" id="go" disabled>시작하기</button></div>
+  </div>
+
+  <!-- 녹음 -->
+  <div class="card hidden" id="reader">
+    <div class="prog"><span>이 문장을 읽어 주세요</span></div>
+    <div class="sent" id="sent"></div>
+    <div class="hint">버튼을 누르고 평소처럼 또박또박 읽어 주세요. 다 읽으면 한 번 더 누르면 돼요.</div>
+    <div class="recwrap">
+      <button class="rec" id="rec" aria-label="녹음">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>
+      </button>
+      <div class="meter"><i id="lv"></i></div>
+      <div class="timer" id="timer"></div>
+    </div>
+    <div class="status" id="st"></div>
+  </div>
+
+  <!-- 결과 -->
+  <div class="card result" id="res">
+    <div id="resBody"></div>
+    <div class="btns"><button class="btn pri" id="again">한 번 더 해보기</button></div>
+  </div>
+
+  <!-- 종합 -->
+  <div class="card sum hidden" id="sum"></div>
+
+  <div class="foot">한국어 발음 코치 <a href="https://www.beavertalk.im" target="_blank" rel="noopener">BeaverTalk</a> · 결과는 재미로 봐 주세요 🦫<span class="src">이 서비스는 한국지능정보사회진흥원의 「지능정보산업 인프라 조성」 사업으로 구축된 <a href="https://aihub.or.kr" target="_blank" rel="noopener">AI 허브</a> 데이터를 활용해 개발했습니다.</span></div>
+</div>
+
+<script>
+const SENTS=["오늘은 평소보다 조금 일찍 집을 나섰다.","창밖으로 보이는 하늘이 유난히 맑았다.","점심에는 따뜻한 국수를 먹고 싶다.","책상 위에 읽다 만 책이 한 권 놓여 있다.","주말에는 친구와 영화를 보기로 했다.","작은 습관이 모이면 큰 변화를 만들 수 있다.","비가 그친 뒤 공기가 한층 시원해졌다.","새로운 일을 시작할 때는 언제나 조금 긴장된다.","음악을 들으면서 산책하면 기분이 좋아진다.","내일은 오늘보다 더 여유로운 하루였으면 좋겠다."];
+const KO={Bangladesh:["방글라데시","🇧🇩"],Brazil:["브라질","🇧🇷"],Bulgaria:["불가리아","🇧🇬"],Cambodia:["캄보디아","🇰🇭"],Chile:["칠레","🇨🇱"],China:["중국","🇨🇳"],Colombia:["콜롬비아","🇨🇴"],Ethiopia:["에티오피아","🇪🇹"],France:["프랑스","🇫🇷"],Germany:["독일","🇩🇪"],"Hong Kong":["홍콩","🇭🇰"],India:["인도","🇮🇳"],Indonesia:["인도네시아","🇮🇩"],Iran:["이란","🇮🇷"],Italy:["이탈리아","🇮🇹"],Japan:["일본","🇯🇵"],Kazakhstan:["카자흐스탄","🇰🇿"],Korea:["한국","🇰🇷"],Kyrgyzstan:["키르기스스탄","🇰🇬"],Malaysia:["말레이시아","🇲🇾"],Mongolia:["몽골","🇲🇳"],Myanmar:["미얀마","🇲🇲"],Nepal:["네팔","🇳🇵"],Pakistan:["파키스탄","🇵🇰"],Peru:["페루","🇵🇪"],Philippines:["필리핀","🇵🇭"],Romania:["루마니아","🇷🇴"],Russia:["러시아","🇷🇺"],Rwanda:["르완다","🇷🇼"],Singapore:["싱가포르","🇸🇬"],Spain:["스페인","🇪🇸"],Tajikistan:["타지키스탄","🇹🇯"],Thailand:["태국","🇹🇭"],Turkey:["튀르키예","🇹🇷"],Turkmenistan:["투르크메니스탄","🇹🇲"],Ukraine:["우크라이나","🇺🇦"],"United Kingdom":["영국","🇬🇧"],"United States":["미국","🇺🇸"],Uzbekistan:["우즈베키스탄","🇺🇿"],Vietnam:["베트남","🇻🇳"],Zambia:["잠비아","🇿🇲"]};
+const $=s=>document.querySelector(s), ko=l=>(KO[l]||[l,"🌏"]);
+const session=Math.random().toString(36).slice(2,10);
+const q=parseInt(new URLSearchParams(location.search).get('s')||'10',10);
+let who="", i=(q>=1&&q<=SENTS.length)?q-1:SENTS.length-1, results=[], mr=null, chunks=[], ctx=null, raf=0, t0=0, tick=0;
+
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');who=c.dataset.v;upd()});
+$('#agree').onchange=upd;
+function upd(){$('#go').disabled=!($('#agree').checked&&who)}
+$('#go').onclick=async()=>{
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop())}
+  catch(e){alert('마이크를 쓸 수 있게 허용해 주세요. 인스타그램 안에서 열었다면 오른쪽 위 ⋯ 에서 "외부 브라우저로 열기"를 눌러 주세요.');return}
+  $('#start').classList.add('hidden');$('#reader').classList.remove('hidden');show();
+};
+function show(){
+  $('#sent').textContent=SENTS[i];
+  $('#st').textContent='';$('#st').className='status';$('#timer').textContent='';$('#rec').disabled=false;
+}
+$('#rec').onclick=async()=>{
+  if(mr&&mr.state==='recording'){mr.stop();return}
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){$('#st').textContent='마이크 권한이 필요해요.';$('#st').className='status err';return}
+  chunks=[];mr=new MediaRecorder(stream);mr.ondataavailable=e=>chunks.push(e.data);
+  mr.onstop=()=>{stream.getTracks().forEach(t=>t.stop());cancelAnimationFrame(raf);clearInterval(tick);$('#lv').style.width=0;$('#rec').classList.remove('on');
+    const sec=(Date.now()-t0)/1000; if(sec<1.5){$('#st').textContent='조금 더 길게, 문장을 끝까지 읽어 주세요.';$('#st').className='status err';return}
+    send(new Blob(chunks,{type:mr.mimeType||'audio/webm'}))};
+  ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(stream).connect(an);
+  const buf=new Uint8Array(an.fftSize);const loop=()=>{an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));$('#lv').style.width=Math.min(100,m*1.6)+'%';raf=requestAnimationFrame(loop)};loop();
+  mr.start();t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000;$('#timer').textContent=s.toFixed(1)+'초';if(s>12)mr.stop()},100);
+  $('#rec').classList.add('on');$('#st').textContent='듣고 있어요…';$('#st').className='status';$('#res').classList.remove('show');
+};
+async function send(blob){
+  $('#rec').disabled=true;$('#st').textContent='AI 비버가 듣는 중…';
+  const f=new FormData();f.append('audio',blob,blob.type.includes('mp4')?'a.mp4':'a.webm');
+  f.append('consent','1');f.append('sentence_id',String(i+1));f.append('sentence',SENTS[i]);f.append('self_report',who);f.append('session',session);
+  try{const r=await fetch('/predict',{method:'POST',body:f});const d=await r.json();
+    if(!r.ok||d.error){$('#st').textContent=(d.code==='no_speech'||d.code==='too_short')?'목소리가 잘 안 들렸어요. 조금 더 크게, 끝까지 읽어 주세요.':'잠시 문제가 생겼어요. 다시 한 번 눌러 주세요.';$('#st').className='status err';$('#rec').disabled=false;return}
+    $('#st').textContent='';render(d);
+  }catch(e){$('#st').textContent='연결이 불안정해요. 다시 시도해 주세요.';$('#st').className='status err';$('#rec').disabled=false}
+}
+function render(d){
+  const top=d.top5[0];let html='';
+  if(d.low_confidence){
+    html=`<div class="retry">🤔 이번엔 잘 못 알아들었어요. 조금 더 또렷하게, 휴대폰을 입 가까이 대고 한 번 더 읽어 주세요.</div>`;
+  }else{
+    results.push(d);
+    const [name,flag]=ko(top.label);
+    html=`<div class="big"><div class="flag">${flag}</div><div><div class="t">AI 비버에게는 이렇게 들렸어요</div><div class="v">${d.native?'한국어 원어민':name+' 사람의 한국어'}</div></div></div>`;
+    html+=`<div class="bars">`+d.top5.slice(0,3).map(t=>{const [n,f]=ko(t.label);return `<div class="bar-row"><span class="n">${f} ${n}</span><span class="track"><i style="width:${Math.max(2,t.prob*100)}%"></i></span><span class="p">${Math.round(t.prob*100)}%</span></div>`}).join('')+`</div>`;
+  }
+  $('#resBody').innerHTML=html;$('#res').classList.add('show');
+  $('#res').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('#again').onclick=()=>{$('#res').classList.remove('show');$('#rec').disabled=false;$('#st').textContent=''};
+function summary(){
+  $('#reader').classList.add('hidden');
+  const n=results.length, nat=results.filter(r=>r.native).length, agg={};
+  results.forEach(r=>r.top5.forEach(t=>agg[t.label]=(agg[t.label]||0)+t.prob/n));
+  const top=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const [name,flag]=ko(top[0][0]);
+  $('#sum').innerHTML=`<div class="big"><div class="flag">${flag}</div><div><div class="t">${n}문장 종합 결과</div><div class="v">${top[0][0]==='Korea'?'한국어 원어민':name+' 사람의 한국어'}</div></div></div>
+   <p style="margin-top:12px">${n}문장 중 <b>${nat}문장</b>을 한국어 원어민으로 들었어요.</p>
+   <div class="bars">`+top.map(([l,p])=>{const [nn,ff]=ko(l);return `<div class="bar-row"><span class="n">${ff} ${nn}</span><span class="track"><i style="width:${Math.max(2,p*100)}%"></i></span><span class="p">${Math.round(p*100)}%</span></div>`}).join('')+`</div>
+   <div class="btns"><button class="btn pri" onclick="location.reload()">처음부터 다시</button></div>`;
+  $('#sum').classList.remove('hidden');$('#sum').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>

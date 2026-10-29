@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BeaverTalk · 버전 비교</title>
+<meta name="theme-color" content="#00FFB2">
+<link rel="icon" type="image/png" href="/read/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{--bg:#fff;--bg-normal:#f1f1f5;--border:#e5e5ec;--text:#111;--text-2:#333;--sub:#505050;--muted:#767676;
+  --primary:#007a55;--primary-hover:#00694a;--primary-dim:#008c621a;--neon:#00ffb2;--danger:#e52222;--warn-bg:#fff4e2}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-normal)}
+body{color:var(--text);font-family:Pretendard,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px calc(32px + env(safe-area-inset-bottom))}
+.app{max-width:560px;margin:0 auto}
+.bar{display:flex;align-items:center;gap:10px;padding:18px 2px 10px}
+.bar img{width:34px;height:34px;border-radius:10px}
+.bar b{font-family:Poppins,Pretendard,sans-serif;font-weight:700;font-size:19px}
+.bar span{margin-left:auto;font-size:12px;color:var(--muted)}
+.hero{padding:10px 2px 16px}
+.hero h1{font-size:24px;line-height:1.3;font-weight:800;letter-spacing:-.5px}
+.hero p{margin-top:8px;color:var(--sub);font-size:14px;line-height:1.6}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:18px;margin-bottom:12px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--sub);line-height:1.5;margin-bottom:12px}
+.consent input{margin-top:2px;width:18px;height:18px;accent-color:var(--primary);flex:none}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:8px}
+.link{background:none;border:0;color:var(--primary);font:600 13px Pretendard,sans-serif;cursor:pointer}
+.sent{font-size:21px;line-height:1.5;font-weight:700;letter-spacing:-.4px;word-break:keep-all}
+.recwrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0 4px}
+.rec{position:relative;width:84px;height:84px;border-radius:50%;border:0;background:var(--primary);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px #007a5540}
+.rec:disabled{background:#b9c7c1;box-shadow:none}
+.rec svg{width:34px;height:34px}
+.rec.on{background:var(--danger)}
+.rec.on::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid #e5222255;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{transform:scale(.92);opacity:1}100%{transform:scale(1.18);opacity:0}}
+.meter{width:150px;height:6px;border-radius:3px;background:var(--bg-normal);overflow:hidden}.meter i{display:block;height:100%;width:0;background:var(--neon)}
+.status{text-align:center;font-size:14px;color:var(--sub);min-height:20px}.status.err{color:var(--danger)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.v.picked{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-dim)}
+.v .lt{font-family:Poppins,sans-serif;font-weight:700;font-size:15px;color:var(--primary)}
+.v .name{font-size:11px;color:var(--muted);min-height:14px}
+.v .verdict{font-size:17px;font-weight:800;letter-spacing:-.3px;line-height:1.3;min-height:44px}
+.v .verdict.retry{color:#8a6100;font-size:15px}
+.mini{display:flex;flex-direction:column;gap:5px}
+.mrow{display:grid;grid-template-columns:1fr 34px;gap:6px;font-size:12px;color:var(--text-2);align-items:center}
+.mrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow .pp{text-align:right;font-family:Poppins,sans-serif;color:var(--sub)}
+.track{grid-column:1/3;height:5px;border-radius:3px;background:var(--bg-normal);overflow:hidden}.track i{display:block;height:100%;background:var(--primary)}
+.vote{border:1px solid var(--border);background:var(--bg);border-radius:12px;padding:9px;font:600 13px Pretendard,sans-serif;cursor:pointer;color:var(--text-2)}
+.vote.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.tally{font-size:13px;color:var(--sub);line-height:1.7}
+.btn{width:100%;border:0;border-radius:16px;padding:14px;font:700 15px Pretendard,sans-serif;cursor:pointer;background:var(--bg-normal);color:var(--text-2);margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+th,td{padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar"><img src="/read/logo.png" alt=""><b>BeaverTalk</b><span>버전 비교 (내부용)</span></div>
+  <div class="hero">
+    <h1>어떤 버전이 제일 좋을까요?</h1>
+    <p>문장을 한 번 읽으면 <b>네 가지 버전</b>이 같은 녹음을 동시에 판정합니다. 어떤 버전인지는 가려 두었어요. 여러 번 해 보시고 가장 믿음직한 카드에 👍 를 눌러 주세요. 다 끝나면 아래에서 정체를 공개합니다.</p>
+  </div>
+
+  <div class="card">
+    <label class="consent"><input type="checkbox" id="agree" checked><span>녹음과 선택을 모델 개선 분석에 사용하는 데 동의해요 (체크를 끄면 저장하지 않아요)</span></label>
+    <div class="row"><span id="idx">문장 1 / 10</span><button class="link" id="nextSent">다른 문장 →</button></div>
+    <div class="sent" id="sent"></div>
+    <div class="recwrap">
+      <button class="rec" id="rec" aria-label="녹음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg></button>
+      <div class="meter"><i id="lv"></i></div>
+    </div>
+    <div class="status" id="st">버튼을 누르고 읽은 뒤, 한 번 더 누르세요.</div>
+  </div>
+
+  <div id="res" class="hidden">
+    <div class="grid" id="grid"></div>
+    <div class="note">네 버전이 똑같이 나오는 경우가 많아요. 차이는 애매한 녹음에서만 납니다.</div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="tally" id="tally">아직 선택이 없어요.</div>
+    <button class="btn" id="reveal">버전 정체 공개하기</button>
+    <div id="truth" class="hidden"></div>
+  </div>
+</div>
+<script>
+const SENTS=["내일은 오늘보다 더 여유로운 하루였으면 좋겠다.","오늘은 평소보다 조금 일찍 집을 나섰다.","창밖으로 보이는 하늘이 유난히 맑았다.","점심에는 따뜻한 국수를 먹고 싶다.","책상 위에 읽다 만 책이 한 권 놓여 있다.","주말에는 친구와 영화를 보기로 했다.","작은 습관이 모이면 큰 변화를 만들 수 있다.","비가 그친 뒤 공기가 한층 시원해졌다.","새로운 일을 시작할 때는 언제나 조금 긴장된다.","음악을 들으면서 산책하면 기분이 좋아진다."];
+const KO={Bangladesh:["방글라데시","🇧🇩"],Brazil:["브라질","🇧🇷"],Bulgaria:["불가리아","🇧🇬"],Cambodia:["캄보디아","🇰🇭"],Chile:["칠레","🇨🇱"],China:["중국","🇨🇳"],Colombia:["콜롬비아","🇨🇴"],Ethiopia:["에티오피아","🇪🇹"],France:["프랑스","🇫🇷"],Germany:["독일","🇩🇪"],"Hong Kong":["홍콩","🇭🇰"],India:["인도","🇮🇳"],Indonesia:["인도네시아","🇮🇩"],Iran:["이란","🇮🇷"],Italy:["이탈리아","🇮🇹"],Japan:["일본","🇯🇵"],Kazakhstan:["카자흐스탄","🇰🇿"],Korea:["한국","🇰🇷"],Kyrgyzstan:["키르기스스탄","🇰🇬"],Malaysia:["말레이시아","🇲🇾"],Mongolia:["몽골","🇲🇳"],Myanmar:["미얀마","🇲🇲"],Nepal:["네팔","🇳🇵"],Pakistan:["파키스탄","🇵🇰"],Peru:["페루","🇵🇪"],Philippines:["필리핀","🇵🇭"],Romania:["루마니아","🇷🇴"],Russia:["러시아","🇷🇺"],Rwanda:["르완다","🇷🇼"],Singapore:["싱가포르","🇸🇬"],Spain:["스페인","🇪🇸"],Tajikistan:["타지키스탄","🇹🇯"],Thailand:["태국","🇹🇭"],Turkey:["튀르키예","🇹🇷"],Turkmenistan:["투르크메니스탄","🇹🇲"],Ukraine:["우크라이나","🇺🇦"],"United Kingdom":["영국","🇬🇧"],"United States":["미국","🇺🇸"],Uzbekistan:["우즈베키스탄","🇺🇿"],Vietnam:["베트남","🇻🇳"],Zambia:["잠비아","🇿🇲"]};
+const NAMES={"old":"기존 서비스 (옛 모델)","tau0.9":"새 구성 · 기준값 0.9 (현재)","tau0.7":"새 구성 · 기준값 0.7","tau0.5":"새 구성 · 기준값 0.5 (한국인 우선)"};
+// 공개 시 보여 줄 대가 (시험 데이터 기준, results/15_NPU_GPU_성능비교.md)
+const FACTS={"old":["54 / 58","81.1%","5.1%","27.0%"],"tau0.9":["50 / 58","99.5%","1.5%","65.9%"],"tau0.7":["51 / 58","99.6%","2.8%","65.4%"],"tau0.5":["53 / 58","99.7%","3.9%","64.9%"]};
+const $=s=>document.querySelector(s), ko=l=>(KO[l]||[l,"🌏"]);
+const session=Math.random().toString(36).slice(2,10);
+const keys=Object.keys(NAMES).sort(()=>Math.random()-.5);           // 세션마다 A~D 배정을 섞는다
+const letterOf=Object.fromEntries(keys.map((k,i)=>[k,"ABCD"[i]]));
+let si=0, mr=null, chunks=[], ctx=null, raf=0, t0=0, last=null, votes={}, revealed=false;
+function showSent(){$('#sent').textContent=SENTS[si];$('#idx').textContent=`문장 ${si+1} / ${SENTS.length}`}
+showSent();
+$('#nextSent').onclick=()=>{si=(si+1)%SENTS.length;showSent()};
+$('#rec').onclick=async()=>{
+  if(mr&&mr.state==='recording'){mr.stop();return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){$('#st').textContent='마이크 권한이 필요해요. 인스타그램 안이라면 외부 브라우저로 열어 주세요.';$('#st').className='status err';return}
+  chunks=[];mr=new MediaRecorder(stream);mr.ondataavailable=e=>chunks.push(e.data);
+  mr.onstop=()=>{stream.getTracks().forEach(t=>t.stop());cancelAnimationFrame(raf);$('#lv').style.width=0;$('#rec').classList.remove('on');
+    if((Date.now()-t0)/1000<1.5){$('#st').textContent='조금 더 길게, 문장을 끝까지 읽어 주세요.';$('#st').className='status err';return}
+    send(new Blob(chunks,{type:mr.mimeType||'audio/webm'}))};
+  ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(stream).connect(an);
+  const buf=new Uint8Array(an.fftSize);const loop=()=>{an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));$('#lv').style.width=Math.min(100,m*1.6)+'%';raf=requestAnimationFrame(loop)};loop();
+  mr.start();t0=Date.now();setTimeout(()=>{if(mr.state==='recording')mr.stop()},12000);
+  $('#rec').classList.add('on');$('#st').textContent='듣고 있어요…';$('#st').className='status';
+};
+async function send(blob){
+  $('#rec').disabled=true;$('#st').textContent='네 버전이 듣는 중…';
+  const f=new FormData();f.append('audio',blob,blob.type.includes('mp4')?'a.mp4':'a.webm');
+  f.append('consent',$('#agree').checked?'1':'0');f.append('sentence',SENTS[si]);f.append('session',session);
+  try{const r=await fetch('/compare/predict',{method:'POST',body:f});const d=await r.json();
+    if(!r.ok||d.error){$('#st').textContent=(d.code==='no_speech'||d.code==='too_short')?'목소리가 잘 안 들렸어요. 조금 더 크게, 끝까지 읽어 주세요.':'잠시 문제가 생겼어요. 다시 눌러 주세요.';$('#st').className='status err';$('#rec').disabled=false;return}
+    last=d;render(d);$('#st').textContent='마음에 드는 카드에 👍 를 눌러 주세요. 다른 문장으로 계속 해 보셔도 돼요.';$('#st').className='status';
+  }catch(e){$('#st').textContent='연결이 불안정해요. 다시 시도해 주세요.';$('#st').className='status err'}
+  $('#rec').disabled=false;
+}
+function verdictHtml(v){
+  if(v.low_confidence) return `<div class="verdict retry">🔁 다시 말해 주세요</div>`;
+  const [n,f]=ko(v.top5[0].label);return `<div class="verdict">${f} ${v.native?'한국어 원어민':n}</div>`;
+}
+function render(d){
+  const by=Object.fromEntries(d.variants.map(v=>[v.key,v]));
+  $('#grid').innerHTML=keys.map(k=>{const v=by[k];if(!v)return'';
+    const rows=v.top5.slice(0,3).map(t=>{const [n,f]=ko(t.label);return `<div class="mrow"><span class="nm">${f} ${n}</span><span class="pp">${Math.round(t.prob*100)}%</span><span class="track"><i style="width:${Math.max(2,t.prob*100)}%"></i></span></div>`}).join('');
+    return `<div class="v" data-k="${k}"><div class="lt">${letterOf[k]}</div><div class="name">${revealed?NAMES[k]:''}</div>${verdictHtml(v)}<div class="mini">${rows}</div><button class="vote" data-k="${k}">👍 이게 좋아요</button></div>`}).join('');
+  $('#res').classList.remove('hidden');
+  document.querySelectorAll('.vote').forEach(b=>b.onclick=()=>vote(b.dataset.k,b));
+}
+async function vote(k,btn){
+  document.querySelectorAll('.vote').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.v').forEach(x=>x.classList.remove('picked'));
+  btn.classList.add('on');btn.closest('.v').classList.add('picked');
+  votes[k]=(votes[k]||0)+1;tally();
+  const f=new FormData();f.append('session',session);f.append('choice',k);f.append('letter',letterOf[k]);f.append('stem',(last&&last.stem)||'');
+  if($('#agree').checked){try{await fetch('/compare/vote',{method:'POST',body:f})}catch(e){}}
+}
+function tally(){
+  const t=keys.map(k=>`${letterOf[k]} ${votes[k]||0}표`).join(' · ');
+  $('#tally').innerHTML=`지금까지 선택: <b>${t}</b>`;
+}
+$('#reveal').onclick=()=>{
+  revealed=true;if(last)render(last);
+  const rows=keys.map(k=>`<tr><td><b>${letterOf[k]}</b> ${NAMES[k]}</td><td>${votes[k]||0}</td><td>${FACTS[k][0]}</td><td>${FACTS[k][1]}</td><td>${FACTS[k][2]}</td><td>${FACTS[k][3]}</td></tr>`).join('');
+  $('#truth').innerHTML=`<table><tr><th>버전</th><th>내 선택</th><th>사내 녹음 Korea</th><th>처음 보는 한국인 Korea</th><th>외국인→한국인 오판</th><th>외국인 국적 정답</th></tr>${rows}</table>
+  <div class="note">사내 녹음 = 저장된 실제 녹음 58개(녹음자 1~2명). 처음 보는 한국인 = 학습에 없던 화자의 시험 음성 1,127개. 외국인 = 학습에 없던 외국인 시험 음성 17,193개(국적 정답은 1위 기준).
+  기존 서비스는 우리 목소리에는 잘 맞지만 처음 보는 한국인의 19%를 외국인으로 부르고(<b>여성 43%</b> · 남성 18%), 외국인 국적은 27%만 맞힙니다. 새 구성은 처음 보는 한국인 여성 100% · 남성 98.6% 를 한국인으로 판정합니다. 기준값을 낮출수록 한국인은 더 잘 나오고 외국인이 한국인으로 나오는 비율이 늘어납니다.</div>`;
+  $('#truth').classList.remove('hidden');$('#reveal').classList.add('hidden');
+};
+</script>
+</body>
+</html>
