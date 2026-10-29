@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 이게 뭔가
 
-한국어 음성 AI 두 가지. 백본은 둘 다 XLS-R 이지만 **모델·데이터·평가 잣대가 완전히 다르다.**
+한국어 음성 AI. 아래 표는 기존 보고용 XLS-R 모델 기준이며 **모델·데이터·평가 잣대가 완전히 다르다.**
+
+**발음평가 NPU 운영은 w2v-BERT 2.0 기반 M3 `w2vbert_synth_tense_v2/step_3000`이다.** 마지막 원격 확인은 2026-10-25 KST, 문서 갱신은 10월 29일이다. 운영 식별자·설정·연구와의 구분은 [현재 서비스 모델](docs/발음평가_현재_서비스_모델.md)을 먼저 읽는다. H0·P3·λ=.3 fold0 파일럿은 연구용이며 운영 채택 기록이 없다.
 
 | task | 하는 일 | 모델 | 성능 |
 |---|---|---|---|
@@ -91,7 +93,7 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
 - **부트스트랩** — 진입점 맨 위 블록이 `pyproject.toml` 을 찾아 저장소 루트와 `tasks/*/src` 를 `sys.path`
   앞에 넣는다(fairseq 를 쓰는 곳은 이어서 `ensure_fairseq()`). 그래서 `country_classifier`·`mdd` 가 설치 없이
   패키지로 잡힌다. **`import mdd_eval` 처럼 패키지를 빼고 쓰면 안 잡힌다** — `from mdd import mdd_eval`.
-- **발음(MDD)** — 문장 →KoG2P→ 표준 발음 / 오디오 →CTC(자모 46종)→ 실현 자모열 → NW 정렬 → 오류 유형
+- **기존 XLS-R 발음(MDD)** — 문장 →KoG2P→ 표준 발음 / 오디오 →CTC(자모 46종)→ 실현 자모열 → NW 정렬 → 오류 유형
   (`src/mdd/pipeline.py`). 71음소 표기는 `jamo_to_kog2p.py` 후처리다. 점수 3종은 같은 forward 에서 나온
   GOP 특징 41종(`gop_feats_v2.py`) → GBM 회귀기(joblib). `deploy/mdd-api` 는 사용자용 지적에서
   삭제·삽입형을 숨긴다(`suppress.py`, DECISIONS #10).
@@ -99,9 +101,10 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
   `mdd.pipeline` 이 import 될 때 이 값을 `tag_all_lar` 로 덮어쓰므로 체크포인트는 import 가 끝난 **뒤에** 넣는다.
   스크립트별 `--ckpt` 기본값은 제각각이다(주 평가 `mdd_eval_tag71.py` 는 `tag_combined`) —
   수치를 재현할 땐 README 명령처럼 명시한다.
-- **서빙 모델** — `deploy/mdd-api` 는 `.env` 의 `MDD_SERVE_CKPT`·`MDD_SERVE_SCORER`(`tag_all_native` 짝)로
+- **기존 로컬 서빙 모델** — `deploy/mdd-api` 는 `.env` 의 `MDD_SERVE_CKPT`·`MDD_SERVE_SCORER`(`tag_all_native` 짝)로
   못 박는다. `deploy/mdd-demo` 는 이 키를 안 읽고 `mdd.pipeline` 기본값(`$SPEECH_AI_DATA` 의 `tag_all_lar` +
   `$MDD_ANALYSIS` 의 L1-prior JSON)을 써서, `setup.sh` 로 만든 추론 전용 환경에선 뜨지 않는다.
+- **NPU 운영 발음 모델** — `deploy/pronunciation-demo/app.py` 계열이며 원격 `run_8932.sh`가 M3의 HF·RBLN 경로와 표시 인자를 지정한다. 로컬 기본값이나 최근 연구 체크포인트를 운영 설정으로 간주하지 않는다.
 - **국적** — 동결 XLS-R 특징을 `.npz` 로 캐시하고 그 위에서 헤드를 학습한다(CPU 몇 분).
   서빙(`deploy/nationality-kd-demo/app.py`)은 KD 인코더 ONNX + numpy 헤드(`head_np.npz`)라 torch·fairseq 가
   필요 없다. 모델 위치는 `KD_MODEL_DIR`.

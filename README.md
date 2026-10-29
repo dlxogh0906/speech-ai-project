@@ -1,12 +1,13 @@
 # speech-ai-project
 
-한국어 음성 AI 두 가지를 한 저장소에서 관리한다. 백본은 둘 다 **XLS-R (wav2vec 2.0)** 이지만
-모델·데이터·평가 잣대가 완전히 달라 **task 단위로 분리**되어 있다.
+한국어 음성 AI를 한 저장소에서 관리한다. 모델·데이터·평가 잣대에 따라 **task 단위로 분리**되어 있다.
 
 | task | 무엇을 하는가 | 모델 | 성능 |
 |---|---|---|---|
 | [`nationality-classification`](tasks/nationality-classification/) | 외국인이 한국어로 말한 음성 → **화자의 모국어/국적** 예측 | XLS-R **2B** 동결 + 분류 헤드 | top-5 **0.950** · top-1 0.798 (41클래스) |
-| [`pronunciation-assessment`](tasks/pronunciation-assessment/) | 외국인의 한국어 발음 → **어느 음소를 어떻게 틀렸는지** + 1~5점 | XLS-R **300m** + CTC (직접 학습) | weighted F1 **0.9547** · PCC **0.662/0.683/0.762** (전체 발화 · 30발화 집계 0.646/0.671/0.762) |
+| [`pronunciation-assessment`](tasks/pronunciation-assessment/) | 외국인의 한국어 발음 → **어느 음소를 어떻게 틀렸는지** + 점수 | **NPU 운영: w2v-BERT 2.0 기반 M3** `w2vbert_synth_tense_v2/step_3000` | [운영 모델·확인 날짜](docs/발음평가_현재_서비스_모델.md) · [배포 검증](docs/발음평가_개선_반영_2026-10-21.md) |
+
+**발음평가의 마지막 원격 운영 확인은 2026-10-25 KST**다(문서 갱신 10월 29일). `pron-api` · 포트 `8932`에서 M3 100% 모델을 사용한다. 기존 XLS-R `tag_all_lar`의 weighted F1 0.9547 · PCC 0.662/0.683/0.762는 과거 평가값이며, H0·P3·λ=.3 파일럿은 연구용이다. 아래 설치·CLI의 `tag_all_native` 번들은 NPU 운영과 별도 경로다.
 
 두 task 는 **코드상 완전히 독립**이다 (교차 import 0건). 공유하는 것은 경로 설정과
 fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더는 요구사항이 달라
@@ -15,6 +16,8 @@ fairseq import 가드뿐이며 [`shared/`](shared/) 에 있다. 오디오 로더
 ---
 
 ## 설치
+
+아래는 기존 `tag_all_native` 발음 모델·국적 모델 번들의 설치 절차다. M3 NPU 서비스의 구성은 [현재 서비스 모델](docs/발음평가_현재_서비스_모델.md)을 따른다.
 
 이 저장소에는 **코드와 문서만** 있다(약 12 MB). 코퍼스·모델·산출물은 전부 저장소 밖에 있고
 위치는 환경마다 다르므로 `.env` 로 지정한다.
@@ -95,6 +98,8 @@ python tests/test_imports.py      # 30초, GPU 불필요
 
 ## 실행
 
+아래 발음 명령은 기존 `deploy/mdd-api` 경로를 실행한다. NPU `pron-api`의 요청 형식·인증은 [NPU API 안내](docs/NPU_서버_API_안내.md)를 참고한다.
+
 ### 파일 하나씩 — CLI
 
 ```bash
@@ -124,14 +129,14 @@ curl -s localhost:8905/health
 ```
 
 엔드포인트 상세는 [`deploy/README.md`](deploy/README.md).
-**인증이 없다.** 외부에 열 때는 앞단에 접근 제어를 두어야 한다.
+**위 로컬 API 예제에는 인증이 없다.** NPU 발음평가 API는 토큰을 요구한다.
 
 ### 실행 전에 알아야 할 것
 
-- **발음 점수는 화자 단위로만 유효하다.** 발화 1개 PCC 는 0.43 이고 20~30문장을 모아야
+- **기존 `mdd-api` 점수는 화자 단위 집계 기준이다.** 발화 1개 PCC 는 0.43 이고 20~30문장을 모아야
   포화한다. 같은 `--session` 으로 누적해야 하며, **5발화 미만이면 점수 없이 진단만** 나온다.
-- **발음 진단은 학습에 쓴 287문장 안에서 강하다.** 안 본 문장은 weighted F1 0.9509 → 0.8218
-  로 떨어진다. 정해진 문장을 읽게 하는 서비스면 문제없고, 자유 발화로 넓힐 때 걸린다
+- **과거 XLS-R 문항 홀드아웃 실험에서는 문항 일반화 문제가 관찰됐다.** 별도로 축약 학습한 모델의 seen/unseen weighted F1이 0.9509 / 0.8218
+  이었던 기록이며, 현재 M3의 서비스 성능이나 자유 문장 지원 검증으로 인용하지 않는다
   → [`08_문장암기_일반화.md`](tasks/pronunciation-assessment/results/08_문장암기_일반화.md).
 - **국적 정확도 수치가 문서마다 다르다** — 0.798(2B) / 0.751(300m 구버전) /
   **0.8245**(현재 배포 KD). 셋 다 사실이지만 다른 모델이다 → [`docs/WEIGHTS.md`](docs/WEIGHTS.md).
@@ -194,7 +199,8 @@ speech-ai-project/
 각 task 의 README 에 학습·평가·추론 명령이 있다.
 
 - [국적 분류 — 데이터 준비 · 학습 · 평가 · 내보내기](tasks/nationality-classification/README.md#실행)
-- [발음 진단 — 데이터 준비 · 학습 · 평가 · 점수 · 추론](tasks/pronunciation-assessment/README.md#실행)
+- [발음평가 — 현재 M3 서비스 모델](docs/발음평가_현재_서비스_모델.md)
+- [기존 XLS-R 발음 진단 — 데이터 준비 · 학습 · 평가 · 점수 · 추론](tasks/pronunciation-assessment/README.md#기존-xls-r-경로-실행)
 - [데모·API 실행](deploy/README.md)
 
 ```bash

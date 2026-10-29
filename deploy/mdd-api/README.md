@@ -1,5 +1,7 @@
 # mdd-api — 발음 진단 + 점수 3종 API (PyTorch · **CPU/GPU ONNX**)
 
+> **범위 갱신(2026-10-29):** 이 문서는 기존 XLS-R `tag_all_native` 번들의 API·ONNX 실행 안내다. 현재 NPU 발음평가는 w2v-BERT 기반 **M3 `w2vbert_synth_tense_v2/step_3000`**, `pron-api` · 포트 `8932`를 사용한다(마지막 원격 확인 10월 25일). [현재 서비스 모델](../../docs/발음평가_현재_서비스_모델.md)을 참고한다.
+
 `POST /diagnose` 하나로 음소 진단과 점수 특징을 **같은 forward 한 번**에서 뽑는다.
 엔드포인트 설명은 [`deploy/README.md`](../README.md) §mdd-api, 수치의 근거는
 [`results/11_경량화.md`](../../tasks/pronunciation-assessment/results/11_경량화.md) 에 있다.
@@ -10,11 +12,11 @@
 
 ## 1. CPU 버전이란 무엇인가 — 재학습이 아니다
 
-현역 모델 `mdd_tag_all_native` **그 가중치 그대로** 를 ONNX 로 내보내고 int8 로 양자화한 것이다.
+이 API의 기본 모델 `mdd_tag_all_native` **그 가중치 그대로** 를 ONNX 로 내보내고 int8 로 양자화한 것이다.
 학습 데이터가 들어갈 자리가 없다. 동적 양자화(`quantize_dynamic`)라 **보정 데이터도 0건** 이다
 (기각한 정적 QDQ 만 60발화가 필요했다).
 
-| | 현역 PyTorch | **CPU 배포판(int8)** | GPU 배포판(fp16) |
+| | 기존 PyTorch | **CPU 배포판(int8)** | GPU 배포판(fp16) |
 |---|--:|--:|--:|
 | 파일 크기 | 1,204 MiB | **339 MiB** | 603 MiB |
 | 프로세스 메모리(단독 실행) | 3.3 GB | **1.1 GB** | — |

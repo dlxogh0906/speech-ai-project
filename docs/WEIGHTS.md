@@ -1,5 +1,7 @@
 # 가중치 — 어느 파일이 무엇인가
 
+> **발음평가 범위 갱신(2026-10-29):** 아래는 8월 XLS-R 번들 안내다. NPU 운영 발음평가는 **M3 `w2vbert_synth_tense_v2/step_3000`**이며, 마지막 원격 확인은 10월 25일이다. M3의 HF·RBLN 경로와 배포 이력은 [현재 서비스 모델](발음평가_현재_서비스_모델.md)을 따른다. 이 문서의 `tag_all_native`는 기존 CLI·`deploy/mdd-api`용이다.
+
 파일명이 서로 비슷해서 **잘못 골라도 에러 없이 답만 틀리는** 조합이 있다. 옮기거나
 교체하기 전에 이 문서를 볼 것.
 
@@ -8,9 +10,9 @@
 
 ---
 
-## 1. 실제로 쓰는 건 5개뿐
+## 1. 기존 번들 추론에 필요한 파일 5개
 
-전부 `final/` 안에 있다. 이 2.1 GB 만 있으면 두 서비스가 돈다.
+전부 `final/` 안에 있다. 이 2.1 GB는 기존 번들 CLI·API의 추론 자산이며 M3 NPU 배포 자산은 포함하지 않는다.
 
 | 용도 | 파일 |
 |---|---|
@@ -23,7 +25,7 @@
 
 ```
 speech-ai-weights/
-├── final/                  ← 서비스용 (2.1 GB)
+├── final/                  ← 기존 번들 추론용 (2.1 GB)
 │   ├── pronunciation/  mdd_tag_all_native.pt · dict.ltr.txt · score_models_v2_native.joblib
 │   └── nationality/    encoder_kd_l17.onnx · head_np.npz  (+ 구버전 encoder_l17.onnx · head.pt)
 ├── mdd-full/               ← 발음 모델 6종 원본 (21 GB · 재학습용)
@@ -39,8 +41,8 @@ speech-ai-weights/
 
 ```
 mdd-full/mdd_ckpt_tag_all/checkpoint_best.pt          본학습 (TAG 143만 발화)
-mdd-full/mdd_ckpt_tag_all_lar/checkpoint_best.pt      ↑ + LAR 도메인 적응 — 이전 배포본
-mdd-full/mdd_ckpt_tag_all_native/checkpoint_best.pt   ↑ + 원어민 — 현재 배포본
+mdd-full/mdd_ckpt_tag_all_lar/checkpoint_best.pt      ↑ + LAR 도메인 적응 — 과거 평가 기준
+mdd-full/mdd_ckpt_tag_all_native/checkpoint_best.pt   ↑ + 원어민 — 기존 CLI/mdd-api 기본 모델
 mdd-full/mdd_ckpt_errup/checkpoint_best.pt            실험 (오류 가중)
 mdd-full/mdd_ckpt_omniw2v/checkpoint_best.pt          실험 (백본 교체)
 mdd-full/mdd_ckpt_diverse50k/checkpoint_best.pt       실험 (문장 다양성)
@@ -73,11 +75,11 @@ mdd-full/mdd_ckpt_diverse50k/checkpoint_best.pt       실험 (문장 다양성)
 
 | 체크포인트 | 짝이 되는 회귀기 |
 |---|---|
-| `mdd_tag_all_native` (현재 배포) | `score_models_v2_native.joblib` |
-| `mdd_tag_all_lar` (이전 배포) | `score_models_v2.joblib` |
+| `mdd_tag_all_native` (기존 CLI/mdd-api) | `score_models_v2_native.joblib` |
+| `mdd_tag_all_lar` (과거 평가 모델) | `score_models_v2.joblib` |
 
 회귀기는 그 체크포인트가 뽑은 특징 41종으로 학습됐다. 짝이 어긋나면 **에러 없이
-점수만 조용히 틀린다.** 체크포인트를 바꾸면 회귀기도 같이 바꿔야 한다.
+점수만 조용히 틀린다.** 위 번들은 해당 짝으로 사용한다. 다른 모델로 교체할 때는 특징·보정 정합성을 검증해야 한다. M3 운영 교체는 기존 회귀기를 유지하고 별도 검증한 사례다([10월 21일 기록](발음평가_개선_반영_2026-10-21.md)).
 
 ---
 

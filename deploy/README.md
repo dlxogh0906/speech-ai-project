@@ -1,27 +1,31 @@
 # deploy — 데모와 추론 API
 
-학습·평가 코드와 라이프사이클이 달라 분리했다. 전부 FastAPI + uvicorn 이고,
-`.env` 의 경로 설정을 그대로 쓴다.
+학습·평가 코드와 라이프사이클이 달라 분리했다. FastAPI + uvicorn 기반이며, 모델 선택은 각 진입점의 설정을 따른다.
+
+**발음평가 NPU 운영은 `pronunciation-demo/` 계열의 M3 `w2vbert_synth_tense_v2/step_3000`이다.** `pron-api` · 포트 `8932` · NPU 7, 마지막 원격 확인은 2026-10-25 KST다(문서 갱신 10월 29일). [현재 서비스 모델·원격 설정](../docs/발음평가_현재_서비스_모델.md)과 [NPU API 안내](../docs/NPU_서버_API_안내.md)를 참고한다.
 
 | | 무엇 | 입력 → 출력 |
 |---|---|---|
-| `mdd-demo/` | 발음 진단 웹 UI | 문장 제시 → 브라우저 녹음 → 오류 위치·유형 지적 |
-| `mdd-api/` | **MDD 진단 + 점수 3종 통합 API** | 오디오 + 문장 → 진단·점수 JSON |
+| [`pronunciation-demo/`](pronunciation-demo/) | **M3 NPU 운영 계열의 통합 발음평가 앱** | `/sent.eval.kr` · `/speak` · `/word.judge`, 원격 실행 인자로 모델 지정 |
+| `mdd-demo/` | 기존 XLS-R `tag_all_lar` 웹 UI | 문장 제시 → 브라우저 녹음 → 오류 위치·유형 지적 |
+| `mdd-api/` | 기존 XLS-R `tag_all_native` 진단 + 점수 API | 오디오 + 문장 → 진단·점수 JSON |
 | `model-compare/` | 두 모델 나란히 비교 | 같은 오디오 → 모델별 결과 대조 |
 | `nationality-latency-demo/` | ONNX CPU 지연·부하 측정 | GPU vs CPU, 동접 부하 |
 | `nationality-batch/` | 배치 추론·양자화 유틸 | 매니페스트 → 예측 CSV |
 
-## 실행
+## 기존 로컬 API·데모 실행
+
+아래 발음 명령은 XLS-R 경로다. NPU 운영 배포 절차와 구분한다.
 
 ```bash
 source tools/env.sh
 PORT=8911     # 쓰지 않는 포트를 고를 것
 
 # 발음 진단 UI
-python deploy/mdd-demo/app.py --port $PORT
+$PY deploy/mdd-demo/app.py --port $PORT
 
 # 발음 진단 + 점수 통합 API
-python deploy/mdd-api/mdd_infer_api.py --port $PORT
+$PY deploy/mdd-api/mdd_infer_api.py --port $PORT
 curl -s localhost:$PORT/health
 ```
 
@@ -54,14 +58,13 @@ bash deploy/serve.sh nat --port 8905     # POST /predict
 > **점수는 화자 단위로만 유효하다.** 발화 1개로는 PCC 0.43 이고 20~30문장 모아야 포화한다.
 > `mdd-api` 는 발화 5개 미만이면 점수를 내지 않고 진단만 반환한다.
 
-## 모델 로딩
+## 기존 `mdd-api` 모델 로딩
 
 GOP 점수 특징이 MDD forward 의 부산물이라 **모델을 한 번만 올려 진단과 점수를 둘 다 낸다.**
-기동 시 체크포인트(`MDD_CKPT`)를 GPU 에 올리므로 첫 요청 전까지 수십 초가 걸린다.
+PyTorch 경로는 기동 시 `MDD_SERVE_CKPT`를 적재하며 점수 회귀기는 `MDD_SERVE_SCORER`로 지정한다. 기본 모델은 `tag_all_native`다. ONNX 선택 설정은 [mdd-api 안내](mdd-api/README.md)를 따른다.
 
 ## 주의
 
-- **공개 노출은 신중히.** 이 API 들은 인증이 없다. 리버스 프록시나 터널로 외부에 열 때는
-  접근 제어를 앞단에 두어야 한다.
+- 위 기존 로컬 API에는 인증이 없다. NPU 발음평가 API는 토큰 인증을 사용한다.
 - 리버스 프록시 설정 방식에 따라 기존 라우팅이 꺼질 수 있다. 경로 마운트를 쓸 것.
-- 배포 전 반드시 `python tests/test_imports.py` 로 저장소 상태를 확인한다.
+- 배포 전 반드시 `source tools/env.sh` 후 `$PY tests/test_imports.py`로 저장소 상태를 확인한다.
