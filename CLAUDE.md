@@ -13,11 +13,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | task | 하는 일 | 모델 | 성능 |
 |---|---|---|---|
 | `tasks/nationality-classification/` | 외국인의 한국어 발화 → 화자 모국어/국적 | XLS-R **2B** 동결 + 헤드 | top-5 0.950 / top-1 0.798 (41클래스) |
-| `tasks/pronunciation-assessment/` | 외국인의 한국어 발음 → 음소 오류 + 1~5점 | XLS-R **300m** + CTC 직접 학습 | weighted F1 0.9547 · PCC 0.662/0.683/0.762 (전체 발화 기준 · 30발화 집계 0.646/0.671/0.762) |
+| `tasks/pronunciation-assessment/` | 외국인의 한국어 발음 → 음소 오류 + 1~5점 | 과거 XLS-R **300m** `tag_all_lar` | weighted F1 0.9547 **및 오류 F1 0.4319** · 화자 단위 PCC 0.662/0.683/0.762 (화자별 전체 발화 집계) |
 
 위 수치는 **보고용 모델** 기준이다. `deploy/serve.sh`·`deploy/infer_*.sh` 가 올리는 모델은 다르다 —
 국적은 300m KD 인코더(ONNX·CPU, top-1 0.8245 / top-5 0.9584), 발음은 `tag_all_native`(weighted F1 0.9558).
 어느 모델의 수치인지 밝히지 않고 섞어 인용하지 말 것 → `docs/WEIGHTS.md` §5.
+
+**M3 보존 화면 평가:** 재현율 31.95%·정밀도 46.29%·오류 검출 F1 0.3781(TP 631/FP 732/FN 1,344), 당시 입력 검사 통과 2,281발화 기준이다. 과거 오류 F1과의 기록값 차이는 −0.0538이지만 같은 평가 조건의 모델 변화량이 아니다. M3 화자 단위 PCC는 0.683/0.713/0.752이며 옛 PCC와 화자·발화 구성도 다르다. M3의 옛 0.9547과 동일 조건 weighted F1은 미확인이다. [성능 비교·분모](docs/발음평가_현재_서비스_모델.md#성능과-과거-xls-r-수치의-비교)를 함께 인용한다.
 
 두 task 의 라이브러리(`src/`) 사이 교차 import 는 **0건**이다. 스크립트 예외가 1곳 있다 —
 `tasks/pronunciation-assessment/scripts/eval/eval_word_skip_record.py` 가 디코드 경로에서
@@ -139,7 +141,7 @@ from shared.paths import DATA_ROOT, MDD_OUTPUTS, NAT_OUTPUTS   # .env 에서 읽
   유창성 **0.607** 이고 20~30문장 모아야 포화한다.
 - **국적**: 61 / 62 / 41 클래스가 섞여 있다. 어느 split 인지 먼저 확인할 것.
   어족·권역 병합(31/13-class)은 **중단됐다** — `archive/` 에 있고 되살리지 않는다.
-- weighted F1(0.9547)과 오류 F1(0.4319)은 둘 다 사실이다. 보고엔 전자, 질문 오면 후자도 말한다.
+- 과거 XLS-R의 weighted F1(0.9547)과 오류 F1(0.4319)은 **항상 함께 보고한다.** 질문을 받을 때까지 오류 F1 설명을 미루지 않는다. 두 값은 정상/오류 이진 채점이며 실제음·유형의 정확 진단과 다르다.
   단 정상 위치가 **95.86%** 라 전부 "정상"으로 찍어도 weighted F1 **0.9384** 가 나온다.
   즉 0.9547 의 실제 개선폭은 **+0.0163** 이다 — 이 맥락 없이 0.9547 만 인용하지 말 것.
 - **0.9547 은 학습에 쓴 287개 문장 범위 안의 값이다.** 학습셋 155만 발화가 287문장뿐이라
