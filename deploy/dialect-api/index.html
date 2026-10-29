@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사투리 판별 데모</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --muted: #6b6a64; --line: #e3e1da;
+  --accent: #2f6f5e; --accent-ink: #ffffff; --warn-bg: #fff6e0; --warn-ink: #7a5300;
+  --bar: #2f6f5e; --bar-bg: #ecebe6; --rec: #c2412d; --err-bg: #fdecea; --err-ink: #8a1f11;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161714; --card: #1f201d; --ink: #ecebe6; --muted: #a3a29b; --line: #34352f;
+    --accent: #6cbfa6; --accent-ink: #10201b; --warn-bg: #3a2f14; --warn-ink: #f2d38c;
+    --bar: #6cbfa6; --bar-bg: #2b2c27; --rec: #ef7a63; --err-bg: #3d1d18; --err-ink: #f5b5aa;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161714; --card: #1f201d; --ink: #ecebe6; --muted: #a3a29b; --line: #34352f;
+  --accent: #6cbfa6; --accent-ink: #10201b; --warn-bg: #3a2f14; --warn-ink: #f2d38c;
+  --bar: #6cbfa6; --bar-bg: #2b2c27; --rec: #ef7a63; --err-bg: #3d1d18; --err-ink: #f5b5aa;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.5rem; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.card h2 { font-size: 1.05rem; margin: 0 0 12px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+.tab { flex: 1; padding: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 10px; font-size: 0.95rem; cursor: pointer; }
+.tab[aria-selected="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); font-weight: 600; }
+.prompt { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.prompt:first-of-type { border-top: 0; padding-top: 0; }
+.prompt .q { font-weight: 600; }
+.prompt .hint { color: var(--muted); font-size: 0.85rem; }
+.prompt audio { grid-column: 1 / -1; width: 100%; height: 36px; }
+button.rec { min-width: 92px; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 0.95rem; cursor: pointer; }
+button.rec.on { background: var(--rec); border-color: var(--rec); color: #fff; }
+button.go { width: 100%; padding: 13px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-size: 1.02rem; font-weight: 600; cursor: pointer; margin-top: 14px; }
+button.go:disabled { opacity: 0.45; cursor: default; }
+label.field { display: block; margin-top: 14px; font-size: 0.92rem; color: var(--muted); }
+select, input[type=password], input[type=file] { display: block; width: 100%; margin-top: 6px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 0.95rem; }
+.notice { font-size: 0.85rem; color: var(--muted); margin-top: 12px; }
+.warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; }
+.warn ul { margin: 6px 0 0; padding-left: 18px; }
+.err { background: var(--err-bg); color: var(--err-ink); border-radius: 10px; padding: 12px 14px; margin-top: 12px; font-size: 0.92rem; }
+.big { font-size: 2rem; font-weight: 700; margin: 0; }
+.big small { font-size: 1rem; font-weight: 500; color: var(--muted); margin-left: 8px; }
+.bars { margin-top: 14px; }
+.bar { display: grid; grid-template-columns: 56px 1fr 52px; gap: 10px; align-items: center; margin: 6px 0; font-size: 0.92rem; }
+.bar .track { height: 12px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--bar); border-radius: 6px; }
+.bar .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 0.85rem; }
+.meta { color: var(--muted); font-size: 0.82rem; margin-top: 12px; word-break: break-all; }
+.hidden { display: none; }
+.row { display: flex; gap: 8px; align-items: end; }
+.row > :first-child { flex: 1; }
+</style>
+</head>
+<body>
+<main>
+  <h1>사투리 판별 데모</h1>
+  <p class="sub">평소 말투로 짧게 말하면 강원 · 경상 · 전라 · 제주 · 충청 · 표준어 중 어디에 가까운지 판정합니다.</p>
+
+  <div class="card hidden" id="keyCard">
+    <h2>접근 키</h2>
+    <div class="row">
+      <label class="field" style="margin-top:0">전달받은 키를 넣어 주세요
+        <input type="password" id="keyInput" autocomplete="off">
+      </label>
+      <button class="rec" id="keySave" type="button">저장</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabRec" aria-selected="true" type="button">세 번 말하기</button>
+      <button class="tab" role="tab" id="tabFile" aria-selected="false" type="button">파일 올리기</button>
+    </div>
+
+    <section id="paneRec">
+      <div id="prompts"></div>
+      <p class="notice">한 번에 5~10초가 좋습니다. 하나만 녹음해도 판정은 되지만, 셋을 합치면 더 안정적입니다.</p>
+    </section>
+
+    <section id="paneFile" class="hidden">
+      <label class="field" style="margin-top:0">녹음 파일 (wav · m4a · webm · mp3, 60초까지)
+        <input type="file" id="fileInput" accept="audio/*,.m4a,.webm,.wav,.mp3">
+      </label>
+      <p class="notice">긴 녹음은 12초 이하 구간으로 나눠 각각 판정한 뒤 평균합니다.</p>
+    </section>
+
+    <label class="field">출신 지역 (선택 — 모델 검증용으로만 기록합니다)
+      <select id="selfReport">
+        <option value="">선택 안 함</option>
+        <option>서울·경기·인천</option>
+        <option>강원</option>
+        <option>충청·대전·세종</option>
+        <option>전라·광주</option>
+        <option>경상·부산·대구·울산</option>
+        <option>제주</option>
+        <option>외국인(한국어 학습자)</option>
+      </select>
+    </label>
+
+    <button class="go" id="go" type="button" disabled>판정하기</button>
+    <p class="notice">녹음과 판정 결과는 품질 분석을 위해 서버에 저장됩니다.</p>
+    <div class="err hidden" id="err"></div>
+  </div>
+
+  <div class="card hidden" id="result">
+    <p class="big" id="rLabel"></p>
+    <div class="warn hidden" id="rLow" style="margin-top:10px">확신이 낮은 판정입니다. 조금 더 길게, 평소 말투로 다시 말해 보세요.</div>
+    <div class="bars" id="rBars"></div>
+    <div id="rParts"></div>
+    <div class="meta" id="rMeta"></div>
+  </div>
+
+  <div class="warn">
+    <strong>알아 둘 점</strong>
+    <ul>
+      <li>AI 허브 방언 발화 코퍼스로 학습했고, 같은 코퍼스의 봉인 test 에서 정답률 0.960 입니다. 폰·노트북으로 녹음한 실제 목소리에서는 정답 지역을 아는 녹음이 없어 아직 정확도를 재지 못했습니다.</li>
+      <li>한국인이 말한다고 가정한 모델입니다. 외국인 발화도 대부분 "표준어"로 나옵니다.</li>
+      <li>표준어 학습 데이터는 녹음 방식이 다른 출처에서 와서 표준어 판정은 잠정적입니다.</li>
+    </ul>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var BASE = location.pathname.endsWith("/") ? location.pathname : location.pathname + "/";
+  var PROMPTS = [
+    { q: "고향이나 사는 동네를 소개해 주세요", hint: "예: 어디서 자랐는지, 뭐가 유명한지" },
+    { q: "어제 뭘 먹었는지 말해 주세요", hint: "누구랑, 어디서, 맛이 어땠는지" },
+    { q: "주말에 한 일을 이야기해 주세요", hint: "평소 친구에게 말하듯이" }
+  ];
+  var MAX_REC_SEC = 15;
+  var clips = [null, null, null];
+  var mode = "rec";
+  var key = "";
+
+  function store(op, k, v) {
+    try { return op === "get" ? localStorage.getItem(k) : (v ? localStorage.setItem(k, v) : localStorage.removeItem(k)); }
+    catch (e) { return null; }
+  }
+  function $(id) { return document.getElementById(id); }
+
+  // 링크로 받은 키(?key=)는 저장하고 주소창에서 지운다
+  var params = new URLSearchParams(location.search);
+  if (params.get("key")) {
+    key = params.get("key");
+    store("set", "dialect_key", key);
+    params.delete("key");
+    history.replaceState(null, "", location.pathname + (params.toString() ? "?" + params : ""));
+  } else {
+    key = store("get", "dialect_key") || "";
+  }
+  function showKeyCard(show) { $("keyCard").classList.toggle("hidden", !show); }
+  showKeyCard(!key);
+  $("keySave").onclick = function () {
+    key = $("keyInput").value.trim();
+    store("set", "dialect_key", key);
+    showKeyCard(!key);
+    refresh();
+  };
+
+  function pickMime() {
+    var types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+    for (var i = 0; i < types.length; i++) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) return types[i];
+    }
+    return "";
+  }
+  function extFor(mime) { return mime.indexOf("mp4") >= 0 ? "m4a" : mime.indexOf("ogg") >= 0 ? "ogg" : "webm"; }
+
+  var recorder = null, recIndex = -1, timer = null;
+  function buildPrompts() {
+    var box = $("prompts");
+    PROMPTS.forEach(function (p, i) {
+      var div = document.createElement("div");
+      div.className = "prompt";
+      div.innerHTML = '<div><div class="q">' + (i + 1) + ". " + p.q + '</div><div class="hint">' + p.hint + "</div></div>" +
+        '<button class="rec" type="button" id="rec' + i + '">녹음</button><audio controls class="hidden" id="play' + i + '"></audio>';
+      box.appendChild(div);
+      $("rec" + i).onclick = function () { toggle(i); };
+    });
+  }
+
+  function toggle(i) {
+    if (recorder && recorder.state === "recording") {
+      var same = recIndex === i;
+      recorder.stop();
+      if (same) return;
+    }
+    start(i);
+  }
+
+  function start(i) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showErr("이 브라우저에서는 녹음을 쓸 수 없습니다. 파일 올리기를 써 주세요."); return; }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      var mime = pickMime();
+      var chunks = [];
+      recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      recIndex = i;
+      var btn = $("rec" + i), t0 = Date.now();
+      btn.classList.add("on");
+      timer = setInterval(function () {
+        var s = Math.floor((Date.now() - t0) / 1000);
+        btn.textContent = "멈춤 " + s + "초";
+        if (s >= MAX_REC_SEC && recorder.state === "recording") recorder.stop();
+      }, 250);
+      recorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+      recorder.onstop = function () {
+        clearInterval(timer);
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        btn.classList.remove("on");
+        btn.textContent = "다시 녹음";
+        var type = recorder.mimeType || mime || "audio/webm";
+        var blob = new Blob(chunks, { type: type });
+        clips[i] = { blob: blob, name: "part" + (i + 1) + "." + extFor(type), sec: (Date.now() - t0) / 1000 };
+        var a = $("play" + i);
+        a.src = URL.createObjectURL(blob);
+        a.classList.remove("hidden");
+        recIndex = -1;
+        refresh();
+      };
+      recorder.start();
+      hideErr();
+    }).catch(function () { showErr("마이크를 쓸 수 없습니다. 브라우저의 마이크 권한을 확인해 주세요."); });
+  }
+
+  function setMode(m) {
+    mode = m;
+    $("tabRec").setAttribute("aria-selected", m === "rec");
+    $("tabFile").setAttribute("aria-selected", m === "file");
+    $("paneRec").classList.toggle("hidden", m !== "rec");
+    $("paneFile").classList.toggle("hidden", m !== "file");
+    refresh();
+  }
+  $("tabRec").onclick = function () { setMode("rec"); };
+  $("tabFile").onclick = function () { setMode("file"); };
+  $("fileInput").onchange = refresh;
+
+  function ready() {
+    if (!key) return false;
+    if (mode === "file") return $("fileInput").files.length > 0;
+    return clips.some(function (c) { return c; });
+  }
+  function refresh() { $("go").disabled = !ready(); }
+
+  function showErr(msg) { var e = $("err"); e.textContent = msg; e.classList.remove("hidden"); }
+  function hideErr() { $("err").classList.add("hidden"); }
+
+  $("go").onclick = function () {
+    var form = new FormData(), url;
+    if (mode === "file") {
+      form.append("audio", $("fileInput").files[0]);
+      url = BASE + "predict";
+    } else {
+      clips.forEach(function (c) { if (c) form.append("audio", c.blob, c.name); });
+      url = BASE + "predict_multi";
+    }
+    var sr = $("selfReport").value;
+    if (sr) form.append("self_report", sr);
+    form.append("session", sessionId());
+    var go = $("go");
+    go.disabled = true; go.textContent = "판정 중…";
+    hideErr();
+    var t0 = performance.now();
+    fetch(url, { method: "POST", body: form, headers: { "X-API-Key": key } })
+      .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
+      .then(function (res) {
+        if (res.status === 401) { store("set", "dialect_key", ""); key = ""; showKeyCard(true); showErr("키가 맞지 않습니다. 다시 넣어 주세요."); return; }
+        if (res.status !== 200) { showErr((res.body && res.body.error) || ("오류 " + res.status)); return; }
+        render(res.body, performance.now() - t0);
+      })
+      .catch(function () { showErr("서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요."); })
+      .then(function () { go.textContent = "판정하기"; refresh(); });
+  };
+
+  function sessionId() {
+    var s = store("get", "dialect_session");
+    if (!s) { s = Math.random().toString(36).slice(2, 10); store("set", "dialect_session", s); }
+    return s;
+  }
+
+  function pct(p) { return Math.round(p * 100) + "%"; }
+  function render(b, wallMs) {
+    $("result").classList.remove("hidden");
+    $("rLabel").innerHTML = "";
+    $("rLabel").appendChild(document.createTextNode(b.label_ko));
+    var sm = document.createElement("small");
+    sm.textContent = pct(b.prob);
+    $("rLabel").appendChild(sm);
+    $("rLow").classList.toggle("hidden", !b.low_confidence);
+    var bars = $("rBars");
+    bars.innerHTML = "";
+    b.probs.forEach(function (p) {
+      var row = document.createElement("div");
+      row.className = "bar";
+      row.innerHTML = "<span></span><div class=\"track\"><div class=\"fill\"></div></div><span class=\"v\"></span>";
+      row.children[0].textContent = p.label_ko;
+      row.children[1].firstChild.style.width = Math.max(0.5, p.prob * 100) + "%";
+      row.children[2].textContent = pct(p.prob);
+      bars.appendChild(row);
+    });
+    var parts = $("rParts");
+    parts.innerHTML = "";
+    if (b.per_part && b.per_part.length > 1) {
+      var h = document.createElement("div");
+      h.className = "notice";
+      h.textContent = "구간별 판정 (" + b.n + "개를 평균)";
+      parts.appendChild(h);
+      var chips = document.createElement("div");
+      chips.className = "chips";
+      b.per_part.forEach(function (p, i) {
+        var c = document.createElement("span");
+        c.className = "chip";
+        c.textContent = (p.file !== undefined ? (p.file + 1) + "번 " : (i + 1) + "구간 ") + p.label_ko + " " + pct(p.prob);
+        chips.appendChild(c);
+      });
+      parts.appendChild(chips);
+    }
+    var m = b.models || {};
+    $("rMeta").textContent = "모델별: EAT " + (m.eat_large ? m.eat_large.label_ko + " " + pct(m.eat_large.prob) + " (표준어 " + pct(m.eat_large.standard_prob) + ")" : "-") +
+      " · XLS-R 2B " + (m.xlsr2b ? m.xlsr2b.label_ko + " " + pct(m.xlsr2b.prob) : "-") +
+      " · 말소리 " + b.voiced_sec + "초 · 서버 " + b.total_ms + "ms · 왕복 " + Math.round(wallMs) + "ms · 요청 번호 " + (b.rid || "-");
+    $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  buildPrompts();
+  refresh();
+})();
+</script>
+</body>
+</html>

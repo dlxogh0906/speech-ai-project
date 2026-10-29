@@ -1,0 +1,19 @@
+[Unit]
+Description=BeaverTalk dialect API (NPU :8907)
+After=network-online.target rbln_daemon.service
+Wants=network-online.target rbln_daemon.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/dialect_serve/bundle
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 90); do [ -e /dev/rbln5 ] && exit 0; sleep 2; done; exit 1'
+ExecStart=/bin/bash /root/dialect_serve/bundle/deploy/dialect-api/npu/run_npu.sh
+Restart=on-failure
+RestartSec=10
+KillMode=control-group
+TimeoutStopSec=30
+StandardOutput=append:/root/dialect_serve/serve.log
+StandardError=append:/root/dialect_serve/serve.log
+
+[Install]
+WantedBy=multi-user.target
