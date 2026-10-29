@@ -56,21 +56,72 @@ MODELS_PATH = os.environ.get("MDD_SERVE_SCORER",
 # /health 가 보고하는 TAG test weighted F1. 근거는 eval_tag71{,_native}.json.
 # ⚠️ 전부 "정상"으로 찍어도 0.9384 가 나온다 — 이 값만 떼어 인용하지 말 것.
 MDD_F1 = {"mdd_ckpt_tag_all_lar": 0.9547, "mdd_ckpt_tag_all_native": 0.9558}
-S = {"dec": None, "bundle": None, "lock": threading.Lock(),
+# 인코더만 ONNX 로 갈아 끼운다. 비우면 지금까지와 같은 PyTorch 경로다(기본값 유지).
+#   CPU 는 int8(339 MiB · RSS 1.1 GB · 1.6~1.8배), GPU 는 fp16(603 MiB · 2.3배).
+#   정확도는 같다 — TAG test 1만 발화 오류 F1 차이 int8 +0.0002 · fp16 +0.0005,
+#   LAR·원어민 표본에서도 PER 차이 없음 (results/11_경량화.md).
+ONNX_PATH = os.environ.get("MDD_SERVE_ONNX")
+ONNX_DEVICE = os.environ.get("MDD_SERVE_DEVICE", "cpu")
+ONNX_THREADS = int(os.environ.get("MDD_SERVE_THREADS", "4"))
+S = {"dec": None, "bundle": None, "lock": threading.Lock(), "gate": None, "backend": None,
      "sessions": collections.defaultdict(list)}
+
+
+def _load_onnx():
+    """인코더 forward 만 ONNX 세션으로 바꾼다 — 진단·정렬·점수 코드는 그대로 쓴다.
+
+    `analyze()` 는 `GF.forward_lprobs` 와 `dec` 의 속성 몇 개(d/blank/normalize)만 보므로
+    그 둘만 갈아 끼우면 된다. 회귀기는 바꾸지 않는다(점수 상관 0.999 이상, 11_경량화.md).
+    """
+    import onnxruntime as ort
+    from fairseq.data import Dictionary
+    so = ort.SessionOptions()
+    so.intra_op_num_threads = ONNX_THREADS
+    so.inter_op_num_threads = 1
+    prov = (["CUDAExecutionProvider", "CPUExecutionProvider"] if ONNX_DEVICE == "cuda"
+            else ["CPUExecutionProvider"])
+    sess = ort.InferenceSession(ONNX_PATH, so, providers=prov)
+    if ONNX_DEVICE == "cuda" and sess.get_providers()[0] != "CUDAExecutionProvider":
+        # onnxruntime-gpu 는 CUDA 11 라이브러리를 찾아야 한다 — LD_LIBRARY_PATH 확인
+        raise SystemExit(f"CUDA provider 가 안 잡혔다: {sess.get_providers()}")
+    in_dt = np.float16 if "float16" in sess.get_inputs()[0].type else np.float32
+    dict_path = os.path.join(os.environ.get("MDD_DATA_DIR", os.path.dirname(CKPT_PATH)), "dict.ltr.txt")
+
+    class OrtDec:                             # analyze() 가 읽는 속성만 (model 은 안 쓴다)
+        d = Dictionary.load(dict_path)
+        blank = 0                             # task.blank_symbol = <s>
+        normalize = True                      # 학습 설정과 같다
+        device = ONNX_DEVICE
+
+    def ort_forward(dec, wavs):               # GF.forward_lprobs 와 같은 (lp, Ls) 를 돌려준다
+        w = wavs[0]                           # 서빙은 발화 1건씩이다
+        x = (w - w.mean()) / np.sqrt(w.var() + 1e-5)     # normalize=True 의 layer_norm 과 같다
+        lp = sess.run(None, {"source": x[None, :].astype(in_dt)})[0].astype(np.float32)
+        return torch.from_numpy(lp), [lp.shape[1]]
+
+    GF.forward_lprobs = ort_forward
+    S["dec"] = OrtDec()
+    S["backend"] = {"kind": "onnx", "path": ONNX_PATH, "device": ONNX_DEVICE,
+                    "threads": ONNX_THREADS, "mib": round(os.path.getsize(ONNX_PATH) / 2 ** 20)}
 
 
 def load():
     t0 = time.time()
     import g2p
     MD.S["ri"], MD.S["ro"] = g2p.readRules(g2p.ver_info[0], MD.RULEBOOK)
-    import mdd.mdd_eval as _me
-    _me.CKPT = CKPT_PATH                      # Decoder() 가 이 전역을 읽는다
-    S["dec"] = Decoder()
+    if ONNX_PATH:
+        _load_onnx()
+        # ONNX 세션은 스레드 안전하다 — 직렬화할 이유가 없다. 워커 프로세스 없이도 동시 처리된다.
+        S["gate"] = __import__("contextlib").nullcontext()
+    else:
+        import mdd.mdd_eval as _me
+        _me.CKPT = CKPT_PATH                  # Decoder() 가 이 전역을 읽는다
+        S["dec"] = Decoder()
+        S["backend"] = {"kind": "torch", "path": CKPT_PATH, "device": S["dec"].device}
+        S["gate"] = S["lock"]                 # 단일 GPU 모델 — 직렬화
     S["bundle"] = joblib.load(MODELS_PATH)
-    print(f"[load] {os.path.basename(os.path.dirname(CKPT_PATH))} + "
-          f"{os.path.basename(MODELS_PATH)} · 특징 {len(S['bundle']['feature_names'])}개 "
-          f"({time.time()-t0:.0f}s)", flush=True)
+    print(f"[load] {S['backend']} + {os.path.basename(MODELS_PATH)} · "
+          f"특징 {len(S['bundle']['feature_names'])}개 ({time.time()-t0:.0f}s)", flush=True)
 
 
 @torch.inference_mode()
@@ -281,6 +332,8 @@ def make_app():
     def health():
         b = S["bundle"]
         return {"status": "ok" if S["dec"] else "loading",
+                # 어느 백엔드로 떠 있는지 — ONNX 로 바꿔 띄웠는데 모르고 수치를 인용하면 곤란하다
+                "backend": S["backend"],
                 # 하드코딩하면 체크포인트를 바꿔도 안 따라온다 (실제로 그랬다)
                 "ckpt": "/".join(CKPT_PATH.split("/")[-2:]),
                 "mdd_f1_weighted": MDD_F1.get(CKPT_PATH.split("/")[-2]),
@@ -289,15 +342,17 @@ def make_app():
                 "note": "점수는 세션 단위. 발화 1개로는 신뢰 불가(PCC 0.43)"}
 
     @r.post("/diagnose")
-    async def diagnose(audio: UploadFile = File(...), sentence: str = Form(...),
-                       session_id: str = Form(None)):
+    # 동기 함수다 — FastAPI 가 스레드풀에서 돌린다. async 로 두면 추론하는 동안
+    # 이벤트 루프가 멈춰서 다른 요청을 받지도 못한다(업로드·/health 까지 대기).
+    def diagnose(audio: UploadFile = File(...), sentence: str = Form(...),
+                 session_id: str = Form(None)):
         if not S["dec"]:
             raise HTTPException(503, "loading")
         sentence = (sentence or "").strip()
         if not sentence or len(sentence) > 200:
             raise HTTPException(400, "sentence required (<=200 chars)")
         try:
-            w = MD.decode_audio(await audio.read())
+            w = MD.decode_audio(audio.file.read())
         except ValueError:
             raise HTTPException(400, "could not decode audio")
         return _run(w, sentence, session_id)
@@ -317,7 +372,7 @@ def make_app():
             raise HTTPException(400, "표준발음 생성 실패 (숫자·영문 확인)")
 
         t0 = time.time()
-        with S["lock"]:                       # 단일 GPU — 직렬화
+        with S["gate"]:                       # torch=직렬화(단일 GPU) · onnx=동시 실행
             pred, feat, gops, spans = analyze(w[: 30 * SR], canon)
         errors, n, match_rate, not_recognized = diagnose_ops(canon, pred)
 
@@ -366,10 +421,31 @@ def make_app():
     return app
 
 
+def make_server_app():
+    """uvicorn --workers 용 팩토리 — 워커 프로세스마다 모델을 따로 올린다."""
+    load()
+    return make_app()
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8903)
+    # 한 프로세스로는 동시 요청이 GIL 에 막힌다. 인코더(ONNX/torch)는 GIL 을 놓지만
+    # 강제정렬·특징·점수는 파이썬/numpy 라 직렬화된다 — 실측 단일 프로세스 2.7 req/s 대 8프로세스 5.25 req/s.
+    # CPU ONNX 서빙 권장값: --workers (코어수/2) · MDD_SERVE_THREADS=2
+    ap.add_argument("--workers", type=int, default=1, help="워커 프로세스 수 (CPU ONNX 서빙은 2 이상 권장)")
     a = ap.parse_args()
-    load()
     import uvicorn
-    uvicorn.run(make_app(), host="0.0.0.0", port=a.port)
+    if a.workers > 1:
+        # ⚠️ 세션(`S["sessions"]`)은 프로세스 메모리에 있다. 워커가 여럿이면 같은 session_id 라도
+        #    매번 다른 워커에 붙어 점수가 갈라진다. 같은 세션을 같은 워커로 보내거나(스티키),
+        #    공용 저장소로 옮기기 전까지 --workers 는 **단발 진단 전용**이다.
+        print(f"[warn] workers={a.workers} — /session 점수는 워커별로 갈라진다(단발 /diagnose 전용)", flush=True)
+        _here = os.path.dirname(os.path.abspath(__file__))
+        _sys.path.insert(0, _here)
+        os.environ["PYTHONPATH"] = _here + os.pathsep + os.environ.get("PYTHONPATH", "")
+        uvicorn.run("mdd_infer_api:make_server_app", factory=True,
+                    host="0.0.0.0", port=a.port, workers=a.workers)
+    else:
+        load()
+        uvicorn.run(make_app(), host="0.0.0.0", port=a.port)

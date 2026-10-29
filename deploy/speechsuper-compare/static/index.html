@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>들린 대로 적는가 — SpeechSuper 비교</title>
+<style>
+:root{--paper:#F2F5F3;--surface:#fff;--ink:#0E1614;--muted:#5C6B66;--rule:#DCE4DF;--rule2:#EDF1EE;
+ --ours:#2B4B92;--ss:#7A4BA8;--canon:#0B6E62;--bad:#C2451E;--mid:#B8860B;
+ --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--shadow:0 1px 2px rgba(16,32,28,.05),0 8px 24px rgba(16,32,28,.06)}
+@media (prefers-color-scheme:dark){:root{--paper:#0D1412;--surface:#141C1A;--ink:#E9EFEB;--muted:#97A8A2;
+ --rule:#27342F;--rule2:#1C2622;--ours:#9FB8FF;--ss:#D4A9FF;--canon:#5AD2C0;--bad:#FF9068;--mid:#E8C063;
+ --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+body{margin:0;padding:0 0 72px;background:var(--paper);color:var(--ink);
+ font:17px/1.6 -apple-system,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",Segoe UI,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;gap:18px}
+header{padding:34px 0 0} h1{font-size:28px;margin:0 0 6px;letter-spacing:-.03em}
+.sub{color:var(--muted);font-size:15px;max-width:74ch}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.card h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:700}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 5px}
+select,input{font:inherit;font-size:16px;width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;
+ background:var(--surface);color:var(--ink)}
+button{font:inherit;font-size:15px;padding:10px 18px;border-radius:99px;border:1px solid var(--rule);
+ background:var(--surface);color:var(--ink);cursor:pointer}
+button.primary{background:var(--ours);border-color:transparent;color:#fff;font-weight:600}
+button.primary[data-on=true]{background:var(--bad)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--muted);margin-top:10px}
+.legend b{font-weight:600}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+.ch{border:1px solid var(--rule);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.ch .w{font-size:24px;font-weight:700;line-height:1.2}
+.ch .line{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;font-family:var(--mono);font-size:15px;align-items:baseline}
+.ch .tag{font-size:10.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.d{color:var(--bad);font-weight:700}
+.same{color:var(--muted)}
+.sc{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center}
+.sc .v{font-size:26px;font-weight:700} .sc .k{font-size:12px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.head .nm{font-weight:700} .head .ms{font-size:12.5px;color:var(--muted)}
+.ours .nm{color:var(--ours)} .ss .nm{color:var(--ss)}
+.note{font-size:13.5px;color:var(--muted);margin-top:12px}
+pre{margin:0;font-family:var(--mono);font-size:12px;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow:auto}
+@media (max-width:860px){.two{grid-template-columns:1fr}.sc{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div class="wrap">
+<header>
+  <h1>들린 대로 적는가 — SpeechSuper 비교</h1>
+  <p class="sub">같은 녹음을 두 API 에 동시에 보낸다. <b>일부러 틀리게 읽어</b> 어느 쪽이 그 소리를 그대로 적고,
+  어느 쪽이 표준발음으로 고쳐 적는지 본다.</p>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--canon)"></span><b>표준발음</b> 문장대로 읽었을 때 나야 할 소리</span>
+    <span><span class="sw" style="background:var(--ours)"></span><b>우리</b> 들린 대로 적은 소리</span>
+    <span><span class="sw" style="background:var(--ss)"></span><b>SpeechSuper</b> 그쪽이 돌려준 음소 표기</span>
+    <span><span class="sw" style="background:var(--bad)"></span>표준발음과 다른 자리</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2>녹음</h2>
+  <label for="sent">읽을 문장</label>
+  <select id="sent"></select>
+  <label for="custom">직접 입력 (비우면 위 선택 사용)</label>
+  <input id="custom" placeholder="예: 값이 너무 비싸서 못 샀어요" autocomplete="off">
+  <div class="row">
+    <button id="rec" class="primary" type="button">● 녹음 시작</button>
+    <span id="status" class="sub">녹음 버튼을 누르면 마이크 권한을 묻는다</span>
+  </div>
+  <audio id="play" controls preload="none" style="width:100%;margin-top:10px;display:none"></audio>
+  <p class="note">시험 방법: "학교에서 친구를 만났어요" 를 <b>학교에서 신구를 만났어요</b> 로 읽어 본다.
+  들린 대로 적는 쪽은 ㅊ 자리에 ㅅ 이 나오고, 고쳐 적는 쪽은 그대로 ㅊ 이 나온다.</p>
+</div>
+
+<div class="card">
+  <h2>문장 점수</h2>
+  <div class="two">
+    <div class="ours"><div class="head"><span class="nm">우리</span><span class="ms" id="o-ms"></span></div>
+      <div class="sc">
+        <div><div class="v" id="o-ov">—</div><div class="k">overall</div></div>
+        <div><div class="v" id="o-pr">—</div><div class="k">발음</div></div>
+        <div><div class="v" id="o-fl">—</div><div class="k">유창성</div></div>
+        <div><div class="v" id="o-cm">—</div><div class="k">이해도</div></div>
+      </div></div>
+    <div class="ss"><div class="head"><span class="nm">SpeechSuper</span><span class="ms" id="s-ms"></span></div>
+      <div class="sc">
+        <div><div class="v" id="s-ov">—</div><div class="k">overall</div></div>
+        <div><div class="v" id="s-pr">—</div><div class="k">발음</div></div>
+        <div><div class="v" id="s-fl">—</div><div class="k">유창성</div></div>
+        <div><div class="v" id="s-rh">—</div><div class="k">rhythm</div></div>
+      </div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>글자별 전사 비교</h2>
+  <div class="grid" id="chars"><span class="sub">녹음하면 글자마다 세 줄로 늘어놓는다</span></div>
+  <p class="note" id="summary"></p>
+</div>
+
+<div class="card">
+  <h2>원본 응답</h2>
+  <pre id="raw">—</pre>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id), esc=t=>{const d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML};
+const setStatus=t=>$('status').textContent=t;
+let stream=null, actx=null, node=null, src=null, buf=[], recording=false;
+
+function toWav(f32, sr){
+  const n=f32.length, b=new ArrayBuffer(44+n*2), v=new DataView(b);
+  const put=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  put(0,'RIFF'); v.setUint32(4,36+n*2,true); put(8,'WAVEfmt '); v.setUint32(16,16,true);
+  v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,sr,true); v.setUint32(28,sr*2,true);
+  v.setUint16(32,2,true); v.setUint16(34,16,true); put(36,'data'); v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){const x=Math.max(-1,Math.min(1,f32[i])); v.setInt16(44+i*2, x<0?x*0x8000:x*0x7FFF, true);}
+  return new Blob([b],{type:'audio/wav'});
+}
+function resample(f32, from, to){
+  if(from===to) return f32;
+  const r=from/to, n=Math.round(f32.length/r), out=new Float32Array(n);
+  for(let i=0;i<n;i++){const p=i*r,k=Math.floor(p),t=p-k; out[i]=(f32[k]||0)*(1-t)+(f32[k+1]||0)*t;}
+  return out;
+}
+function render(d){
+  const o=d.ours, s=d.speechsuper;
+  $('o-ms').textContent = o.status===200? o.ms+'ms' : ('오류 '+(o.code||o.status||''));
+  $('s-ms').textContent = s.status===200? s.ms+'ms' : ('오류 '+(s.status||''));
+  const put=(id,v)=>$(id).textContent = (v==null?'—':v);
+  put('o-ov',o.scores&&o.scores.overall); put('o-pr',o.scores&&o.scores.pronunciation);
+  put('o-fl',o.scores&&o.scores.fluency); put('o-cm',o.scores&&o.scores.comprehensibility);
+  put('s-ov',s.scores&&s.scores.overall); put('s-pr',s.scores&&s.scores.pronunciation);
+  put('s-fl',s.scores&&s.scores.fluency); put('s-rh',s.scores&&s.scores.rhythm);
+
+  const host=$('chars'); host.innerHTML='';
+  const ow=o.words||[], sw=s.words||[];
+  const n=Math.max(ow.length, sw.length);
+  let oursDiff=0, ssDiff=0, canonN=0;
+  for(let i=0;i<n;i++){
+    const a=ow[i], b=sw[i];
+    const canon=(a?a.ph.map(p=>p[0]):[]);
+    const ours=(a?a.ph.map(p=>p[1]):[]);
+    const ss=(b?b.ph.map(p=>p[0]):[]);
+    canonN += canon.length;
+    const line=(arr, ref, cls)=> arr.length? arr.map((x,k)=>{
+      const bad = ref && ref[k]!=null && x!==ref[k];
+      if(bad && cls) (cls==='o'? oursDiff++ : ssDiff++);
+      return `<span class="${bad?'d':'same'}">${esc(x==null?'∅':x)}</span>`;
+    }).join('') : '<span class="same">—</span>';
+    host.insertAdjacentHTML('beforeend',
+      `<div class="ch"><div class="w">${esc((a&&a.word)||(b&&b.word)||'')}</div>
+        <div class="line"><span class="tag" style="color:var(--canon)">표준</span>${line(canon,null,null)}</div>
+        <div class="line"><span class="tag" style="color:var(--ours)">우리</span>${line(ours,canon,'o')}</div>
+        <div class="line"><span class="tag" style="color:var(--ss)">SS</span>${line(ss,canon,'s')}</div>
+      </div>`);
+  }
+  $('summary').textContent = canonN
+    ? `표준발음 ${canonN}자리 중 — 우리가 다르게 적은 자리 ${oursDiff}개 · SpeechSuper 가 다르게 적은 자리 ${ssDiff}개. `
+      + `일부러 틀리게 읽었다면 이 숫자가 클수록 "들린 대로" 적은 것이다.`
+    : '';
+  $('raw').textContent = JSON.stringify(d, null, 1);
+}
+async function startRec(){
+  stream = stream || await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,noiseSuppression:true}});
+  actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended') await actx.resume();
+  src=actx.createMediaStreamSource(stream); node=actx.createScriptProcessor(4096,1,1);
+  buf=[]; recording=true;
+  node.onaudioprocess=e=>{ if(recording) buf.push(new Float32Array(e.inputBuffer.getChannelData(0))); };
+  src.connect(node); node.connect(actx.destination);
+}
+function stopRec(){
+  recording=false;
+  try{ src.disconnect(); node.disconnect(); }catch(e){}
+  const n=buf.reduce((a,b)=>a+b.length,0), all=new Float32Array(n);
+  let o=0; buf.forEach(b=>{ all.set(b,o); o+=b.length; });
+  return toWav(resample(all, actx.sampleRate, 16000), 16000);
+}
+$('rec').onclick=async()=>{
+  if(recording){
+    const blob=stopRec();
+    $('rec').textContent='● 녹음 시작'; $('rec').dataset.on='false';
+    const pl=$('play'); pl.src=URL.createObjectURL(blob); pl.style.display='block';
+    setStatus('두 API 에 보내는 중…');
+    const fd=new FormData();
+    fd.append('audio',blob,'rec.wav');
+    fd.append('refText', ($('custom').value.trim() || $('sent').value));
+    try{
+      const r=await fetch('compare',{method:'POST',body:fd}); const d=await r.json();
+      if(!r.ok){ setStatus('오류: '+(d.error||r.status)); return; }
+      render(d); setStatus(`우리 ${d.ours.ms}ms · SpeechSuper ${d.speechsuper.ms}ms`);
+    }catch(e){ setStatus('요청 실패: '+e.message); }
+    return;
+  }
+  try{ await startRec(); }
+  catch(e){ setStatus('마이크를 열지 못했다: '+e.message+' (http://127.0.0.1 로 접속했는지 확인)'); return; }
+  $('rec').textContent='■ 정지'; $('rec').dataset.on='true'; setStatus('녹음 중…');
+};
+fetch('sentences').then(r=>r.json()).then(d=>{
+  $('sent').innerHTML=(d.sentences||[]).map(s=>`<option>${esc(s)}</option>`).join('');
+});
+</script></body></html>

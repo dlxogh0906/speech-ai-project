@@ -1,0 +1,4072 @@
+{
+ "OLD": {
+  "seen": {
+   "name": "OLD_tag_all_native",
+   "ckpt": "/data/speech-ai/weights/final/pronunciation/mdd_tag_all_native.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_seen",
+   "tsv_sha16": "e4cdf4c5a07ca713",
+   "ltr_sha16": "925d4edc43401da8",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 160512,
+   "jer": {
+    "jer": 0.0455,
+    "sub": 0.0299,
+    "del": 0.0091,
+    "ins": 0.0065,
+    "S": 48064,
+    "D": 14718,
+    "I": 10397,
+    "N": 1608704
+   },
+   "sites": {
+    "mispron_sites": 61535,
+    "preservation": 0.3747,
+    "reversion": 0.5572,
+    "other": 0.0681,
+    "other_deletion": 0.0131,
+    "normal_sites": 1551347,
+    "normal_site_error": 0.0175
+   },
+   "mdd": {
+    "precision": 0.5002,
+    "recall": 0.4428,
+    "f1": 0.4697,
+    "far": 0.5572,
+    "frr": 0.0175,
+    "TA": 1524124,
+    "FR": 27223,
+    "FA": 34290,
+    "TR": 27245,
+    "CD": 23055,
+    "DE": 4190
+   },
+   "legacy": {
+    "f1_weighted": 0.9557,
+    "err_f1": 0.4543,
+    "positions": 1623567
+   },
+   "by_language": {
+    "English": {
+     "utterances": 34217,
+     "jer": {
+      "jer": 0.0544,
+      "sub": 0.0345,
+      "del": 0.0124,
+      "ins": 0.0074,
+      "S": 10961,
+      "D": 3929,
+      "I": 2361,
+      "N": 317314
+     },
+     "sites": {
+      "mispron_sites": 10505,
+      "preservation": 0.3798,
+      "reversion": 0.5374,
+      "other": 0.0828,
+      "other_deletion": 0.0164,
+      "normal_sites": 307449,
+      "normal_site_error": 0.0286
+     }
+    },
+    "Indonesian": {
+     "utterances": 21588,
+     "jer": {
+      "jer": 0.0336,
+      "sub": 0.0219,
+      "del": 0.0062,
+      "ins": 0.0055,
+      "S": 4810,
+      "D": 1361,
+      "I": 1210,
+      "N": 219611
+     },
+     "sites": {
+      "mispron_sites": 6266,
+      "preservation": 0.4079,
+      "reversion": 0.5361,
+      "other": 0.056,
+      "other_deletion": 0.0097,
+      "normal_sites": 213602,
+      "normal_site_error": 0.0124
+     }
+    },
+    "Chinese": {
+     "utterances": 17815,
+     "jer": {
+      "jer": 0.0373,
+      "sub": 0.023,
+      "del": 0.0068,
+      "ins": 0.0074,
+      "S": 4320,
+      "D": 1278,
+      "I": 1386,
+      "N": 187439
+     },
+     "sites": {
+      "mispron_sites": 7130,
+      "preservation": 0.3715,
+      "reversion": 0.5714,
+      "other": 0.0571,
+      "other_deletion": 0.0157,
+      "normal_sites": 181490,
+      "normal_site_error": 0.0103
+     }
+    },
+    "Vietnamese": {
+     "utterances": 14184,
+     "jer": {
+      "jer": 0.0561,
+      "sub": 0.0351,
+      "del": 0.0123,
+      "ins": 0.0087,
+      "S": 5042,
+      "D": 1764,
+      "I": 1249,
+      "N": 143673
+     },
+     "sites": {
+      "mispron_sites": 6938,
+      "preservation": 0.3384,
+      "reversion": 0.5848,
+      "other": 0.0768,
+      "other_deletion": 0.0186,
+      "normal_sites": 137477,
+      "normal_site_error": 0.0199
+     }
+    },
+    "Japanese": {
+     "utterances": 12173,
+     "jer": {
+      "jer": 0.0436,
+      "sub": 0.0309,
+      "del": 0.0067,
+      "ins": 0.006,
+      "S": 3818,
+      "D": 833,
+      "I": 736,
+      "N": 123687
+     },
+     "sites": {
+      "mispron_sites": 4448,
+      "preservation": 0.3608,
+      "reversion": 0.5782,
+      "other": 0.0609,
+      "other_deletion": 0.0106,
+      "normal_sites": 119512,
+      "normal_site_error": 0.0171
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 9591,
+     "jer": {
+      "jer": 0.064,
+      "sub": 0.0436,
+      "del": 0.0141,
+      "ins": 0.0063,
+      "S": 4067,
+      "D": 1313,
+      "I": 590,
+      "N": 93238
+     },
+     "sites": {
+      "mispron_sites": 5363,
+      "preservation": 0.3994,
+      "reversion": 0.5187,
+      "other": 0.0819,
+      "other_deletion": 0.0134,
+      "normal_sites": 87995,
+      "normal_site_error": 0.0254
+     }
+    },
+    "Russian": {
+     "utterances": 7981,
+     "jer": {
+      "jer": 0.0496,
+      "sub": 0.0376,
+      "del": 0.0067,
+      "ins": 0.0053,
+      "S": 3095,
+      "D": 553,
+      "I": 436,
+      "N": 82270
+     },
+     "sites": {
+      "mispron_sites": 4143,
+      "preservation": 0.349,
+      "reversion": 0.5947,
+      "other": 0.0562,
+      "other_deletion": 0.0087,
+      "normal_sites": 78267,
+      "normal_site_error": 0.0134
+     }
+    },
+    "German": {
+     "utterances": 5834,
+     "jer": {
+      "jer": 0.036,
+      "sub": 0.0283,
+      "del": 0.0047,
+      "ins": 0.0031,
+      "S": 1701,
+      "D": 281,
+      "I": 185,
+      "N": 60188
+     },
+     "sites": {
+      "mispron_sites": 2217,
+      "preservation": 0.3649,
+      "reversion": 0.571,
+      "other": 0.0641,
+      "other_deletion": 0.0099,
+      "normal_sites": 57989,
+      "normal_site_error": 0.0101
+     }
+    },
+    "Turkish": {
+     "utterances": 4909,
+     "jer": {
+      "jer": 0.0324,
+      "sub": 0.0227,
+      "del": 0.0055,
+      "ins": 0.0042,
+      "S": 1158,
+      "D": 279,
+      "I": 215,
+      "N": 51031
+     },
+     "sites": {
+      "mispron_sites": 1723,
+      "preservation": 0.4248,
+      "reversion": 0.5212,
+      "other": 0.054,
+      "other_deletion": 0.0093,
+      "normal_sites": 49414,
+      "normal_site_error": 0.0096
+     }
+    },
+    "Portuguese": {
+     "utterances": 3496,
+     "jer": {
+      "jer": 0.045,
+      "sub": 0.0298,
+      "del": 0.0081,
+      "ins": 0.0071,
+      "S": 1027,
+      "D": 278,
+      "I": 243,
+      "N": 34420
+     },
+     "sites": {
+      "mispron_sites": 1502,
+      "preservation": 0.3615,
+      "reversion": 0.5533,
+      "other": 0.0852,
+      "other_deletion": 0.018,
+      "normal_sites": 32983,
+      "normal_site_error": 0.0128
+     }
+    },
+    "Italian": {
+     "utterances": 3485,
+     "jer": {
+      "jer": 0.0359,
+      "sub": 0.0251,
+      "del": 0.0057,
+      "ins": 0.0051,
+      "S": 871,
+      "D": 197,
+      "I": 176,
+      "N": 34665
+     },
+     "sites": {
+      "mispron_sites": 1226,
+      "preservation": 0.3866,
+      "reversion": 0.5522,
+      "other": 0.0612,
+      "other_deletion": 0.0065,
+      "normal_sites": 33505,
+      "normal_site_error": 0.011
+     }
+    },
+    "Polish": {
+     "utterances": 3253,
+     "jer": {
+      "jer": 0.0347,
+      "sub": 0.0262,
+      "del": 0.0045,
+      "ins": 0.004,
+      "S": 881,
+      "D": 150,
+      "I": 136,
+      "N": 33674
+     },
+     "sites": {
+      "mispron_sites": 1248,
+      "preservation": 0.3662,
+      "reversion": 0.5737,
+      "other": 0.0601,
+      "other_deletion": 0.0056,
+      "normal_sites": 32440,
+      "normal_site_error": 0.0081
+     }
+    },
+    "Czech": {
+     "utterances": 2665,
+     "jer": {
+      "jer": 0.0406,
+      "sub": 0.0261,
+      "del": 0.0076,
+      "ins": 0.0068,
+      "S": 719,
+      "D": 210,
+      "I": 188,
+      "N": 27500
+     },
+     "sites": {
+      "mispron_sites": 1029,
+      "preservation": 0.3139,
+      "reversion": 0.6035,
+      "other": 0.0826,
+      "other_deletion": 0.0117,
+      "normal_sites": 26493,
+      "normal_site_error": 0.0105
+     }
+    },
+    "Mongolian": {
+     "utterances": 2368,
+     "jer": {
+      "jer": 0.0506,
+      "sub": 0.031,
+      "del": 0.0113,
+      "ins": 0.0083,
+      "S": 770,
+      "D": 280,
+      "I": 206,
+      "N": 24824
+     },
+     "sites": {
+      "mispron_sites": 970,
+      "preservation": 0.3773,
+      "reversion": 0.5464,
+      "other": 0.0763,
+      "other_deletion": 0.0196,
+      "normal_sites": 23953,
+      "normal_site_error": 0.0212
+     }
+    },
+    "Romanian": {
+     "utterances": 2264,
+     "jer": {
+      "jer": 0.0428,
+      "sub": 0.0268,
+      "del": 0.0077,
+      "ins": 0.0082,
+      "S": 600,
+      "D": 173,
+      "I": 184,
+      "N": 22356
+     },
+     "sites": {
+      "mispron_sites": 991,
+      "preservation": 0.3986,
+      "reversion": 0.5388,
+      "other": 0.0626,
+      "other_deletion": 0.005,
+      "normal_sites": 21439,
+      "normal_site_error": 0.0117
+     }
+    },
+    "French": {
+     "utterances": 2247,
+     "jer": {
+      "jer": 0.038,
+      "sub": 0.0267,
+      "del": 0.0053,
+      "ins": 0.006,
+      "S": 604,
+      "D": 119,
+      "I": 136,
+      "N": 22594
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.3958,
+      "reversion": 0.5488,
+      "other": 0.0554,
+      "other_deletion": 0.0078,
+      "normal_sites": 21756,
+      "normal_site_error": 0.0103
+     }
+    },
+    "Azerbaijani": {
+     "utterances": 1680,
+     "jer": {
+      "jer": 0.0348,
+      "sub": 0.0243,
+      "del": 0.0055,
+      "ins": 0.005,
+      "S": 430,
+      "D": 97,
+      "I": 88,
+      "N": 17687
+     },
+     "sites": {
+      "mispron_sites": 603,
+      "preservation": 0.471,
+      "reversion": 0.4577,
+      "other": 0.0713,
+      "other_deletion": 0.005,
+      "normal_sites": 17103,
+      "normal_site_error": 0.0134
+     }
+    },
+    "Hungarian": {
+     "utterances": 1538,
+     "jer": {
+      "jer": 0.1056,
+      "sub": 0.0338,
+      "del": 0.0654,
+      "ins": 0.0064,
+      "S": 542,
+      "D": 1051,
+      "I": 103,
+      "N": 16059
+     },
+     "sites": {
+      "mispron_sites": 546,
+      "preservation": 0.3864,
+      "reversion": 0.5476,
+      "other": 0.0659,
+      "other_deletion": 0.0147,
+      "normal_sites": 15517,
+      "normal_site_error": 0.0813
+     }
+    },
+    "Kazakh": {
+     "utterances": 1060,
+     "jer": {
+      "jer": 0.0394,
+      "sub": 0.0305,
+      "del": 0.0041,
+      "ins": 0.0048,
+      "S": 352,
+      "D": 47,
+      "I": 55,
+      "N": 11536
+     },
+     "sites": {
+      "mispron_sites": 484,
+      "preservation": 0.3223,
+      "reversion": 0.6384,
+      "other": 0.0393,
+      "other_deletion": 0.0083,
+      "normal_sites": 11095,
+      "normal_site_error": 0.0087
+     }
+    },
+    "Armenian": {
+     "utterances": 932,
+     "jer": {
+      "jer": 0.0336,
+      "sub": 0.0228,
+      "del": 0.0053,
+      "ins": 0.0055,
+      "S": 219,
+      "D": 51,
+      "I": 53,
+      "N": 9607
+     },
+     "sites": {
+      "mispron_sites": 346,
+      "preservation": 0.4595,
+      "reversion": 0.5087,
+      "other": 0.0318,
+      "other_deletion": 0.0087,
+      "normal_sites": 9282,
+      "normal_site_error": 0.0099
+     }
+    },
+    "Uzbek": {
+     "utterances": 838,
+     "jer": {
+      "jer": 0.0487,
+      "sub": 0.0372,
+      "del": 0.0052,
+      "ins": 0.0063,
+      "S": 318,
+      "D": 44,
+      "I": 54,
+      "N": 8542
+     },
+     "sites": {
+      "mispron_sites": 460,
+      "preservation": 0.337,
+      "reversion": 0.5978,
+      "other": 0.0652,
+      "other_deletion": 0.0022,
+      "normal_sites": 8098,
+      "normal_site_error": 0.0084
+     }
+    },
+    "Hindi": {
+     "utterances": 801,
+     "jer": {
+      "jer": 0.0234,
+      "sub": 0.0161,
+      "del": 0.0043,
+      "ins": 0.003,
+      "S": 130,
+      "D": 35,
+      "I": 24,
+      "N": 8086
+     },
+     "sites": {
+      "mispron_sites": 173,
+      "preservation": 0.5029,
+      "reversion": 0.422,
+      "other": 0.0751,
+      "other_deletion": 0.0173,
+      "normal_sites": 7935,
+      "normal_site_error": 0.0107
+     }
+    },
+    "Latvian": {
+     "utterances": 789,
+     "jer": {
+      "jer": 0.0554,
+      "sub": 0.0409,
+      "del": 0.0098,
+      "ins": 0.0046,
+      "S": 337,
+      "D": 81,
+      "I": 38,
+      "N": 8238
+     },
+     "sites": {
+      "mispron_sites": 527,
+      "preservation": 0.3795,
+      "reversion": 0.5446,
+      "other": 0.0759,
+      "other_deletion": 0.0228,
+      "normal_sites": 7716,
+      "normal_site_error": 0.0114
+     }
+    },
+    "Estonian": {
+     "utterances": 630,
+     "jer": {
+      "jer": 0.0601,
+      "sub": 0.033,
+      "del": 0.0101,
+      "ins": 0.017,
+      "S": 213,
+      "D": 65,
+      "I": 110,
+      "N": 6455
+     },
+     "sites": {
+      "mispron_sites": 312,
+      "preservation": 0.2564,
+      "reversion": 0.6699,
+      "other": 0.0737,
+      "other_deletion": 0.0192,
+      "normal_sites": 6208,
+      "normal_site_error": 0.0184
+     }
+    },
+    "Slovak": {
+     "utterances": 615,
+     "jer": {
+      "jer": 0.041,
+      "sub": 0.0312,
+      "del": 0.0034,
+      "ins": 0.0065,
+      "S": 193,
+      "D": 21,
+      "I": 40,
+      "N": 6194
+     },
+     "sites": {
+      "mispron_sites": 273,
+      "preservation": 0.3114,
+      "reversion": 0.6447,
+      "other": 0.044,
+      "other_deletion": 0.0,
+      "normal_sites": 5948,
+      "normal_site_error": 0.0076
+     }
+    },
+    "Burmese": {
+     "utterances": 594,
+     "jer": {
+      "jer": 0.0269,
+      "sub": 0.0164,
+      "del": 0.0039,
+      "ins": 0.0066,
+      "S": 110,
+      "D": 26,
+      "I": 44,
+      "N": 6688
+     },
+     "sites": {
+      "mispron_sites": 166,
+      "preservation": 0.3855,
+      "reversion": 0.5542,
+      "other": 0.0602,
+      "other_deletion": 0.0181,
+      "normal_sites": 6559,
+      "normal_site_error": 0.0093
+     }
+    }
+   }
+  },
+  "unseen": {
+   "name": "OLD_tag_all_native",
+   "ckpt": "/data/speech-ai/weights/final/pronunciation/mdd_tag_all_native.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_unseen",
+   "tsv_sha16": "5d6663e2c45ba930",
+   "ltr_sha16": "6ef916ebc23a0704",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 23562,
+   "jer": {
+    "jer": 0.0448,
+    "sub": 0.0321,
+    "del": 0.0074,
+    "ins": 0.0053,
+    "S": 7535,
+    "D": 1732,
+    "I": 1253,
+    "N": 234914
+   },
+   "sites": {
+    "mispron_sites": 9209,
+    "preservation": 0.3548,
+    "reversion": 0.5843,
+    "other": 0.0609,
+    "other_deletion": 0.0073,
+    "normal_sites": 226212,
+    "normal_site_error": 0.0165
+   },
+   "mdd": {
+    "precision": 0.5061,
+    "recall": 0.4157,
+    "f1": 0.4565,
+    "far": 0.5843,
+    "frr": 0.0165,
+    "TA": 222477,
+    "FR": 3735,
+    "FA": 5381,
+    "TR": 3828,
+    "CD": 3267,
+    "DE": 561
+   },
+   "legacy": {
+    "f1_weighted": 0.9554,
+    "err_f1": 0.4439,
+    "positions": 236620
+   },
+   "by_language": {
+    "English": {
+     "utterances": 5071,
+     "jer": {
+      "jer": 0.0494,
+      "sub": 0.0344,
+      "del": 0.0095,
+      "ins": 0.0056,
+      "S": 1564,
+      "D": 430,
+      "I": 253,
+      "N": 45444
+     },
+     "sites": {
+      "mispron_sites": 1413,
+      "preservation": 0.3772,
+      "reversion": 0.5379,
+      "other": 0.0849,
+      "other_deletion": 0.0099,
+      "normal_sites": 44058,
+      "normal_site_error": 0.0259
+     }
+    },
+    "Indonesian": {
+     "utterances": 3069,
+     "jer": {
+      "jer": 0.0313,
+      "sub": 0.0246,
+      "del": 0.003,
+      "ins": 0.0037,
+      "S": 728,
+      "D": 89,
+      "I": 110,
+      "N": 29623
+     },
+     "sites": {
+      "mispron_sites": 897,
+      "preservation": 0.3868,
+      "reversion": 0.5719,
+      "other": 0.0412,
+      "other_deletion": 0.0033,
+      "normal_sites": 28760,
+      "normal_site_error": 0.0104
+     }
+    },
+    "Chinese": {
+     "utterances": 2754,
+     "jer": {
+      "jer": 0.0392,
+      "sub": 0.0243,
+      "del": 0.0061,
+      "ins": 0.0088,
+      "S": 798,
+      "D": 200,
+      "I": 290,
+      "N": 32853
+     },
+     "sites": {
+      "mispron_sites": 1286,
+      "preservation": 0.3212,
+      "reversion": 0.6345,
+      "other": 0.0443,
+      "other_deletion": 0.0078,
+      "normal_sites": 31831,
+      "normal_site_error": 0.0102
+     }
+    },
+    "Vietnamese": {
+     "utterances": 1994,
+     "jer": {
+      "jer": 0.0548,
+      "sub": 0.0394,
+      "del": 0.0093,
+      "ins": 0.0061,
+      "S": 736,
+      "D": 173,
+      "I": 114,
+      "N": 18663
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.3381,
+      "reversion": 0.5909,
+      "other": 0.071,
+      "other_deletion": 0.01,
+      "normal_sites": 17821,
+      "normal_site_error": 0.0199
+     }
+    },
+    "Japanese": {
+     "utterances": 1807,
+     "jer": {
+      "jer": 0.0471,
+      "sub": 0.0348,
+      "del": 0.0063,
+      "ins": 0.006,
+      "S": 652,
+      "D": 119,
+      "I": 112,
+      "N": 18743
+     },
+     "sites": {
+      "mispron_sites": 793,
+      "preservation": 0.3783,
+      "reversion": 0.5574,
+      "other": 0.0643,
+      "other_deletion": 0.0063,
+      "normal_sites": 17998,
+      "normal_site_error": 0.018
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 1403,
+     "jer": {
+      "jer": 0.0635,
+      "sub": 0.0479,
+      "del": 0.011,
+      "ins": 0.0046,
+      "S": 626,
+      "D": 144,
+      "I": 60,
+      "N": 13063
+     },
+     "sites": {
+      "mispron_sites": 750,
+      "preservation": 0.368,
+      "reversion": 0.568,
+      "other": 0.064,
+      "other_deletion": 0.0093,
+      "normal_sites": 12297,
+      "normal_site_error": 0.0233
+     }
+    },
+    "Russian": {
+     "utterances": 1180,
+     "jer": {
+      "jer": 0.053,
+      "sub": 0.042,
+      "del": 0.0068,
+      "ins": 0.0042,
+      "S": 521,
+      "D": 85,
+      "I": 52,
+      "N": 12417
+     },
+     "sites": {
+      "mispron_sites": 632,
+      "preservation": 0.3117,
+      "reversion": 0.6218,
+      "other": 0.0665,
+      "other_deletion": 0.0127,
+      "normal_sites": 11798,
+      "normal_site_error": 0.0156
+     }
+    },
+    "German": {
+     "utterances": 851,
+     "jer": {
+      "jer": 0.037,
+      "sub": 0.0313,
+      "del": 0.0041,
+      "ins": 0.0017,
+      "S": 284,
+      "D": 37,
+      "I": 15,
+      "N": 9080
+     },
+     "sites": {
+      "mispron_sites": 338,
+      "preservation": 0.3018,
+      "reversion": 0.6243,
+      "other": 0.074,
+      "other_deletion": 0.0,
+      "normal_sites": 8739,
+      "normal_site_error": 0.0098
+     }
+    },
+    "Turkish": {
+     "utterances": 695,
+     "jer": {
+      "jer": 0.0337,
+      "sub": 0.0262,
+      "del": 0.0052,
+      "ins": 0.0024,
+      "S": 178,
+      "D": 35,
+      "I": 16,
+      "N": 6786
+     },
+     "sites": {
+      "mispron_sites": 254,
+      "preservation": 0.4331,
+      "reversion": 0.5315,
+      "other": 0.0354,
+      "other_deletion": 0.0039,
+      "normal_sites": 6547,
+      "normal_site_error": 0.0104
+     }
+    }
+   },
+   "strict_text_unseen": {
+    "exclude_texts": "/data/speech-ai/out/mdd/manifest_mix_f80_n20/native_train_texts.txt",
+    "excluded_utts": 1011,
+    "utterances": 22551,
+    "jer": {
+     "jer": 0.0452,
+     "sub": 0.0323,
+     "del": 0.0075,
+     "ins": 0.0053,
+     "S": 7370,
+     "D": 1708,
+     "I": 1216,
+     "N": 227855
+    },
+    "sites": {
+     "mispron_sites": 9050,
+     "preservation": 0.3571,
+     "reversion": 0.5821,
+     "other": 0.0608,
+     "other_deletion": 0.0072,
+     "normal_sites": 219294,
+     "normal_site_error": 0.0167
+    },
+    "mdd": {
+     "precision": 0.5087,
+     "recall": 0.4179,
+     "f1": 0.4588,
+     "far": 0.5821,
+     "frr": 0.0167,
+     "TA": 215641,
+     "FR": 3653,
+     "FA": 5268,
+     "TR": 3782,
+     "CD": 3232,
+     "DE": 550
+    }
+   }
+  },
+  "native": {
+   "name": "OLD_tag_all_native",
+   "ckpt": "/data/speech-ai/weights/final/pronunciation/mdd_tag_all_native.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_kspon_native_v1",
+   "split": "dev",
+   "tsv_sha16": "8a6a325a33d4195d",
+   "ltr_sha16": "9abda9d1d3faff03",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 2149,
+   "jer": {
+    "jer": 0.1859,
+    "sub": 0.1024,
+    "del": 0.0662,
+    "ins": 0.0173,
+    "S": 9125,
+    "D": 5897,
+    "I": 1544,
+    "N": 89131
+   },
+   "sites": {
+    "mispron_sites": 0,
+    "preservation": null,
+    "reversion": null,
+    "other": null,
+    "other_deletion": null,
+    "normal_sites": 89131,
+    "normal_site_error": 0.1688
+   },
+   "mdd": {
+    "precision": 0.0,
+    "recall": 0,
+    "f1": 0.0,
+    "far": null,
+    "frr": 0.1688,
+    "TA": 74087,
+    "FR": 15044,
+    "FA": 0,
+    "TR": 0,
+    "CD": 0,
+    "DE": 0
+   },
+   "legacy": {
+    "f1_weighted": 0.8994,
+    "err_f1": 0.0,
+    "positions": 90653
+   },
+   "by_language": {
+    "?": {
+     "utterances": 2149,
+     "jer": {
+      "jer": 0.1859,
+      "sub": 0.1024,
+      "del": 0.0662,
+      "ins": 0.0173,
+      "S": 9125,
+      "D": 5897,
+      "I": 1544,
+      "N": 89131
+     },
+     "sites": {
+      "mispron_sites": 0,
+      "preservation": null,
+      "reversion": null,
+      "other": null,
+      "other_deletion": null,
+      "normal_sites": 89131,
+      "normal_site_error": 0.1688
+     }
+    }
+   }
+  },
+  "run": null,
+  "train": {
+   "note": "기존 서비스 모델 tag_all_native (재학습 안 함)"
+  }
+ },
+ "E1": {
+  "seen": {
+   "name": "E1",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e1_foreign_clean/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_seen",
+   "tsv_sha16": "e4cdf4c5a07ca713",
+   "ltr_sha16": "925d4edc43401da8",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 160512,
+   "jer": {
+    "jer": 0.0493,
+    "sub": 0.031,
+    "del": 0.0109,
+    "ins": 0.0073,
+    "S": 49909,
+    "D": 17583,
+    "I": 11757,
+    "N": 1608704
+   },
+   "sites": {
+    "mispron_sites": 61535,
+    "preservation": 0.3268,
+    "reversion": 0.6021,
+    "other": 0.0711,
+    "other_deletion": 0.0165,
+    "normal_sites": 1551347,
+    "normal_site_error": 0.0187
+   },
+   "mdd": {
+    "precision": 0.4579,
+    "recall": 0.3979,
+    "f1": 0.4258,
+    "far": 0.6021,
+    "frr": 0.0187,
+    "TA": 1522363,
+    "FR": 28984,
+    "FA": 37049,
+    "TR": 24486,
+    "CD": 20108,
+    "DE": 4378
+   },
+   "legacy": {
+    "f1_weighted": 0.9521,
+    "err_f1": 0.4104,
+    "positions": 1625006
+   },
+   "by_language": {
+    "English": {
+     "utterances": 34217,
+     "jer": {
+      "jer": 0.0599,
+      "sub": 0.0357,
+      "del": 0.0157,
+      "ins": 0.0085,
+      "S": 11338,
+      "D": 4973,
+      "I": 2694,
+      "N": 317314
+     },
+     "sites": {
+      "mispron_sites": 10505,
+      "preservation": 0.3524,
+      "reversion": 0.5497,
+      "other": 0.0979,
+      "other_deletion": 0.0247,
+      "normal_sites": 307449,
+      "normal_site_error": 0.0323
+     }
+    },
+    "Indonesian": {
+     "utterances": 21588,
+     "jer": {
+      "jer": 0.0369,
+      "sub": 0.0231,
+      "del": 0.0073,
+      "ins": 0.0064,
+      "S": 5078,
+      "D": 1602,
+      "I": 1414,
+      "N": 219611
+     },
+     "sites": {
+      "mispron_sites": 6266,
+      "preservation": 0.3465,
+      "reversion": 0.5934,
+      "other": 0.0602,
+      "other_deletion": 0.012,
+      "normal_sites": 213602,
+      "normal_site_error": 0.0129
+     }
+    },
+    "Chinese": {
+     "utterances": 17815,
+     "jer": {
+      "jer": 0.0399,
+      "sub": 0.0241,
+      "del": 0.0075,
+      "ins": 0.0083,
+      "S": 4523,
+      "D": 1402,
+      "I": 1554,
+      "N": 187439
+     },
+     "sites": {
+      "mispron_sites": 7130,
+      "preservation": 0.3081,
+      "reversion": 0.6383,
+      "other": 0.0536,
+      "other_deletion": 0.017,
+      "normal_sites": 181490,
+      "normal_site_error": 0.0097
+     }
+    },
+    "Vietnamese": {
+     "utterances": 14184,
+     "jer": {
+      "jer": 0.0618,
+      "sub": 0.0369,
+      "del": 0.0153,
+      "ins": 0.0096,
+      "S": 5296,
+      "D": 2196,
+      "I": 1380,
+      "N": 143673
+     },
+     "sites": {
+      "mispron_sites": 6938,
+      "preservation": 0.3141,
+      "reversion": 0.5993,
+      "other": 0.0866,
+      "other_deletion": 0.0216,
+      "normal_sites": 137477,
+      "normal_site_error": 0.0233
+     }
+    },
+    "Japanese": {
+     "utterances": 12173,
+     "jer": {
+      "jer": 0.0455,
+      "sub": 0.0309,
+      "del": 0.0078,
+      "ins": 0.0067,
+      "S": 3825,
+      "D": 969,
+      "I": 828,
+      "N": 123687
+     },
+     "sites": {
+      "mispron_sites": 4448,
+      "preservation": 0.3094,
+      "reversion": 0.6313,
+      "other": 0.0594,
+      "other_deletion": 0.0106,
+      "normal_sites": 119512,
+      "normal_site_error": 0.0162
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 9591,
+     "jer": {
+      "jer": 0.0678,
+      "sub": 0.045,
+      "del": 0.0159,
+      "ins": 0.007,
+      "S": 4197,
+      "D": 1480,
+      "I": 649,
+      "N": 93238
+     },
+     "sites": {
+      "mispron_sites": 5363,
+      "preservation": 0.3466,
+      "reversion": 0.5782,
+      "other": 0.0751,
+      "other_deletion": 0.0164,
+      "normal_sites": 87995,
+      "normal_site_error": 0.0257
+     }
+    },
+    "Russian": {
+     "utterances": 7981,
+     "jer": {
+      "jer": 0.0533,
+      "sub": 0.0394,
+      "del": 0.0082,
+      "ins": 0.0057,
+      "S": 3244,
+      "D": 673,
+      "I": 472,
+      "N": 82270
+     },
+     "sites": {
+      "mispron_sites": 4143,
+      "preservation": 0.287,
+      "reversion": 0.6507,
+      "other": 0.0623,
+      "other_deletion": 0.0133,
+      "normal_sites": 78267,
+      "normal_site_error": 0.0133
+     }
+    },
+    "German": {
+     "utterances": 5834,
+     "jer": {
+      "jer": 0.0381,
+      "sub": 0.029,
+      "del": 0.0053,
+      "ins": 0.0039,
+      "S": 1745,
+      "D": 316,
+      "I": 234,
+      "N": 60188
+     },
+     "sites": {
+      "mispron_sites": 2217,
+      "preservation": 0.2995,
+      "reversion": 0.6392,
+      "other": 0.0613,
+      "other_deletion": 0.0117,
+      "normal_sites": 57989,
+      "normal_site_error": 0.0092
+     }
+    },
+    "Turkish": {
+     "utterances": 4909,
+     "jer": {
+      "jer": 0.0339,
+      "sub": 0.0227,
+      "del": 0.0061,
+      "ins": 0.0051,
+      "S": 1158,
+      "D": 312,
+      "I": 261,
+      "N": 51031
+     },
+     "sites": {
+      "mispron_sites": 1723,
+      "preservation": 0.3871,
+      "reversion": 0.5607,
+      "other": 0.0522,
+      "other_deletion": 0.0099,
+      "normal_sites": 49414,
+      "normal_site_error": 0.0092
+     }
+    },
+    "Portuguese": {
+     "utterances": 3496,
+     "jer": {
+      "jer": 0.0474,
+      "sub": 0.0312,
+      "del": 0.0087,
+      "ins": 0.0075,
+      "S": 1075,
+      "D": 298,
+      "I": 257,
+      "N": 34420
+     },
+     "sites": {
+      "mispron_sites": 1502,
+      "preservation": 0.3069,
+      "reversion": 0.6165,
+      "other": 0.0766,
+      "other_deletion": 0.016,
+      "normal_sites": 32983,
+      "normal_site_error": 0.0127
+     }
+    },
+    "Italian": {
+     "utterances": 3485,
+     "jer": {
+      "jer": 0.0379,
+      "sub": 0.0257,
+      "del": 0.0066,
+      "ins": 0.0056,
+      "S": 890,
+      "D": 230,
+      "I": 193,
+      "N": 34665
+     },
+     "sites": {
+      "mispron_sites": 1226,
+      "preservation": 0.3238,
+      "reversion": 0.6191,
+      "other": 0.0571,
+      "other_deletion": 0.0139,
+      "normal_sites": 33505,
+      "normal_site_error": 0.0102
+     }
+    },
+    "Polish": {
+     "utterances": 3253,
+     "jer": {
+      "jer": 0.0372,
+      "sub": 0.0274,
+      "del": 0.0054,
+      "ins": 0.0045,
+      "S": 921,
+      "D": 181,
+      "I": 151,
+      "N": 33674
+     },
+     "sites": {
+      "mispron_sites": 1248,
+      "preservation": 0.3021,
+      "reversion": 0.6442,
+      "other": 0.0537,
+      "other_deletion": 0.0096,
+      "normal_sites": 32440,
+      "normal_site_error": 0.0078
+     }
+    },
+    "Czech": {
+     "utterances": 2665,
+     "jer": {
+      "jer": 0.0448,
+      "sub": 0.0276,
+      "del": 0.0095,
+      "ins": 0.0077,
+      "S": 758,
+      "D": 260,
+      "I": 213,
+      "N": 27500
+     },
+     "sites": {
+      "mispron_sites": 1029,
+      "preservation": 0.2721,
+      "reversion": 0.6297,
+      "other": 0.0982,
+      "other_deletion": 0.0146,
+      "normal_sites": 26493,
+      "normal_site_error": 0.0121
+     }
+    },
+    "Mongolian": {
+     "utterances": 2368,
+     "jer": {
+      "jer": 0.0598,
+      "sub": 0.0334,
+      "del": 0.016,
+      "ins": 0.0104,
+      "S": 830,
+      "D": 398,
+      "I": 257,
+      "N": 24824
+     },
+     "sites": {
+      "mispron_sites": 970,
+      "preservation": 0.3381,
+      "reversion": 0.5639,
+      "other": 0.0979,
+      "other_deletion": 0.034,
+      "normal_sites": 23953,
+      "normal_site_error": 0.0276
+     }
+    },
+    "Romanian": {
+     "utterances": 2264,
+     "jer": {
+      "jer": 0.0458,
+      "sub": 0.0283,
+      "del": 0.0085,
+      "ins": 0.0089,
+      "S": 632,
+      "D": 191,
+      "I": 200,
+      "N": 22356
+     },
+     "sites": {
+      "mispron_sites": 991,
+      "preservation": 0.336,
+      "reversion": 0.6014,
+      "other": 0.0626,
+      "other_deletion": 0.005,
+      "normal_sites": 21439,
+      "normal_site_error": 0.0111
+     }
+    },
+    "French": {
+     "utterances": 2247,
+     "jer": {
+      "jer": 0.041,
+      "sub": 0.0279,
+      "del": 0.007,
+      "ins": 0.0061,
+      "S": 630,
+      "D": 159,
+      "I": 137,
+      "N": 22594
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.3437,
+      "reversion": 0.6086,
+      "other": 0.0477,
+      "other_deletion": 0.01,
+      "normal_sites": 21756,
+      "normal_site_error": 0.0108
+     }
+    },
+    "Azerbaijani": {
+     "utterances": 1680,
+     "jer": {
+      "jer": 0.0402,
+      "sub": 0.0263,
+      "del": 0.007,
+      "ins": 0.007,
+      "S": 465,
+      "D": 123,
+      "I": 123,
+      "N": 17687
+     },
+     "sites": {
+      "mispron_sites": 603,
+      "preservation": 0.3897,
+      "reversion": 0.5439,
+      "other": 0.0663,
+      "other_deletion": 0.005,
+      "normal_sites": 17103,
+      "normal_site_error": 0.0139
+     }
+    },
+    "Hungarian": {
+     "utterances": 1538,
+     "jer": {
+      "jer": 0.1145,
+      "sub": 0.0359,
+      "del": 0.0715,
+      "ins": 0.0072,
+      "S": 576,
+      "D": 1148,
+      "I": 115,
+      "N": 16059
+     },
+     "sites": {
+      "mispron_sites": 546,
+      "preservation": 0.3516,
+      "reversion": 0.5806,
+      "other": 0.0678,
+      "other_deletion": 0.011,
+      "normal_sites": 15517,
+      "normal_site_error": 0.0886
+     }
+    },
+    "Kazakh": {
+     "utterances": 1060,
+     "jer": {
+      "jer": 0.0401,
+      "sub": 0.0297,
+      "del": 0.0046,
+      "ins": 0.0058,
+      "S": 343,
+      "D": 53,
+      "I": 67,
+      "N": 11536
+     },
+     "sites": {
+      "mispron_sites": 484,
+      "preservation": 0.281,
+      "reversion": 0.6818,
+      "other": 0.0372,
+      "other_deletion": 0.0124,
+      "normal_sites": 11095,
+      "normal_site_error": 0.0073
+     }
+    },
+    "Armenian": {
+     "utterances": 932,
+     "jer": {
+      "jer": 0.0356,
+      "sub": 0.0244,
+      "del": 0.0056,
+      "ins": 0.0056,
+      "S": 234,
+      "D": 54,
+      "I": 54,
+      "N": 9607
+     },
+     "sites": {
+      "mispron_sites": 346,
+      "preservation": 0.3931,
+      "reversion": 0.5636,
+      "other": 0.0434,
+      "other_deletion": 0.0173,
+      "normal_sites": 9282,
+      "normal_site_error": 0.0095
+     }
+    },
+    "Uzbek": {
+     "utterances": 838,
+     "jer": {
+      "jer": 0.0519,
+      "sub": 0.0378,
+      "del": 0.0068,
+      "ins": 0.0073,
+      "S": 323,
+      "D": 58,
+      "I": 62,
+      "N": 8542
+     },
+     "sites": {
+      "mispron_sites": 460,
+      "preservation": 0.2891,
+      "reversion": 0.663,
+      "other": 0.0478,
+      "other_deletion": 0.0109,
+      "normal_sites": 8098,
+      "normal_site_error": 0.008
+     }
+    },
+    "Hindi": {
+     "utterances": 801,
+     "jer": {
+      "jer": 0.0261,
+      "sub": 0.0181,
+      "del": 0.0042,
+      "ins": 0.0038,
+      "S": 146,
+      "D": 34,
+      "I": 31,
+      "N": 8086
+     },
+     "sites": {
+      "mispron_sites": 173,
+      "preservation": 0.4046,
+      "reversion": 0.5202,
+      "other": 0.0751,
+      "other_deletion": 0.0058,
+      "normal_sites": 7935,
+      "normal_site_error": 0.0112
+     }
+    },
+    "Latvian": {
+     "utterances": 789,
+     "jer": {
+      "jer": 0.0584,
+      "sub": 0.042,
+      "del": 0.0109,
+      "ins": 0.0055,
+      "S": 346,
+      "D": 90,
+      "I": 45,
+      "N": 8238
+     },
+     "sites": {
+      "mispron_sites": 527,
+      "preservation": 0.3472,
+      "reversion": 0.592,
+      "other": 0.0607,
+      "other_deletion": 0.0133,
+      "normal_sites": 7716,
+      "normal_site_error": 0.0121
+     }
+    },
+    "Estonian": {
+     "utterances": 630,
+     "jer": {
+      "jer": 0.0603,
+      "sub": 0.0328,
+      "del": 0.0113,
+      "ins": 0.0161,
+      "S": 212,
+      "D": 73,
+      "I": 104,
+      "N": 6455
+     },
+     "sites": {
+      "mispron_sites": 312,
+      "preservation": 0.2821,
+      "reversion": 0.6346,
+      "other": 0.0833,
+      "other_deletion": 0.0192,
+      "normal_sites": 6208,
+      "normal_site_error": 0.0195
+     }
+    },
+    "Slovak": {
+     "utterances": 615,
+     "jer": {
+      "jer": 0.0444,
+      "sub": 0.0323,
+      "del": 0.0055,
+      "ins": 0.0066,
+      "S": 200,
+      "D": 34,
+      "I": 41,
+      "N": 6194
+     },
+     "sites": {
+      "mispron_sites": 273,
+      "preservation": 0.2821,
+      "reversion": 0.6813,
+      "other": 0.0366,
+      "other_deletion": 0.0073,
+      "normal_sites": 5948,
+      "normal_site_error": 0.0103
+     }
+    },
+    "Burmese": {
+     "utterances": 594,
+     "jer": {
+      "jer": 0.0293,
+      "sub": 0.0179,
+      "del": 0.0043,
+      "ins": 0.007,
+      "S": 120,
+      "D": 29,
+      "I": 47,
+      "N": 6688
+     },
+     "sites": {
+      "mispron_sites": 166,
+      "preservation": 0.2651,
+      "reversion": 0.6747,
+      "other": 0.0602,
+      "other_deletion": 0.0181,
+      "normal_sites": 6559,
+      "normal_site_error": 0.0085
+     }
+    }
+   }
+  },
+  "unseen": {
+   "name": "E1",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e1_foreign_clean/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_unseen",
+   "tsv_sha16": "5d6663e2c45ba930",
+   "ltr_sha16": "6ef916ebc23a0704",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 23562,
+   "jer": {
+    "jer": 0.3311,
+    "sub": 0.2103,
+    "del": 0.1104,
+    "ins": 0.0104,
+    "S": 49409,
+    "D": 25934,
+    "I": 2433,
+    "N": 234914
+   },
+   "sites": {
+    "mispron_sites": 9209,
+    "preservation": 0.4412,
+    "reversion": 0.1994,
+    "other": 0.3594,
+    "other_deletion": 0.137,
+    "normal_sites": 226212,
+    "normal_site_error": 0.3136
+   },
+   "mdd": {
+    "precision": 0.0942,
+    "recall": 0.8006,
+    "f1": 0.1685,
+    "far": 0.1994,
+    "frr": 0.3136,
+    "TA": 155275,
+    "FR": 70937,
+    "FA": 1836,
+    "TR": 7373,
+    "CD": 4063,
+    "DE": 3310
+   },
+   "legacy": {
+    "f1_weighted": 0.7783,
+    "err_f1": 0.17,
+    "positions": 238309
+   },
+   "by_language": {
+    "English": {
+     "utterances": 5071,
+     "jer": {
+      "jer": 0.3481,
+      "sub": 0.227,
+      "del": 0.1105,
+      "ins": 0.0107,
+      "S": 10315,
+      "D": 5022,
+      "I": 484,
+      "N": 45444
+     },
+     "sites": {
+      "mispron_sites": 1413,
+      "preservation": 0.4671,
+      "reversion": 0.1607,
+      "other": 0.3723,
+      "other_deletion": 0.1309,
+      "normal_sites": 44058,
+      "normal_site_error": 0.3331
+     }
+    },
+    "Indonesian": {
+     "utterances": 3069,
+     "jer": {
+      "jer": 0.3176,
+      "sub": 0.2068,
+      "del": 0.102,
+      "ins": 0.0087,
+      "S": 6125,
+      "D": 3023,
+      "I": 259,
+      "N": 29623
+     },
+     "sites": {
+      "mispron_sites": 897,
+      "preservation": 0.4359,
+      "reversion": 0.1828,
+      "other": 0.3813,
+      "other_deletion": 0.1538,
+      "normal_sites": 28760,
+      "normal_site_error": 0.3031
+     }
+    },
+    "Chinese": {
+     "utterances": 2754,
+     "jer": {
+      "jer": 0.3245,
+      "sub": 0.1894,
+      "del": 0.1235,
+      "ins": 0.0115,
+      "S": 6224,
+      "D": 4058,
+      "I": 378,
+      "N": 32853
+     },
+     "sites": {
+      "mispron_sites": 1286,
+      "preservation": 0.4487,
+      "reversion": 0.2395,
+      "other": 0.3118,
+      "other_deletion": 0.1345,
+      "normal_sites": 31831,
+      "normal_site_error": 0.3059
+     }
+    },
+    "Vietnamese": {
+     "utterances": 1994,
+     "jer": {
+      "jer": 0.3367,
+      "sub": 0.2201,
+      "del": 0.106,
+      "ins": 0.0106,
+      "S": 4107,
+      "D": 1978,
+      "I": 198,
+      "N": 18663
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.3991,
+      "reversion": 0.1918,
+      "other": 0.4091,
+      "other_deletion": 0.1419,
+      "normal_sites": 17821,
+      "normal_site_error": 0.3161
+     }
+    },
+    "Japanese": {
+     "utterances": 1807,
+     "jer": {
+      "jer": 0.3395,
+      "sub": 0.2069,
+      "del": 0.1213,
+      "ins": 0.0114,
+      "S": 3877,
+      "D": 2273,
+      "I": 213,
+      "N": 18743
+     },
+     "sites": {
+      "mispron_sites": 793,
+      "preservation": 0.4855,
+      "reversion": 0.1728,
+      "other": 0.3417,
+      "other_deletion": 0.1602,
+      "normal_sites": 17998,
+      "normal_site_error": 0.3226
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 1403,
+     "jer": {
+      "jer": 0.3348,
+      "sub": 0.2227,
+      "del": 0.1025,
+      "ins": 0.0096,
+      "S": 2909,
+      "D": 1339,
+      "I": 126,
+      "N": 13063
+     },
+     "sites": {
+      "mispron_sites": 750,
+      "preservation": 0.476,
+      "reversion": 0.18,
+      "other": 0.344,
+      "other_deletion": 0.1227,
+      "normal_sites": 12297,
+      "normal_site_error": 0.3146
+     }
+    },
+    "Russian": {
+     "utterances": 1180,
+     "jer": {
+      "jer": 0.3312,
+      "sub": 0.2164,
+      "del": 0.1041,
+      "ins": 0.0107,
+      "S": 2687,
+      "D": 1292,
+      "I": 133,
+      "N": 12417
+     },
+     "sites": {
+      "mispron_sites": 632,
+      "preservation": 0.4098,
+      "reversion": 0.1978,
+      "other": 0.3924,
+      "other_deletion": 0.1313,
+      "normal_sites": 11798,
+      "normal_site_error": 0.3087
+     }
+    },
+    "German": {
+     "utterances": 851,
+     "jer": {
+      "jer": 0.3078,
+      "sub": 0.1956,
+      "del": 0.1051,
+      "ins": 0.0072,
+      "S": 1776,
+      "D": 954,
+      "I": 65,
+      "N": 9080
+     },
+     "sites": {
+      "mispron_sites": 338,
+      "preservation": 0.4083,
+      "reversion": 0.2722,
+      "other": 0.3195,
+      "other_deletion": 0.1154,
+      "normal_sites": 8739,
+      "normal_site_error": 0.2904
+     }
+    },
+    "Turkish": {
+     "utterances": 695,
+     "jer": {
+      "jer": 0.3018,
+      "sub": 0.202,
+      "del": 0.0922,
+      "ins": 0.0075,
+      "S": 1371,
+      "D": 626,
+      "I": 51,
+      "N": 6786
+     },
+     "sites": {
+      "mispron_sites": 254,
+      "preservation": 0.4882,
+      "reversion": 0.189,
+      "other": 0.3228,
+      "other_deletion": 0.1063,
+      "normal_sites": 6547,
+      "normal_site_error": 0.2873
+     }
+    }
+   }
+  },
+  "native": {
+   "name": "E1",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e1_foreign_clean/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_kspon_native_v1",
+   "split": "dev",
+   "tsv_sha16": "8a6a325a33d4195d",
+   "ltr_sha16": "9abda9d1d3faff03",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 2149,
+   "jer": {
+    "jer": 0.5986,
+    "sub": 0.1115,
+    "del": 0.4827,
+    "ins": 0.0045,
+    "S": 9936,
+    "D": 43022,
+    "I": 398,
+    "N": 89131
+   },
+   "sites": {
+    "mispron_sites": 0,
+    "preservation": null,
+    "reversion": null,
+    "other": null,
+    "other_deletion": null,
+    "normal_sites": 89131,
+    "normal_site_error": 0.5951
+   },
+   "mdd": {
+    "precision": 0.0,
+    "recall": 0,
+    "f1": 0.0,
+    "far": null,
+    "frr": 0.5951,
+    "TA": 36085,
+    "FR": 53046,
+    "FA": 0,
+    "TR": 0,
+    "CD": 0,
+    "DE": 0
+   },
+   "legacy": {
+    "f1_weighted": 0.5749,
+    "err_f1": 0.0,
+    "positions": 89441
+   },
+   "by_language": {
+    "?": {
+     "utterances": 2149,
+     "jer": {
+      "jer": 0.5986,
+      "sub": 0.1115,
+      "del": 0.4827,
+      "ins": 0.0045,
+      "S": 9936,
+      "D": 43022,
+      "I": 398,
+      "N": 89131
+     },
+     "sites": {
+      "mispron_sites": 0,
+      "preservation": null,
+      "reversion": null,
+      "other": null,
+      "other_deletion": null,
+      "normal_sites": 89131,
+      "normal_site_error": 0.5951
+     }
+    }
+   }
+  },
+  "run": {
+   "experiment": "e1_foreign_clean",
+   "config_name": "e1_foreign_clean",
+   "overrides": [],
+   "cuda_visible_devices": "0",
+   "git_commit": "cb63efd5a01fae0fcdb55834b84433d5d9be3673",
+   "git_dirty_files": 24,
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "manifest_train_valid_sha256": "fd4f92cbbd0a507ed2afeb0cba2f31d9cb0421d52faea0de1df407c76b39d5f0",
+   "manifest_stats": {
+    "utterances": 195001,
+    "hours": 200.0,
+    "speakers": 9369,
+    "prompts": 196,
+    "unique_ltr": 19881,
+    "utt_per_prompt": {
+     "n": 196,
+     "mean": 994.903,
+     "min": 1,
+     "p5": 1000,
+     "p25": 1000,
+     "median": 1000,
+     "p75": 1000,
+     "p95": 1000,
+     "max": 1000
+    },
+    "duration_sec": {
+     "n": 195001,
+     "mean": 3.693,
+     "min": 0.51,
+     "p5": 1.54,
+     "p25": 2.56,
+     "median": 2.88,
+     "p75": 4.52,
+     "p95": 7.85,
+     "max": 14.93
+    },
+    "sample_rate": {
+     "48000": 170103,
+     "44100": 20574,
+     "16000": 1731,
+     "24000": 1325,
+     "96000": 949,
+     "192000": 294,
+     "88200": 25
+    },
+    "task": {
+     "RW": 130000,
+     "RS": 65000,
+     "RP": 1
+    },
+    "dataset": {
+     "041:TL": 54539,
+     "043:TL": 53445,
+     "040:TL": 35114,
+     "042:TL": 30117,
+     "041:VL": 6842,
+     "043:VL": 6805,
+     "040:VL": 4392,
+     "042:VL": 3747
+    },
+    "label_tokens_total": 2556914,
+    "label_tokens_unique": 45,
+    "oov_tokens": {},
+    "utt_with_mispron_site": 58273
+   },
+   "gpu": "NVIDIA A100-SXM4-80GB",
+   "torch": "2.1.2+cu118",
+   "cuda": "11.8",
+   "cudnn": 8700,
+   "fairseq": "0.12.2",
+   "fairseq_commit": "3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99",
+   "start": "2026-09-15 03:43:10",
+   "end": "2026-09-15 12:34:11",
+   "exit_code": 0
+  },
+  "train": {
+   "utt": 195001,
+   "hours": 200.0,
+   "texts": 196,
+   "speakers": 9369,
+   "ratio": "100 / 0"
+  }
+ },
+ "E2": {
+  "seen": {
+   "name": "E2",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2_native20/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_seen",
+   "tsv_sha16": "e4cdf4c5a07ca713",
+   "ltr_sha16": "925d4edc43401da8",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 160512,
+   "jer": {
+    "jer": 0.0544,
+    "sub": 0.033,
+    "del": 0.0117,
+    "ins": 0.0097,
+    "S": 53043,
+    "D": 18857,
+    "I": 15674,
+    "N": 1608704
+   },
+   "sites": {
+    "mispron_sites": 61535,
+    "preservation": 0.3183,
+    "reversion": 0.6022,
+    "other": 0.0795,
+    "other_deletion": 0.0186,
+    "normal_sites": 1551347,
+    "normal_site_error": 0.0212
+   },
+   "mdd": {
+    "precision": 0.4272,
+    "recall": 0.3978,
+    "f1": 0.412,
+    "far": 0.6022,
+    "frr": 0.0212,
+    "TA": 1518530,
+    "FR": 32817,
+    "FA": 37057,
+    "TR": 24478,
+    "CD": 19589,
+    "DE": 4889
+   },
+   "legacy": {
+    "f1_weighted": 0.949,
+    "err_f1": 0.3904,
+    "positions": 1629312
+   },
+   "by_language": {
+    "English": {
+     "utterances": 34217,
+     "jer": {
+      "jer": 0.0688,
+      "sub": 0.0394,
+      "del": 0.0165,
+      "ins": 0.0129,
+      "S": 12513,
+      "D": 5229,
+      "I": 4085,
+      "N": 317314
+     },
+     "sites": {
+      "mispron_sites": 10505,
+      "preservation": 0.3574,
+      "reversion": 0.5274,
+      "other": 0.1153,
+      "other_deletion": 0.027,
+      "normal_sites": 307449,
+      "normal_site_error": 0.0372
+     }
+    },
+    "Indonesian": {
+     "utterances": 21588,
+     "jer": {
+      "jer": 0.043,
+      "sub": 0.0241,
+      "del": 0.0078,
+      "ins": 0.011,
+      "S": 5298,
+      "D": 1723,
+      "I": 2415,
+      "N": 219611
+     },
+     "sites": {
+      "mispron_sites": 6266,
+      "preservation": 0.3213,
+      "reversion": 0.6127,
+      "other": 0.0661,
+      "other_deletion": 0.014,
+      "normal_sites": 213602,
+      "normal_site_error": 0.0137
+     }
+    },
+    "Chinese": {
+     "utterances": 17815,
+     "jer": {
+      "jer": 0.0428,
+      "sub": 0.0254,
+      "del": 0.008,
+      "ins": 0.0094,
+      "S": 4770,
+      "D": 1494,
+      "I": 1763,
+      "N": 187439
+     },
+     "sites": {
+      "mispron_sites": 7130,
+      "preservation": 0.3025,
+      "reversion": 0.6359,
+      "other": 0.0616,
+      "other_deletion": 0.0167,
+      "normal_sites": 181490,
+      "normal_site_error": 0.0115
+     }
+    },
+    "Vietnamese": {
+     "utterances": 14184,
+     "jer": {
+      "jer": 0.0685,
+      "sub": 0.039,
+      "del": 0.0171,
+      "ins": 0.0124,
+      "S": 5600,
+      "D": 2462,
+      "I": 1782,
+      "N": 143673
+     },
+     "sites": {
+      "mispron_sites": 6938,
+      "preservation": 0.3207,
+      "reversion": 0.5829,
+      "other": 0.0964,
+      "other_deletion": 0.0271,
+      "normal_sites": 137477,
+      "normal_site_error": 0.0273
+     }
+    },
+    "Japanese": {
+     "utterances": 12173,
+     "jer": {
+      "jer": 0.0489,
+      "sub": 0.0323,
+      "del": 0.0082,
+      "ins": 0.0084,
+      "S": 3991,
+      "D": 1017,
+      "I": 1045,
+      "N": 123687
+     },
+     "sites": {
+      "mispron_sites": 4448,
+      "preservation": 0.2898,
+      "reversion": 0.6461,
+      "other": 0.0641,
+      "other_deletion": 0.0119,
+      "normal_sites": 119512,
+      "normal_site_error": 0.0174
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 9591,
+     "jer": {
+      "jer": 0.0722,
+      "sub": 0.0479,
+      "del": 0.0166,
+      "ins": 0.0077,
+      "S": 4468,
+      "D": 1549,
+      "I": 719,
+      "N": 93238
+     },
+     "sites": {
+      "mispron_sites": 5363,
+      "preservation": 0.3422,
+      "reversion": 0.5743,
+      "other": 0.0835,
+      "other_deletion": 0.0166,
+      "normal_sites": 87995,
+      "normal_site_error": 0.029
+     }
+    },
+    "Russian": {
+     "utterances": 7981,
+     "jer": {
+      "jer": 0.0568,
+      "sub": 0.0411,
+      "del": 0.0086,
+      "ins": 0.007,
+      "S": 3383,
+      "D": 710,
+      "I": 577,
+      "N": 82270
+     },
+     "sites": {
+      "mispron_sites": 4143,
+      "preservation": 0.2761,
+      "reversion": 0.6604,
+      "other": 0.0635,
+      "other_deletion": 0.0142,
+      "normal_sites": 78267,
+      "normal_site_error": 0.0151
+     }
+    },
+    "German": {
+     "utterances": 5834,
+     "jer": {
+      "jer": 0.0393,
+      "sub": 0.0287,
+      "del": 0.0058,
+      "ins": 0.0049,
+      "S": 1726,
+      "D": 348,
+      "I": 293,
+      "N": 60188
+     },
+     "sites": {
+      "mispron_sites": 2217,
+      "preservation": 0.2954,
+      "reversion": 0.6378,
+      "other": 0.0668,
+      "other_deletion": 0.0185,
+      "normal_sites": 57989,
+      "normal_site_error": 0.0094
+     }
+    },
+    "Turkish": {
+     "utterances": 4909,
+     "jer": {
+      "jer": 0.0371,
+      "sub": 0.0238,
+      "del": 0.0069,
+      "ins": 0.0065,
+      "S": 1212,
+      "D": 351,
+      "I": 332,
+      "N": 51031
+     },
+     "sites": {
+      "mispron_sites": 1723,
+      "preservation": 0.3662,
+      "reversion": 0.5786,
+      "other": 0.0551,
+      "other_deletion": 0.0116,
+      "normal_sites": 49414,
+      "normal_site_error": 0.0103
+     }
+    },
+    "Portuguese": {
+     "utterances": 3496,
+     "jer": {
+      "jer": 0.0515,
+      "sub": 0.0326,
+      "del": 0.0101,
+      "ins": 0.0088,
+      "S": 1123,
+      "D": 347,
+      "I": 303,
+      "N": 34420
+     },
+     "sites": {
+      "mispron_sites": 1502,
+      "preservation": 0.3003,
+      "reversion": 0.6165,
+      "other": 0.0832,
+      "other_deletion": 0.0193,
+      "normal_sites": 32983,
+      "normal_site_error": 0.0151
+     }
+    },
+    "Italian": {
+     "utterances": 3485,
+     "jer": {
+      "jer": 0.0404,
+      "sub": 0.0266,
+      "del": 0.0079,
+      "ins": 0.0059,
+      "S": 921,
+      "D": 275,
+      "I": 205,
+      "N": 34665
+     },
+     "sites": {
+      "mispron_sites": 1226,
+      "preservation": 0.3091,
+      "reversion": 0.6281,
+      "other": 0.0628,
+      "other_deletion": 0.0171,
+      "normal_sites": 33505,
+      "normal_site_error": 0.012
+     }
+    },
+    "Polish": {
+     "utterances": 3253,
+     "jer": {
+      "jer": 0.0413,
+      "sub": 0.0292,
+      "del": 0.0059,
+      "ins": 0.0063,
+      "S": 984,
+      "D": 197,
+      "I": 211,
+      "N": 33674
+     },
+     "sites": {
+      "mispron_sites": 1248,
+      "preservation": 0.2708,
+      "reversion": 0.6659,
+      "other": 0.0633,
+      "other_deletion": 0.0088,
+      "normal_sites": 32440,
+      "normal_site_error": 0.009
+     }
+    },
+    "Czech": {
+     "utterances": 2665,
+     "jer": {
+      "jer": 0.0475,
+      "sub": 0.0288,
+      "del": 0.0106,
+      "ins": 0.0081,
+      "S": 791,
+      "D": 291,
+      "I": 223,
+      "N": 27500
+     },
+     "sites": {
+      "mispron_sites": 1029,
+      "preservation": 0.2556,
+      "reversion": 0.6433,
+      "other": 0.1011,
+      "other_deletion": 0.0185,
+      "normal_sites": 26493,
+      "normal_site_error": 0.014
+     }
+    },
+    "Mongolian": {
+     "utterances": 2368,
+     "jer": {
+      "jer": 0.0682,
+      "sub": 0.0372,
+      "del": 0.0168,
+      "ins": 0.0142,
+      "S": 923,
+      "D": 417,
+      "I": 352,
+      "N": 24824
+     },
+     "sites": {
+      "mispron_sites": 970,
+      "preservation": 0.3443,
+      "reversion": 0.5546,
+      "other": 0.101,
+      "other_deletion": 0.0309,
+      "normal_sites": 23953,
+      "normal_site_error": 0.0321
+     }
+    },
+    "Romanian": {
+     "utterances": 2264,
+     "jer": {
+      "jer": 0.0473,
+      "sub": 0.0296,
+      "del": 0.0086,
+      "ins": 0.0091,
+      "S": 662,
+      "D": 192,
+      "I": 204,
+      "N": 22356
+     },
+     "sites": {
+      "mispron_sites": 991,
+      "preservation": 0.332,
+      "reversion": 0.6085,
+      "other": 0.0595,
+      "other_deletion": 0.0061,
+      "normal_sites": 21439,
+      "normal_site_error": 0.0117
+     }
+    },
+    "French": {
+     "utterances": 2247,
+     "jer": {
+      "jer": 0.0447,
+      "sub": 0.0298,
+      "del": 0.0083,
+      "ins": 0.0066,
+      "S": 673,
+      "D": 188,
+      "I": 148,
+      "N": 22594
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.2871,
+      "reversion": 0.6574,
+      "other": 0.0554,
+      "other_deletion": 0.0144,
+      "normal_sites": 21756,
+      "normal_site_error": 0.0124
+     }
+    },
+    "Azerbaijani": {
+     "utterances": 1680,
+     "jer": {
+      "jer": 0.0449,
+      "sub": 0.0288,
+      "del": 0.0076,
+      "ins": 0.0085,
+      "S": 509,
+      "D": 135,
+      "I": 150,
+      "N": 17687
+     },
+     "sites": {
+      "mispron_sites": 603,
+      "preservation": 0.34,
+      "reversion": 0.5672,
+      "other": 0.0929,
+      "other_deletion": 0.0182,
+      "normal_sites": 17103,
+      "normal_site_error": 0.0158
+     }
+    },
+    "Hungarian": {
+     "utterances": 1538,
+     "jer": {
+      "jer": 0.1213,
+      "sub": 0.0375,
+      "del": 0.0749,
+      "ins": 0.0089,
+      "S": 602,
+      "D": 1203,
+      "I": 143,
+      "N": 16059
+     },
+     "sites": {
+      "mispron_sites": 546,
+      "preservation": 0.3443,
+      "reversion": 0.5751,
+      "other": 0.0806,
+      "other_deletion": 0.0165,
+      "normal_sites": 15517,
+      "normal_site_error": 0.0934
+     }
+    },
+    "Kazakh": {
+     "utterances": 1060,
+     "jer": {
+      "jer": 0.0439,
+      "sub": 0.0318,
+      "del": 0.0041,
+      "ins": 0.0081,
+      "S": 367,
+      "D": 47,
+      "I": 93,
+      "N": 11536
+     },
+     "sites": {
+      "mispron_sites": 484,
+      "preservation": 0.2748,
+      "reversion": 0.6921,
+      "other": 0.0331,
+      "other_deletion": 0.0083,
+      "normal_sites": 11095,
+      "normal_site_error": 0.0084
+     }
+    },
+    "Armenian": {
+     "utterances": 932,
+     "jer": {
+      "jer": 0.0384,
+      "sub": 0.0262,
+      "del": 0.0068,
+      "ins": 0.0054,
+      "S": 252,
+      "D": 65,
+      "I": 52,
+      "N": 9607
+     },
+     "sites": {
+      "mispron_sites": 346,
+      "preservation": 0.3671,
+      "reversion": 0.5867,
+      "other": 0.0462,
+      "other_deletion": 0.0087,
+      "normal_sites": 9282,
+      "normal_site_error": 0.0108
+     }
+    },
+    "Uzbek": {
+     "utterances": 838,
+     "jer": {
+      "jer": 0.0558,
+      "sub": 0.0397,
+      "del": 0.0075,
+      "ins": 0.0087,
+      "S": 339,
+      "D": 64,
+      "I": 74,
+      "N": 8542
+     },
+     "sites": {
+      "mispron_sites": 460,
+      "preservation": 0.2761,
+      "reversion": 0.6739,
+      "other": 0.05,
+      "other_deletion": 0.0043,
+      "normal_sites": 8098,
+      "normal_site_error": 0.0093
+     }
+    },
+    "Hindi": {
+     "utterances": 801,
+     "jer": {
+      "jer": 0.0272,
+      "sub": 0.0181,
+      "del": 0.004,
+      "ins": 0.0052,
+      "S": 146,
+      "D": 32,
+      "I": 42,
+      "N": 8086
+     },
+     "sites": {
+      "mispron_sites": 173,
+      "preservation": 0.4104,
+      "reversion": 0.5202,
+      "other": 0.0694,
+      "other_deletion": 0.0116,
+      "normal_sites": 7935,
+      "normal_site_error": 0.0103
+     }
+    },
+    "Latvian": {
+     "utterances": 789,
+     "jer": {
+      "jer": 0.0637,
+      "sub": 0.0462,
+      "del": 0.0112,
+      "ins": 0.0063,
+      "S": 381,
+      "D": 92,
+      "I": 52,
+      "N": 8238
+     },
+     "sites": {
+      "mispron_sites": 527,
+      "preservation": 0.3036,
+      "reversion": 0.6338,
+      "other": 0.0626,
+      "other_deletion": 0.0152,
+      "normal_sites": 7716,
+      "normal_site_error": 0.0141
+     }
+    },
+    "Estonian": {
+     "utterances": 630,
+     "jer": {
+      "jer": 0.0666,
+      "sub": 0.0333,
+      "del": 0.0143,
+      "ins": 0.0191,
+      "S": 215,
+      "D": 92,
+      "I": 123,
+      "N": 6455
+     },
+     "sites": {
+      "mispron_sites": 312,
+      "preservation": 0.2628,
+      "reversion": 0.6378,
+      "other": 0.0994,
+      "other_deletion": 0.0256,
+      "normal_sites": 6208,
+      "normal_site_error": 0.0221
+     }
+    },
+    "Slovak": {
+     "utterances": 615,
+     "jer": {
+      "jer": 0.0479,
+      "sub": 0.035,
+      "del": 0.0066,
+      "ins": 0.0063,
+      "S": 217,
+      "D": 41,
+      "I": 39,
+      "N": 6194
+     },
+     "sites": {
+      "mispron_sites": 273,
+      "preservation": 0.2674,
+      "reversion": 0.6923,
+      "other": 0.0403,
+      "other_deletion": 0.0147,
+      "normal_sites": 5948,
+      "normal_site_error": 0.0138
+     }
+    },
+    "Burmese": {
+     "utterances": 594,
+     "jer": {
+      "jer": 0.031,
+      "sub": 0.0184,
+      "del": 0.0051,
+      "ins": 0.0075,
+      "S": 123,
+      "D": 34,
+      "I": 50,
+      "N": 6688
+     },
+     "sites": {
+      "mispron_sites": 166,
+      "preservation": 0.2952,
+      "reversion": 0.6566,
+      "other": 0.0482,
+      "other_deletion": 0.0181,
+      "normal_sites": 6559,
+      "normal_site_error": 0.0102
+     }
+    }
+   }
+  },
+  "unseen": {
+   "name": "E2",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2_native20/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_unseen",
+   "tsv_sha16": "5d6663e2c45ba930",
+   "ltr_sha16": "6ef916ebc23a0704",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 23562,
+   "jer": {
+    "jer": 0.2548,
+    "sub": 0.1847,
+    "del": 0.0546,
+    "ins": 0.0155,
+    "S": 43394,
+    "D": 12819,
+    "I": 3643,
+    "N": 234914
+   },
+   "sites": {
+    "mispron_sites": 9209,
+    "preservation": 0.4567,
+    "reversion": 0.2456,
+    "other": 0.2976,
+    "other_deletion": 0.084,
+    "normal_sites": 226212,
+    "normal_site_error": 0.2296
+   },
+   "mdd": {
+    "precision": 0.118,
+    "recall": 0.7544,
+    "f1": 0.204,
+    "far": 0.2456,
+    "frr": 0.2296,
+    "TA": 174265,
+    "FR": 51947,
+    "FA": 2262,
+    "TR": 6947,
+    "CD": 4206,
+    "DE": 2741
+   },
+   "legacy": {
+    "f1_weighted": 0.8305,
+    "err_f1": 0.2034,
+    "positions": 239449
+   },
+   "by_language": {
+    "English": {
+     "utterances": 5071,
+     "jer": {
+      "jer": 0.2765,
+      "sub": 0.2012,
+      "del": 0.0581,
+      "ins": 0.0171,
+      "S": 9144,
+      "D": 2642,
+      "I": 777,
+      "N": 45444
+     },
+     "sites": {
+      "mispron_sites": 1413,
+      "preservation": 0.4728,
+      "reversion": 0.189,
+      "other": 0.3383,
+      "other_deletion": 0.0842,
+      "normal_sites": 44058,
+      "normal_site_error": 0.253
+     }
+    },
+    "Indonesian": {
+     "utterances": 3069,
+     "jer": {
+      "jer": 0.2473,
+      "sub": 0.1824,
+      "del": 0.0494,
+      "ins": 0.0155,
+      "S": 5404,
+      "D": 1463,
+      "I": 459,
+      "N": 29623
+     },
+     "sites": {
+      "mispron_sites": 897,
+      "preservation": 0.4214,
+      "reversion": 0.2453,
+      "other": 0.3333,
+      "other_deletion": 0.1026,
+      "normal_sites": 28760,
+      "normal_site_error": 0.2237
+     }
+    },
+    "Chinese": {
+     "utterances": 2754,
+     "jer": {
+      "jer": 0.2284,
+      "sub": 0.1578,
+      "del": 0.0524,
+      "ins": 0.0183,
+      "S": 5184,
+      "D": 1720,
+      "I": 601,
+      "N": 32853
+     },
+     "sites": {
+      "mispron_sites": 1286,
+      "preservation": 0.4666,
+      "reversion": 0.2916,
+      "other": 0.2418,
+      "other_deletion": 0.0809,
+      "normal_sites": 31831,
+      "normal_site_error": 0.2011
+     }
+    },
+    "Vietnamese": {
+     "utterances": 1994,
+     "jer": {
+      "jer": 0.2804,
+      "sub": 0.2048,
+      "del": 0.0573,
+      "ins": 0.0182,
+      "S": 3823,
+      "D": 1070,
+      "I": 340,
+      "N": 18663
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.418,
+      "reversion": 0.2195,
+      "other": 0.3625,
+      "other_deletion": 0.102,
+      "normal_sites": 17821,
+      "normal_site_error": 0.2502
+     }
+    },
+    "Japanese": {
+     "utterances": 1807,
+     "jer": {
+      "jer": 0.2546,
+      "sub": 0.1817,
+      "del": 0.0567,
+      "ins": 0.0162,
+      "S": 3405,
+      "D": 1063,
+      "I": 304,
+      "N": 18743
+     },
+     "sites": {
+      "mispron_sites": 793,
+      "preservation": 0.5006,
+      "reversion": 0.2245,
+      "other": 0.2749,
+      "other_deletion": 0.087,
+      "normal_sites": 17998,
+      "normal_site_error": 0.2294
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 1403,
+     "jer": {
+      "jer": 0.2698,
+      "sub": 0.2058,
+      "del": 0.0526,
+      "ins": 0.0115,
+      "S": 2688,
+      "D": 687,
+      "I": 150,
+      "N": 13063
+     },
+     "sites": {
+      "mispron_sites": 750,
+      "preservation": 0.4907,
+      "reversion": 0.216,
+      "other": 0.2933,
+      "other_deletion": 0.0787,
+      "normal_sites": 12297,
+      "normal_site_error": 0.2451
+     }
+    },
+    "Russian": {
+     "utterances": 1180,
+     "jer": {
+      "jer": 0.2588,
+      "sub": 0.1941,
+      "del": 0.0513,
+      "ins": 0.0134,
+      "S": 2410,
+      "D": 637,
+      "I": 167,
+      "N": 12417
+     },
+     "sites": {
+      "mispron_sites": 632,
+      "preservation": 0.4557,
+      "reversion": 0.2563,
+      "other": 0.288,
+      "other_deletion": 0.068,
+      "normal_sites": 11798,
+      "normal_site_error": 0.2316
+     }
+    },
+    "German": {
+     "utterances": 851,
+     "jer": {
+      "jer": 0.2263,
+      "sub": 0.1669,
+      "del": 0.0487,
+      "ins": 0.0108,
+      "S": 1515,
+      "D": 442,
+      "I": 98,
+      "N": 9080
+     },
+     "sites": {
+      "mispron_sites": 338,
+      "preservation": 0.3994,
+      "reversion": 0.3462,
+      "other": 0.2544,
+      "other_deletion": 0.0651,
+      "normal_sites": 8739,
+      "normal_site_error": 0.2022
+     }
+    },
+    "Turkish": {
+     "utterances": 695,
+     "jer": {
+      "jer": 0.2221,
+      "sub": 0.1655,
+      "del": 0.0477,
+      "ins": 0.0088,
+      "S": 1123,
+      "D": 324,
+      "I": 60,
+      "N": 6786
+     },
+     "sites": {
+      "mispron_sites": 254,
+      "preservation": 0.5197,
+      "reversion": 0.2087,
+      "other": 0.2717,
+      "other_deletion": 0.0591,
+      "normal_sites": 6547,
+      "normal_site_error": 0.2028
+     }
+    }
+   },
+   "strict_text_unseen": {
+    "exclude_texts": "/data/speech-ai/out/mdd/manifest_mix_f80_n20/native_train_texts.txt",
+    "excluded_utts": 1011,
+    "utterances": 22551,
+    "jer": {
+     "jer": 0.2504,
+     "sub": 0.1794,
+     "del": 0.0554,
+     "ins": 0.0156,
+     "S": 40872,
+     "D": 12631,
+     "I": 3558,
+     "N": 227855
+    },
+    "sites": {
+     "mispron_sites": 9050,
+     "preservation": 0.4579,
+     "reversion": 0.2485,
+     "other": 0.2936,
+     "other_deletion": 0.0835,
+     "normal_sites": 219294,
+     "normal_site_error": 0.2249
+    },
+    "mdd": {
+     "precision": 0.1212,
+     "recall": 0.7515,
+     "f1": 0.2087,
+     "far": 0.2485,
+     "frr": 0.2249,
+     "TA": 169975,
+     "FR": 49319,
+     "FA": 2249,
+     "TR": 6801,
+     "CD": 4144,
+     "DE": 2657
+    }
+   }
+  },
+  "native": {
+   "name": "E2",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2_native20/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_kspon_native_v1",
+   "split": "dev",
+   "tsv_sha16": "8a6a325a33d4195d",
+   "ltr_sha16": "9abda9d1d3faff03",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 2149,
+   "jer": {
+    "jer": 0.1264,
+    "sub": 0.0715,
+    "del": 0.0347,
+    "ins": 0.0202,
+    "S": 6376,
+    "D": 3094,
+    "I": 1799,
+    "N": 89131
+   },
+   "sites": {
+    "mispron_sites": 0,
+    "preservation": null,
+    "reversion": null,
+    "other": null,
+    "other_deletion": null,
+    "normal_sites": 89131,
+    "normal_site_error": 0.1064
+   },
+   "mdd": {
+    "precision": 0.0,
+    "recall": 0,
+    "f1": 0.0,
+    "far": null,
+    "frr": 0.1064,
+    "TA": 79651,
+    "FR": 9480,
+    "FA": 0,
+    "TR": 0,
+    "CD": 0,
+    "DE": 0
+   },
+   "legacy": {
+    "f1_weighted": 0.9339,
+    "err_f1": 0.0,
+    "positions": 90920
+   },
+   "by_language": {
+    "?": {
+     "utterances": 2149,
+     "jer": {
+      "jer": 0.1264,
+      "sub": 0.0715,
+      "del": 0.0347,
+      "ins": 0.0202,
+      "S": 6376,
+      "D": 3094,
+      "I": 1799,
+      "N": 89131
+     },
+     "sites": {
+      "mispron_sites": 0,
+      "preservation": null,
+      "reversion": null,
+      "other": null,
+      "other_deletion": null,
+      "normal_sites": 89131,
+      "normal_site_error": 0.1064
+     }
+    }
+   }
+  },
+  "run": {
+   "experiment": "e2_native20",
+   "config_name": "e2_native20",
+   "overrides": [],
+   "cuda_visible_devices": "0",
+   "git_commit": "cb63efd5a01fae0fcdb55834b84433d5d9be3673",
+   "git_dirty_files": 26,
+   "manifest": "/data/speech-ai/out/mdd/manifest_mix_f80_n20",
+   "manifest_train_valid_sha256": "a672abd21a55d76923d6c5ac6aab11bff112751e706949d1cb9ca09c1896ce17",
+   "manifest_stats": null,
+   "gpu": "NVIDIA A100-SXM4-80GB",
+   "torch": "2.1.2+cu118",
+   "cuda": "11.8",
+   "cudnn": 8700,
+   "fairseq": "0.12.2",
+   "fairseq_commit": "3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99",
+   "start": "2026-09-15 03:54:09",
+   "end": "2026-09-15 13:23:47",
+   "exit_code": 0
+  },
+  "train": {
+   "utt": 232495,
+   "hours": 250.0,
+   "texts": 37690,
+   "speakers": "9,369 + 원어민(ID 없음)",
+   "ratio": "80 / 20 (시간)"
+  }
+ },
+ "E2-F": {
+  "seen": {
+   "name": "E2F",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2f_foreign_adapt/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_seen",
+   "tsv_sha16": "e4cdf4c5a07ca713",
+   "ltr_sha16": "925d4edc43401da8",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 160512,
+   "jer": {
+    "jer": 0.0538,
+    "sub": 0.0327,
+    "del": 0.0115,
+    "ins": 0.0096,
+    "S": 52668,
+    "D": 18528,
+    "I": 15389,
+    "N": 1608704
+   },
+   "sites": {
+    "mispron_sites": 61535,
+    "preservation": 0.3135,
+    "reversion": 0.6088,
+    "other": 0.0776,
+    "other_deletion": 0.0176,
+    "normal_sites": 1551347,
+    "normal_site_error": 0.0206
+   },
+   "mdd": {
+    "precision": 0.4298,
+    "recall": 0.3912,
+    "f1": 0.4096,
+    "far": 0.6088,
+    "frr": 0.0206,
+    "TA": 1519412,
+    "FR": 31935,
+    "FA": 37464,
+    "TR": 24071,
+    "CD": 19294,
+    "DE": 4777
+   },
+   "legacy": {
+    "f1_weighted": 0.9492,
+    "err_f1": 0.3888,
+    "positions": 1628888
+   },
+   "by_language": {
+    "English": {
+     "utterances": 34217,
+     "jer": {
+      "jer": 0.0673,
+      "sub": 0.0389,
+      "del": 0.016,
+      "ins": 0.0123,
+      "S": 12345,
+      "D": 5087,
+      "I": 3913,
+      "N": 317314
+     },
+     "sites": {
+      "mispron_sites": 10505,
+      "preservation": 0.3507,
+      "reversion": 0.537,
+      "other": 0.1123,
+      "other_deletion": 0.0257,
+      "normal_sites": 307449,
+      "normal_site_error": 0.0361
+     }
+    },
+    "Indonesian": {
+     "utterances": 21588,
+     "jer": {
+      "jer": 0.0421,
+      "sub": 0.0239,
+      "del": 0.0077,
+      "ins": 0.0105,
+      "S": 5257,
+      "D": 1688,
+      "I": 2308,
+      "N": 219611
+     },
+     "sites": {
+      "mispron_sites": 6266,
+      "preservation": 0.3224,
+      "reversion": 0.6179,
+      "other": 0.0597,
+      "other_deletion": 0.0117,
+      "normal_sites": 213602,
+      "normal_site_error": 0.0134
+     }
+    },
+    "Chinese": {
+     "utterances": 17815,
+     "jer": {
+      "jer": 0.0427,
+      "sub": 0.0253,
+      "del": 0.0078,
+      "ins": 0.0096,
+      "S": 4740,
+      "D": 1471,
+      "I": 1798,
+      "N": 187439
+     },
+     "sites": {
+      "mispron_sites": 7130,
+      "preservation": 0.2945,
+      "reversion": 0.6433,
+      "other": 0.0621,
+      "other_deletion": 0.0167,
+      "normal_sites": 181490,
+      "normal_site_error": 0.0111
+     }
+    },
+    "Vietnamese": {
+     "utterances": 14184,
+     "jer": {
+      "jer": 0.0683,
+      "sub": 0.039,
+      "del": 0.0169,
+      "ins": 0.0125,
+      "S": 5601,
+      "D": 2429,
+      "I": 1789,
+      "N": 143673
+     },
+     "sites": {
+      "mispron_sites": 6938,
+      "preservation": 0.3133,
+      "reversion": 0.5898,
+      "other": 0.0969,
+      "other_deletion": 0.0264,
+      "normal_sites": 137477,
+      "normal_site_error": 0.0269
+     }
+    },
+    "Japanese": {
+     "utterances": 12173,
+     "jer": {
+      "jer": 0.0482,
+      "sub": 0.0318,
+      "del": 0.008,
+      "ins": 0.0085,
+      "S": 3928,
+      "D": 986,
+      "I": 1048,
+      "N": 123687
+     },
+     "sites": {
+      "mispron_sites": 4448,
+      "preservation": 0.2907,
+      "reversion": 0.6466,
+      "other": 0.0627,
+      "other_deletion": 0.0106,
+      "normal_sites": 119512,
+      "normal_site_error": 0.0166
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 9591,
+     "jer": {
+      "jer": 0.0719,
+      "sub": 0.0474,
+      "del": 0.0165,
+      "ins": 0.0079,
+      "S": 4423,
+      "D": 1543,
+      "I": 736,
+      "N": 93238
+     },
+     "sites": {
+      "mispron_sites": 5363,
+      "preservation": 0.3409,
+      "reversion": 0.5788,
+      "other": 0.0804,
+      "other_deletion": 0.0162,
+      "normal_sites": 87995,
+      "normal_site_error": 0.0284
+     }
+    },
+    "Russian": {
+     "utterances": 7981,
+     "jer": {
+      "jer": 0.0568,
+      "sub": 0.0412,
+      "del": 0.0085,
+      "ins": 0.0071,
+      "S": 3386,
+      "D": 702,
+      "I": 584,
+      "N": 82270
+     },
+     "sites": {
+      "mispron_sites": 4143,
+      "preservation": 0.2667,
+      "reversion": 0.6703,
+      "other": 0.063,
+      "other_deletion": 0.0157,
+      "normal_sites": 78267,
+      "normal_site_error": 0.0146
+     }
+    },
+    "German": {
+     "utterances": 5834,
+     "jer": {
+      "jer": 0.0396,
+      "sub": 0.0289,
+      "del": 0.0058,
+      "ins": 0.005,
+      "S": 1739,
+      "D": 348,
+      "I": 298,
+      "N": 60188
+     },
+     "sites": {
+      "mispron_sites": 2217,
+      "preservation": 0.2873,
+      "reversion": 0.65,
+      "other": 0.0627,
+      "other_deletion": 0.0162,
+      "normal_sites": 57989,
+      "normal_site_error": 0.0093
+     }
+    },
+    "Turkish": {
+     "utterances": 4909,
+     "jer": {
+      "jer": 0.0365,
+      "sub": 0.0237,
+      "del": 0.0067,
+      "ins": 0.0061,
+      "S": 1209,
+      "D": 343,
+      "I": 311,
+      "N": 51031
+     },
+     "sites": {
+      "mispron_sites": 1723,
+      "preservation": 0.3575,
+      "reversion": 0.5856,
+      "other": 0.0569,
+      "other_deletion": 0.0122,
+      "normal_sites": 49414,
+      "normal_site_error": 0.0099
+     }
+    },
+    "Portuguese": {
+     "utterances": 3496,
+     "jer": {
+      "jer": 0.0514,
+      "sub": 0.0322,
+      "del": 0.0104,
+      "ins": 0.0087,
+      "S": 1110,
+      "D": 359,
+      "I": 301,
+      "N": 34420
+     },
+     "sites": {
+      "mispron_sites": 1502,
+      "preservation": 0.3003,
+      "reversion": 0.6192,
+      "other": 0.0806,
+      "other_deletion": 0.0186,
+      "normal_sites": 32983,
+      "normal_site_error": 0.0148
+     }
+    },
+    "Italian": {
+     "utterances": 3485,
+     "jer": {
+      "jer": 0.0403,
+      "sub": 0.0266,
+      "del": 0.0078,
+      "ins": 0.0058,
+      "S": 923,
+      "D": 271,
+      "I": 202,
+      "N": 34665
+     },
+     "sites": {
+      "mispron_sites": 1226,
+      "preservation": 0.301,
+      "reversion": 0.6362,
+      "other": 0.0628,
+      "other_deletion": 0.0155,
+      "normal_sites": 33505,
+      "normal_site_error": 0.0119
+     }
+    },
+    "Polish": {
+     "utterances": 3253,
+     "jer": {
+      "jer": 0.0408,
+      "sub": 0.029,
+      "del": 0.0058,
+      "ins": 0.006,
+      "S": 976,
+      "D": 196,
+      "I": 201,
+      "N": 33674
+     },
+     "sites": {
+      "mispron_sites": 1248,
+      "preservation": 0.2732,
+      "reversion": 0.6707,
+      "other": 0.0561,
+      "other_deletion": 0.0064,
+      "normal_sites": 32440,
+      "normal_site_error": 0.0086
+     }
+    },
+    "Czech": {
+     "utterances": 2665,
+     "jer": {
+      "jer": 0.0473,
+      "sub": 0.0289,
+      "del": 0.0099,
+      "ins": 0.0085,
+      "S": 796,
+      "D": 273,
+      "I": 233,
+      "N": 27500
+     },
+     "sites": {
+      "mispron_sites": 1029,
+      "preservation": 0.2566,
+      "reversion": 0.6453,
+      "other": 0.0982,
+      "other_deletion": 0.0165,
+      "normal_sites": 26493,
+      "normal_site_error": 0.0134
+     }
+    },
+    "Mongolian": {
+     "utterances": 2368,
+     "jer": {
+      "jer": 0.0673,
+      "sub": 0.0373,
+      "del": 0.0161,
+      "ins": 0.0139,
+      "S": 926,
+      "D": 400,
+      "I": 345,
+      "N": 24824
+     },
+     "sites": {
+      "mispron_sites": 970,
+      "preservation": 0.3392,
+      "reversion": 0.5577,
+      "other": 0.1031,
+      "other_deletion": 0.0299,
+      "normal_sites": 23953,
+      "normal_site_error": 0.0317
+     }
+    },
+    "Romanian": {
+     "utterances": 2264,
+     "jer": {
+      "jer": 0.0473,
+      "sub": 0.0295,
+      "del": 0.0089,
+      "ins": 0.0089,
+      "S": 660,
+      "D": 198,
+      "I": 200,
+      "N": 22356
+     },
+     "sites": {
+      "mispron_sites": 991,
+      "preservation": 0.3219,
+      "reversion": 0.6165,
+      "other": 0.0616,
+      "other_deletion": 0.0071,
+      "normal_sites": 21439,
+      "normal_site_error": 0.0114
+     }
+    },
+    "French": {
+     "utterances": 2247,
+     "jer": {
+      "jer": 0.0435,
+      "sub": 0.0296,
+      "del": 0.0081,
+      "ins": 0.0058,
+      "S": 668,
+      "D": 183,
+      "I": 131,
+      "N": 22594
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.2927,
+      "reversion": 0.6619,
+      "other": 0.0455,
+      "other_deletion": 0.0133,
+      "normal_sites": 21756,
+      "normal_site_error": 0.0117
+     }
+    },
+    "Azerbaijani": {
+     "utterances": 1680,
+     "jer": {
+      "jer": 0.0451,
+      "sub": 0.028,
+      "del": 0.0079,
+      "ins": 0.0092,
+      "S": 496,
+      "D": 139,
+      "I": 162,
+      "N": 17687
+     },
+     "sites": {
+      "mispron_sites": 603,
+      "preservation": 0.3333,
+      "reversion": 0.5672,
+      "other": 0.0995,
+      "other_deletion": 0.0166,
+      "normal_sites": 17103,
+      "normal_site_error": 0.0152
+     }
+    },
+    "Hungarian": {
+     "utterances": 1538,
+     "jer": {
+      "jer": 0.1199,
+      "sub": 0.0378,
+      "del": 0.0743,
+      "ins": 0.0078,
+      "S": 607,
+      "D": 1193,
+      "I": 125,
+      "N": 16059
+     },
+     "sites": {
+      "mispron_sites": 546,
+      "preservation": 0.337,
+      "reversion": 0.5861,
+      "other": 0.0769,
+      "other_deletion": 0.0092,
+      "normal_sites": 15517,
+      "normal_site_error": 0.0927
+     }
+    },
+    "Kazakh": {
+     "utterances": 1060,
+     "jer": {
+      "jer": 0.0436,
+      "sub": 0.0316,
+      "del": 0.0041,
+      "ins": 0.0079,
+      "S": 365,
+      "D": 47,
+      "I": 91,
+      "N": 11536
+     },
+     "sites": {
+      "mispron_sites": 484,
+      "preservation": 0.2665,
+      "reversion": 0.7025,
+      "other": 0.031,
+      "other_deletion": 0.0062,
+      "normal_sites": 11095,
+      "normal_site_error": 0.0079
+     }
+    },
+    "Armenian": {
+     "utterances": 932,
+     "jer": {
+      "jer": 0.0383,
+      "sub": 0.026,
+      "del": 0.0069,
+      "ins": 0.0054,
+      "S": 250,
+      "D": 66,
+      "I": 52,
+      "N": 9607
+     },
+     "sites": {
+      "mispron_sites": 346,
+      "preservation": 0.3497,
+      "reversion": 0.5954,
+      "other": 0.0549,
+      "other_deletion": 0.0145,
+      "normal_sites": 9282,
+      "normal_site_error": 0.0106
+     }
+    },
+    "Uzbek": {
+     "utterances": 838,
+     "jer": {
+      "jer": 0.0556,
+      "sub": 0.0396,
+      "del": 0.0078,
+      "ins": 0.0082,
+      "S": 338,
+      "D": 67,
+      "I": 70,
+      "N": 8542
+     },
+     "sites": {
+      "mispron_sites": 460,
+      "preservation": 0.2674,
+      "reversion": 0.6804,
+      "other": 0.0522,
+      "other_deletion": 0.0087,
+      "normal_sites": 8098,
+      "normal_site_error": 0.0094
+     }
+    },
+    "Hindi": {
+     "utterances": 801,
+     "jer": {
+      "jer": 0.026,
+      "sub": 0.0172,
+      "del": 0.0038,
+      "ins": 0.0049,
+      "S": 139,
+      "D": 31,
+      "I": 40,
+      "N": 8086
+     },
+     "sites": {
+      "mispron_sites": 173,
+      "preservation": 0.4104,
+      "reversion": 0.5202,
+      "other": 0.0694,
+      "other_deletion": 0.0058,
+      "normal_sites": 7935,
+      "normal_site_error": 0.0098
+     }
+    },
+    "Latvian": {
+     "utterances": 789,
+     "jer": {
+      "jer": 0.0639,
+      "sub": 0.0464,
+      "del": 0.0115,
+      "ins": 0.0059,
+      "S": 382,
+      "D": 95,
+      "I": 49,
+      "N": 8238
+     },
+     "sites": {
+      "mispron_sites": 527,
+      "preservation": 0.3036,
+      "reversion": 0.6319,
+      "other": 0.0645,
+      "other_deletion": 0.0152,
+      "normal_sites": 7716,
+      "normal_site_error": 0.014
+     }
+    },
+    "Estonian": {
+     "utterances": 630,
+     "jer": {
+      "jer": 0.0649,
+      "sub": 0.0333,
+      "del": 0.0138,
+      "ins": 0.0178,
+      "S": 215,
+      "D": 89,
+      "I": 115,
+      "N": 6455
+     },
+     "sites": {
+      "mispron_sites": 312,
+      "preservation": 0.2596,
+      "reversion": 0.6346,
+      "other": 0.1058,
+      "other_deletion": 0.0224,
+      "normal_sites": 6208,
+      "normal_site_error": 0.0217
+     }
+    },
+    "Slovak": {
+     "utterances": 615,
+     "jer": {
+      "jer": 0.0471,
+      "sub": 0.0349,
+      "del": 0.0055,
+      "ins": 0.0068,
+      "S": 216,
+      "D": 34,
+      "I": 42,
+      "N": 6194
+     },
+     "sites": {
+      "mispron_sites": 273,
+      "preservation": 0.2674,
+      "reversion": 0.6886,
+      "other": 0.044,
+      "other_deletion": 0.0147,
+      "normal_sites": 5948,
+      "normal_site_error": 0.0126
+     }
+    },
+    "Burmese": {
+     "utterances": 594,
+     "jer": {
+      "jer": 0.0305,
+      "sub": 0.0187,
+      "del": 0.0045,
+      "ins": 0.0073,
+      "S": 125,
+      "D": 30,
+      "I": 49,
+      "N": 6688
+     },
+     "sites": {
+      "mispron_sites": 166,
+      "preservation": 0.2771,
+      "reversion": 0.6747,
+      "other": 0.0482,
+      "other_deletion": 0.012,
+      "normal_sites": 6559,
+      "normal_site_error": 0.0096
+     }
+    }
+   }
+  },
+  "unseen": {
+   "name": "E2F",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2f_foreign_adapt/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "split": "test_unseen",
+   "tsv_sha16": "5d6663e2c45ba930",
+   "ltr_sha16": "6ef916ebc23a0704",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 23562,
+   "jer": {
+    "jer": 0.2607,
+    "sub": 0.1882,
+    "del": 0.0566,
+    "ins": 0.0159,
+    "S": 44211,
+    "D": 13306,
+    "I": 3736,
+    "N": 234914
+   },
+   "sites": {
+    "mispron_sites": 9209,
+    "preservation": 0.4639,
+    "reversion": 0.2387,
+    "other": 0.2974,
+    "other_deletion": 0.0827,
+    "normal_sites": 226212,
+    "normal_site_error": 0.2354
+   },
+   "mdd": {
+    "precision": 0.1163,
+    "recall": 0.7613,
+    "f1": 0.2018,
+    "far": 0.2387,
+    "frr": 0.2354,
+    "TA": 172961,
+    "FR": 53251,
+    "FA": 2198,
+    "TR": 7011,
+    "CD": 4272,
+    "DE": 2739
+   },
+   "legacy": {
+    "f1_weighted": 0.8268,
+    "err_f1": 0.201,
+    "positions": 239521
+   },
+   "by_language": {
+    "English": {
+     "utterances": 5071,
+     "jer": {
+      "jer": 0.2834,
+      "sub": 0.2048,
+      "del": 0.0609,
+      "ins": 0.0177,
+      "S": 9307,
+      "D": 2766,
+      "I": 805,
+      "N": 45444
+     },
+     "sites": {
+      "mispron_sites": 1413,
+      "preservation": 0.4791,
+      "reversion": 0.1904,
+      "other": 0.3305,
+      "other_deletion": 0.0786,
+      "normal_sites": 44058,
+      "normal_site_error": 0.2595
+     }
+    },
+    "Indonesian": {
+     "utterances": 3069,
+     "jer": {
+      "jer": 0.2534,
+      "sub": 0.1866,
+      "del": 0.0518,
+      "ins": 0.015,
+      "S": 5528,
+      "D": 1534,
+      "I": 444,
+      "N": 29623
+     },
+     "sites": {
+      "mispron_sites": 897,
+      "preservation": 0.4359,
+      "reversion": 0.2386,
+      "other": 0.3255,
+      "other_deletion": 0.0925,
+      "normal_sites": 28760,
+      "normal_site_error": 0.2306
+     }
+    },
+    "Chinese": {
+     "utterances": 2754,
+     "jer": {
+      "jer": 0.2356,
+      "sub": 0.1613,
+      "del": 0.0556,
+      "ins": 0.0187,
+      "S": 5299,
+      "D": 1827,
+      "I": 615,
+      "N": 32853
+     },
+     "sites": {
+      "mispron_sites": 1286,
+      "preservation": 0.4751,
+      "reversion": 0.2815,
+      "other": 0.2434,
+      "other_deletion": 0.0739,
+      "normal_sites": 31831,
+      "normal_site_error": 0.208
+     }
+    },
+    "Vietnamese": {
+     "utterances": 1994,
+     "jer": {
+      "jer": 0.2825,
+      "sub": 0.2063,
+      "del": 0.0586,
+      "ins": 0.0177,
+      "S": 3850,
+      "D": 1093,
+      "I": 330,
+      "N": 18663
+     },
+     "sites": {
+      "mispron_sites": 902,
+      "preservation": 0.4224,
+      "reversion": 0.2217,
+      "other": 0.3559,
+      "other_deletion": 0.1064,
+      "normal_sites": 17821,
+      "normal_site_error": 0.2524
+     }
+    },
+    "Japanese": {
+     "utterances": 1807,
+     "jer": {
+      "jer": 0.2607,
+      "sub": 0.186,
+      "del": 0.0576,
+      "ins": 0.0171,
+      "S": 3487,
+      "D": 1080,
+      "I": 320,
+      "N": 18743
+     },
+     "sites": {
+      "mispron_sites": 793,
+      "preservation": 0.4893,
+      "reversion": 0.2194,
+      "other": 0.2913,
+      "other_deletion": 0.0908,
+      "normal_sites": 17998,
+      "normal_site_error": 0.2348
+     }
+    },
+    "Spanish; Castilian": {
+     "utterances": 1403,
+     "jer": {
+      "jer": 0.2749,
+      "sub": 0.2078,
+      "del": 0.0552,
+      "ins": 0.0119,
+      "S": 2714,
+      "D": 721,
+      "I": 156,
+      "N": 13063
+     },
+     "sites": {
+      "mispron_sites": 750,
+      "preservation": 0.5013,
+      "reversion": 0.2133,
+      "other": 0.2853,
+      "other_deletion": 0.0733,
+      "normal_sites": 12297,
+      "normal_site_error": 0.25
+     }
+    },
+    "Russian": {
+     "utterances": 1180,
+     "jer": {
+      "jer": 0.2617,
+      "sub": 0.1966,
+      "del": 0.051,
+      "ins": 0.0141,
+      "S": 2441,
+      "D": 633,
+      "I": 175,
+      "N": 12417
+     },
+     "sites": {
+      "mispron_sites": 632,
+      "preservation": 0.4668,
+      "reversion": 0.2405,
+      "other": 0.2927,
+      "other_deletion": 0.0728,
+      "normal_sites": 11798,
+      "normal_site_error": 0.2345
+     }
+    },
+    "German": {
+     "utterances": 851,
+     "jer": {
+      "jer": 0.2319,
+      "sub": 0.1706,
+      "del": 0.0493,
+      "ins": 0.012,
+      "S": 1549,
+      "D": 448,
+      "I": 109,
+      "N": 9080
+     },
+     "sites": {
+      "mispron_sites": 338,
+      "preservation": 0.4112,
+      "reversion": 0.3343,
+      "other": 0.2544,
+      "other_deletion": 0.0651,
+      "normal_sites": 8739,
+      "normal_site_error": 0.2069
+     }
+    },
+    "Turkish": {
+     "utterances": 695,
+     "jer": {
+      "jer": 0.2261,
+      "sub": 0.1648,
+      "del": 0.0503,
+      "ins": 0.0111,
+      "S": 1118,
+      "D": 341,
+      "I": 75,
+      "N": 6786
+     },
+     "sites": {
+      "mispron_sites": 254,
+      "preservation": 0.5551,
+      "reversion": 0.185,
+      "other": 0.2598,
+      "other_deletion": 0.0551,
+      "normal_sites": 6547,
+      "normal_site_error": 0.2059
+     }
+    }
+   },
+   "strict_text_unseen": {
+    "exclude_texts": "/data/speech-ai/out/mdd/manifest_mix_f80_n20/native_train_texts.txt",
+    "excluded_utts": 1011,
+    "utterances": 22551,
+    "jer": {
+     "jer": 0.2563,
+     "sub": 0.1827,
+     "del": 0.0575,
+     "ins": 0.0161,
+     "S": 41624,
+     "D": 13112,
+     "I": 3664,
+     "N": 227855
+    },
+    "sites": {
+     "mispron_sites": 9050,
+     "preservation": 0.4652,
+     "reversion": 0.2413,
+     "other": 0.2935,
+     "other_deletion": 0.0819,
+     "normal_sites": 219294,
+     "normal_site_error": 0.2305
+    },
+    "mdd": {
+     "precision": 0.1196,
+     "recall": 0.7587,
+     "f1": 0.2066,
+     "far": 0.2413,
+     "frr": 0.2305,
+     "TA": 168737,
+     "FR": 50557,
+     "FA": 2184,
+     "TR": 6866,
+     "CD": 4210,
+     "DE": 2656
+    }
+   }
+  },
+  "native": {
+   "name": "E2F",
+   "ckpt": "/data/speech-ai/corpus/checkpoints/e2f_foreign_adapt/checkpoint_last.pt",
+   "manifest": "/data/speech-ai/out/mdd/manifest_kspon_native_v1",
+   "split": "dev",
+   "tsv_sha16": "8a6a325a33d4195d",
+   "ltr_sha16": "9abda9d1d3faff03",
+   "decoder": "greedy CTC, no LM/lexicon/prompt",
+   "utterances": 2149,
+   "jer": {
+    "jer": 0.1309,
+    "sub": 0.0739,
+    "del": 0.0394,
+    "ins": 0.0176,
+    "S": 6583,
+    "D": 3515,
+    "I": 1571,
+    "N": 89131
+   },
+   "sites": {
+    "mispron_sites": 0,
+    "preservation": null,
+    "reversion": null,
+    "other": null,
+    "other_deletion": null,
+    "normal_sites": 89131,
+    "normal_site_error": 0.1134
+   },
+   "mdd": {
+    "precision": 0.0,
+    "recall": 0,
+    "f1": 0.0,
+    "far": null,
+    "frr": 0.1134,
+    "TA": 79024,
+    "FR": 10107,
+    "FA": 0,
+    "TR": 0,
+    "CD": 0,
+    "DE": 0
+   },
+   "legacy": {
+    "f1_weighted": 0.9312,
+    "err_f1": 0.0,
+    "positions": 90693
+   },
+   "by_language": {
+    "?": {
+     "utterances": 2149,
+     "jer": {
+      "jer": 0.1309,
+      "sub": 0.0739,
+      "del": 0.0394,
+      "ins": 0.0176,
+      "S": 6583,
+      "D": 3515,
+      "I": 1571,
+      "N": 89131
+     },
+     "sites": {
+      "mispron_sites": 0,
+      "preservation": null,
+      "reversion": null,
+      "other": null,
+      "other_deletion": null,
+      "normal_sites": 89131,
+      "normal_site_error": 0.1134
+     }
+    }
+   }
+  },
+  "run": {
+   "experiment": "e2f_foreign_adapt",
+   "config_name": "e2f_foreign_adapt",
+   "overrides": [
+    "checkpoint.restore_file=/data/speech-ai/corpus/checkpoints/e2_native20/checkpoint_6_15000.pt"
+   ],
+   "cuda_visible_devices": "0",
+   "git_commit": "cb63efd5a01fae0fcdb55834b84433d5d9be3673",
+   "git_dirty_files": 29,
+   "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+   "manifest_train_valid_sha256": "fd4f92cbbd0a507ed2afeb0cba2f31d9cb0421d52faea0de1df407c76b39d5f0",
+   "manifest_stats": {
+    "utterances": 195001,
+    "hours": 200.0,
+    "speakers": 9369,
+    "prompts": 196,
+    "unique_ltr": 19881,
+    "utt_per_prompt": {
+     "n": 196,
+     "mean": 994.903,
+     "min": 1,
+     "p5": 1000,
+     "p25": 1000,
+     "median": 1000,
+     "p75": 1000,
+     "p95": 1000,
+     "max": 1000
+    },
+    "duration_sec": {
+     "n": 195001,
+     "mean": 3.693,
+     "min": 0.51,
+     "p5": 1.54,
+     "p25": 2.56,
+     "median": 2.88,
+     "p75": 4.52,
+     "p95": 7.85,
+     "max": 14.93
+    },
+    "sample_rate": {
+     "48000": 170103,
+     "44100": 20574,
+     "16000": 1731,
+     "24000": 1325,
+     "96000": 949,
+     "192000": 294,
+     "88200": 25
+    },
+    "task": {
+     "RW": 130000,
+     "RS": 65000,
+     "RP": 1
+    },
+    "dataset": {
+     "041:TL": 54539,
+     "043:TL": 53445,
+     "040:TL": 35114,
+     "042:TL": 30117,
+     "041:VL": 6842,
+     "043:VL": 6805,
+     "040:VL": 4392,
+     "042:VL": 3747
+    },
+    "label_tokens_total": 2556914,
+    "label_tokens_unique": 45,
+    "oov_tokens": {},
+    "utt_with_mispron_site": 58273
+   },
+   "gpu": "NVIDIA A100-SXM4-80GB",
+   "torch": "2.1.2+cu118",
+   "cuda": "11.8",
+   "cudnn": 8700,
+   "fairseq": "0.12.2",
+   "fairseq_commit": "3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99",
+   "start": "2026-09-15 10:40:02",
+   "end": "2026-09-15 13:23:29",
+   "exit_code": 0
+  },
+  "train": {
+   "note": "15k 스텝 E2 혼합 데이터 → 5k 스텝 E1 외국인 데이터"
+  }
+ }
+}

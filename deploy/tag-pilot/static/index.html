@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발음 전사 P0</title>
+<style>
+:root { --bg: #f6f7fb; --card: #fff; --ink: #1b1f2a; --mute: #6b7280; --line: #e3e6ee; --accent: #3b5bdb; --done: #2f9e44; --warn: #e8590c; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: var(--mute); font-size: 13px; margin: 0 0 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+details summary { cursor: pointer; font-weight: 600; }
+.guide { font-size: 14px; line-height: 1.7; }
+.guide li { margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { width: 34px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: #fff; font-size: 12px; padding: 0; }
+.chip.done { background: #ebfbee; border-color: var(--done); color: var(--done); }
+.chip.cur { outline: 2px solid var(--accent); }
+.label { font-size: 12px; color: var(--mute); margin: 10px 0 4px; }
+.text { font-size: 20px; line-height: 1.6; word-break: keep-all; }
+textarea { width: 100%; min-height: 84px; font-size: 22px; line-height: 1.5; padding: 10px; border: 2px solid var(--line);
+  border-radius: 10px; font-family: inherit; }
+textarea:focus { outline: none; border-color: var(--accent); }
+.mode { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: #edf2ff; color: var(--accent); }
+.mode.blank { background: #fff4e6; color: var(--warn); }
+.status { font-size: 13px; color: var(--mute); min-height: 18px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>발음 전사 P0</h1>
+  <p class="sub">외국인이 읽은 한국어 문장을 듣고, <b>실제로 들린 소리</b>를 한글로 적습니다. 발화 40개 · 약 5분 분량.</p>
+
+  <div class="card" id="whoCard">
+    <div class="row">전사자:
+      <button data-who="A">A</button><button data-who="B">B</button>
+      <span class="status" id="whoMsg"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <details open>
+      <summary>전사 지침 (처음 한 번 꼭 읽기)</summary>
+      <ul class="guide">
+        <li><b>들린 그대로</b> 적습니다. 맞춤법·원문이 아니라 소리입니다. 예: "샀어요"가 [싸써요]로 들리면 <b>싸써요</b>.</li>
+        <li>표준 발음 규칙(연음·된소리 등)은 <b>실제로 그렇게 들렸을 때만</b> 반영합니다. 아는 규칙대로 고쳐 쓰지 않습니다.</li>
+        <li>빠진 소리는 지우고, 덧붙은 소리는 넣습니다. 더듬거나 반복한 부분도 들린 대로 적습니다.</li>
+        <li>확신이 없는 글자 바로 뒤에 <b>?</b> 를 붙입니다. 예: 싸?써요</li>
+        <li>음절로 못 적는 소리는 낱자모로 적어도 됩니다(예: ㅅ).</li>
+        <li>칸이 <b>미리 채워진</b> 발화는 표준 발음이 들어 있는 것입니다 — 틀린 데를 고치세요. 그대로 두면 "표준 발음대로 들렸다"는 뜻입니다.</li>
+        <li>필요한 만큼 다시 들어도 됩니다(Esc). 제출은 Ctrl+Enter. 작업 시간이 자동으로 기록되니 중간에 쉴 때는 제출 후 쉬세요.</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="card" id="work" hidden>
+    <div class="chips" id="chips"></div>
+    <div class="row" style="margin-top:12px; justify-content: space-between;">
+      <div><b id="pos"></b> <span class="mode" id="mode"></span></div>
+      <div class="status" id="timer"></div>
+    </div>
+    <div class="label">원문</div>
+    <div class="text" id="text"></div>
+    <div class="row" style="margin-top:10px;">
+      <button id="playBtn">▶ 듣기 (Esc)</button>
+      <span class="status" id="plays"></span>
+    </div>
+    <audio id="audio" preload="auto"></audio>
+    <div class="label">들린 소리 (한글)</div>
+    <textarea id="answer" spellcheck="false" autocomplete="off"></textarea>
+    <div class="label">메모 (선택)</div>
+    <input id="note" style="width:100%; padding:8px; border:1px solid var(--line); border-radius:8px;" placeholder="판단이 어려웠던 점 등">
+    <div class="row" style="margin-top:12px; justify-content: space-between;">
+      <button id="unclearBtn">판단 불가로 제출</button>
+      <button class="primary" id="submitBtn">제출하고 다음 (Ctrl+Enter)</button>
+    </div>
+    <div class="status" id="msg"></div>
+  </div>
+</main>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+let base = location.pathname;
+if (!base.endsWith('/')) base = /\.[a-z0-9]+$/i.test(base) ? base.replace(/[^/]*$/, '') : base + '/';
+const T = new URLSearchParams(location.search).get('t') || '';
+const q = p => base + p + (p.includes('?') ? '&' : '?') + (T ? 't=' + encodeURIComponent(T) : '');
+let WHO = null, ITEMS = [], cur = -1, tOpen = 0, tFirst = null, plays = 0, tick = null;
+
+function getWho() { try { return localStorage.getItem('tag_p0_who'); } catch (e) { return null; } }
+function setWho(w) { try { localStorage.setItem('tag_p0_who', w); } catch (e) {} }
+
+document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => choose(b.dataset.who));
+
+async function choose(w) {
+  WHO = w; setWho(w);
+  $('#whoMsg').textContent = '전사자 ' + w;
+  document.querySelectorAll('[data-who]').forEach(b => b.classList.toggle('on', b.dataset.who === w));
+  const r = await fetch(q('items?who=' + w));
+  if (!r.ok) { $('#whoMsg').textContent = '불러오지 못했습니다(' + r.status + ')'; return; }
+  ITEMS = await r.json();
+  $('#work').hidden = false;
+  const left = ITEMS.filter(x => !x.done).length;
+  $('#whoMsg').textContent = '전사자 ' + w + ' · 남은 발화 ' + left + ' / ' + ITEMS.length;
+  renderChips();
+  open(ITEMS.findIndex(x => !x.done) >= 0 ? ITEMS.findIndex(x => !x.done) : 0);
+}
+
+function renderChips() {
+  const c = $('#chips'); c.innerHTML = '';
+  ITEMS.forEach((it, k) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (it.done ? ' done' : '') + (k === cur ? ' cur' : '');
+    b.textContent = k + 1; b.onclick = () => open(k);
+    c.appendChild(b);
+  });
+}
+
+function open(k) {
+  cur = k; const it = ITEMS[k];
+  $('#pos').textContent = (k + 1) + ' / ' + ITEMS.length;
+  $('#mode').textContent = it.mode === 'canon' ? '표준 발음 미리 채움' : '빈칸에서 시작';
+  $('#mode').className = 'mode' + (it.mode === 'canon' ? '' : ' blank');
+  $('#text').textContent = it.text;
+  $('#answer').value = it.answer != null ? it.answer : it.prefill;
+  $('#note').value = '';
+  $('#audio').src = q('audio/' + it.id);
+  plays = 0; tFirst = null; tOpen = performance.now();
+  $('#plays').textContent = ''; $('#msg').textContent = it.done ? '이미 제출한 발화입니다 — 다시 제출하면 덮어씁니다(시간도 새로 잽니다).' : '';
+  clearInterval(tick); tick = setInterval(() => { $('#timer').textContent = '작업 ' + Math.round((performance.now() - tOpen) / 1000) + '초'; }, 500);
+  renderChips();
+  $('#answer').focus();
+}
+
+function play() {
+  const a = $('#audio'); a.currentTime = 0; a.play();
+  plays++; if (tFirst == null) tFirst = performance.now();
+  $('#plays').textContent = plays + '번 들음';
+}
+$('#playBtn').onclick = play;
+
+async function submit(flag) {
+  const it = ITEMS[cur];
+  const text = $('#answer').value.trim();
+  if (!flag && !text) { $('#msg').textContent = '들린 소리를 적어 주세요(판단이 어려우면 "판단 불가").'; return; }
+  const body = {who: WHO, id: it.id, text: text, flag: flag || '', note: $('#note').value,
+                time_sec: (performance.now() - tOpen) / 1000, plays: plays,
+                first_play_sec: tFirst == null ? null : (performance.now() - tFirst) / 1000};
+  const r = await fetch(q('label'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  if (!r.ok) { $('#msg').textContent = '저장 실패(' + r.status + ') — 다시 시도해 주세요.'; return; }
+  it.done = true; it.answer = text;
+  const left = ITEMS.filter(x => !x.done).length;
+  $('#whoMsg').textContent = '남은 발화 ' + left + ' / ' + ITEMS.length;
+  const nxt = ITEMS.findIndex((x, k) => k > cur && !x.done);
+  const any = ITEMS.findIndex(x => !x.done);
+  if (nxt >= 0) open(nxt); else if (any >= 0) open(any);
+  else { clearInterval(tick); renderChips(); $('#msg').textContent = '모두 끝났습니다. 감사합니다!'; }
+}
+$('#submitBtn').onclick = () => submit('');
+$('#unclearBtn').onclick = () => submit('unclear');
+document.addEventListener('keydown', e => {
+  if ($('#work').hidden) return;
+  if (e.key === 'Escape') { e.preventDefault(); play(); }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit(''); }
+});
+
+(async () => {                                        // 열쇠가 전사자를 정하면 고르는 버튼을 숨긴다
+  try {
+    const r = await fetch(q('whoami'));
+    if (r.ok) { const d = await r.json(); if (d.who) { $('#whoCard').querySelectorAll('button').forEach(b => b.hidden = true); choose(d.who); return; } }
+    else { $('#whoMsg').textContent = '받은 링크(열쇠 포함)로 열어 주세요.'; return; }
+  } catch (e) {}
+  const w0 = getWho(); if (w0 === 'A' || w0 === 'B') choose(w0);
+})();
+</script>
+</body>
+</html>

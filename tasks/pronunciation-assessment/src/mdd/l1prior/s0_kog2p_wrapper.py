@@ -28,8 +28,9 @@ import re
 import warnings
 from functools import lru_cache
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # scripts/ 하위 -> 데이터 루트는 부모
-_KOG2P_DIR = os.path.join(_HERE, "_g2p_tools", "KoG2P")
+from shared.paths import G2P_TOOLS
+
+_KOG2P_DIR = str(G2P_TOOLS / "KoG2P")   # 옛 scripts/_g2p_tools 배치는 이 저장소에 없다 → .env 의 G2P_TOOLS
 _RULEBOOK = os.path.join(_KOG2P_DIR, "rulebook.txt")
 
 # --- KoG2P 안전 import (argv 보호 + 경고 억제) ---

@@ -1,0 +1,65 @@
+# @package _group_
+#
+# FINAL Stage 1 — 원어민 KsponSpeech 로 한국어 자모 CTC 를 먼저 학습 (2026-09-15)
+# ─────────────────────────────────────────────────────────────────────
+# 목적: 일반 한국어 음향 → 46자모 대응을 먼저 갖춘다. (E1/E2 에서 외국인 196문항만으로는 안 본 단어를 못 받아씀)
+#   초기화   xlsr2_300m.pt
+#   데이터   manifest_kspon_stage1 : KsponSpeech clean train 531,162발화 / 691.2h (발음 전사 → KoG2P → 46자모, ㅙ·ㅞ 분해)
+#            valid = KsponSpeech dev 2,149발화
+#   스텝     10,000 — 1 epoch 추정 ≈ 8.1k (배치 시뮬레이션 6,445 × E1 실측 보정 1.26). 최소 1회 순회
+#   선택     valid UER(= 자모 오류율 JER) 최소 체크포인트 = checkpoint_best.pt (1k 마다 검증·저장)
+#   레시피   E1 과 같다(lr 3e-5 · tri_stage · max_tokens 1.6M × 4 · freeze 2k · mask 0.5). 바뀐 것: data · max_update · 검증/저장 주기 · best 기준
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage1_kspon/tb
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage1_kspon
+  best_checkpoint_metric: uer
+  maximize_best_checkpoint_metric: false
+  save_interval_updates: 1000
+  keep_interval_updates: 2
+  no_epoch_checkpoints: true
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_kspon_stage1
+  normalize: true
+  labels: ltr
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 1000
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+criterion:
+  _name: ctc
+  zero_infinity: true
+optimization:
+  max_update: 10000
+  lr: [0.00003]
+  sentence_avg: true
+  update_freq: [4]
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 2000

@@ -1,0 +1,105 @@
+<title>비버톡 부스 현황</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#F1F1F5;--card:#FFFFFF;--primary:#007A55;--mint:#00C88A;--mint-soft:#E4F6EE;--chip:#E8E8EA;--line:#E1E2E4;--text:#111111;--text-2:#4D4D4D;--text-3:#85858D;--orange:#FF9200;--orange-soft:#FFF2DF;color-scheme:light}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font-family:Pretendard,"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:14.5px;line-height:1.5;word-break:keep-all}
+.wrap{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start}
+.head{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.head h1{margin:0;font-size:22px;font-weight:800}.head h1 span{color:var(--primary)}
+.head .upd{color:var(--text-3);font-size:12.5px;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.card h2{margin:0;font-size:15px;font-weight:800;color:var(--primary)}
+.qr{display:flex;flex-direction:column;align-items:center;gap:10px}
+#qrbox{padding:10px;background:#fff;border-radius:12px;border:1px solid var(--line)}
+.url{font-size:12.5px;color:var(--text-2);word-break:break-all;text-align:center}
+.copy{border:0;background:var(--chip);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.num{background:var(--bg);border-radius:14px;padding:12px;text-align:center}
+.num b{display:block;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.num span{font-size:12px;color:var(--text-2);font-weight:600}
+.tg{display:grid;grid-template-columns:7.5em 1fr 3.2em;gap:8px 10px;align-items:center;font-size:13.5px}
+.tg .bar{height:8px;border-radius:8px;background:var(--chip);overflow:hidden}
+.tg .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--primary))}
+.tg .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}
+th{color:var(--text-3);font-weight:600;font-size:12px}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--primary);font-weight:800}.part{color:#A65A00;font-weight:700}
+.code{font-weight:800;letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.err{grid-column:1/-1;background:var(--orange-soft);color:#8A4B00;border-radius:12px;padding:12px 14px;font-weight:600}
+</style>
+<div class="wrap">
+  <div class="head"><h1><span>비버톡</span> 부스 녹음 현황</h1><span class="upd" id="upd">불러오는 중…</span></div>
+  <div class="err" id="err" hidden></div>
+  <section class="card qr">
+    <h2>참가 QR</h2>
+    <div id="qrbox"></div>
+    <div class="url" id="url"></div>
+    <button class="copy" id="copy" type="button">주소 복사</button>
+  </section>
+  <section class="card">
+    <h2>오늘까지</h2>
+    <div class="nums">
+      <div class="num"><b id="n-part">0</b><span>시작</span></div>
+      <div class="num"><b id="n-done">0</b><span>10문장 완료</span></div>
+      <div class="num"><b id="n-rec">0</b><span>녹음</span></div>
+    </div>
+    <h2>목표 국가 (국가당 5명)</h2>
+    <div class="tg" id="targets"></div>
+  </section>
+  <section class="card">
+    <h2>최근 참가자 — 간식 확인용</h2>
+    <table><thead><tr><th>코드</th><th>국적</th><th class="r">녹음</th><th class="r">시각</th></tr></thead><tbody id="recent"></tbody></table>
+  </section>
+  <section class="card">
+    <h2>국가별</h2>
+    <table><thead><tr><th>국가</th><th class="r">시작</th><th class="r">완료</th></tr></thead><tbody id="countries"></tbody></table>
+    <h2>세트별 배정</h2>
+    <div id="sets" style="font-variant-numeric:tabular-nums;color:var(--text-2)"></div>
+  </section>
+</div>
+<script>
+(function () {
+  'use strict';
+  var TARGETS = [['Malaysia','말레이시아'],['India','인도'],['Thailand','태국'],['Hong Kong','홍콩'],['Nepal','네팔'],['Myanmar','미얀마'],['Pakistan','파키스탄'],['Bangladesh','방글라데시'],['Kyrgyzstan','키르기스스탄'],['Cambodia','캄보디아']];
+  var GOAL = 5;
+  var pin = new URLSearchParams(location.search).get('pin') || '';
+  var base = location.pathname.replace(/\/staff\/?$/, '');
+  var boothUrl = location.origin + base;
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  $('url').textContent = boothUrl;
+  try { new QRCode($('qrbox'), { text: boothUrl, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { $('qrbox').textContent = 'QR을 그리지 못했어요'; }
+  $('copy').addEventListener('click', function () {
+    var b = $('copy');
+    if (navigator.clipboard) navigator.clipboard.writeText(boothUrl).then(function () { b.textContent = '복사됐어요'; }, function () { b.textContent = '직접 복사해 주세요'; });
+  });
+  async function refresh() {
+    try {
+      var r = await fetch(base + '/api/stats?pin=' + encodeURIComponent(pin), { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status === 403 ? 'PIN이 맞지 않아요. 주소 끝에 ?pin=PIN 을 붙여 주세요.' : '현황을 불러오지 못했어요 (' + r.status + ')');
+      var d = await r.json(); $('err').hidden = true;
+      $('n-part').textContent = d.participants; $('n-done').textContent = d.completed; $('n-rec').textContent = d.recordings;
+      var byC = {}; d.by_country.forEach(function (x) { byC[x[0]] = x; });
+      $('targets').innerHTML = TARGETS.map(function (t) {
+        var done = byC[t[0]] ? byC[t[0]][2] : 0, pct = Math.min(100, done / GOAL * 100);
+        return '<span>' + t[1] + '</span><div class="bar"><i style="width:' + pct + '%"></i></div><span class="n">' + done + '/' + GOAL + '</span>';
+      }).join('');
+      $('recent').innerHTML = d.recent.map(function (x) {
+        return '<tr><td class="code">' + esc(x.code) + '</td><td>' + esc(x.nationality) + '</td><td class="r ' + (x.n >= 10 ? 'ok' : 'part') + '">' + x.n + '/10</td><td class="r">' + esc(x.time) + '</td></tr>';
+      }).join('') || '<tr><td colspan="4" style="color:var(--text-3)">아직 참가자가 없어요</td></tr>';
+      $('countries').innerHTML = d.by_country.map(function (x) {
+        return '<tr><td>' + esc(x[0]) + '</td><td class="r">' + x[1] + '</td><td class="r">' + x[2] + '</td></tr>';
+      }).join('') || '<tr><td colspan="3" style="color:var(--text-3)">—</td></tr>';
+      $('sets').textContent = [1, 2, 3, 4, 5].map(function (k) { return k + '세트 ' + (d.by_set[k] || 0) + '명'; }).join(' · ');
+      $('upd').textContent = new Date().toLocaleTimeString('ko-KR') + ' 갱신 · 15초마다 자동';
+    } catch (e) { $('err').textContent = e.message; $('err').hidden = false; }
+  }
+  refresh(); setInterval(refresh, 15000);
+})();
+</script>

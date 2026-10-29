@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>녹음 수집 — 비버톡</title>
+<style>
+  :root { --g:#00734f; --g2:#e3f3ec; --bg:#f1f1f5; --ink:#15161a; --sub:#6b6f7a; --line:#e3e4ea; --red:#d5242c; }
+  * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 -apple-system,"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif; }
+  .wrap { max-width:640px; margin:0 auto; padding:16px 16px 90px; }
+  h1 { font-size:20px; margin:8px 0 4px; } .lead { color:var(--sub); font-size:14px; margin:0 0 14px; }
+  .card { background:#fff; border-radius:16px; padding:16px; margin-bottom:12px; }
+  label { display:block; font-size:12px; color:var(--sub); margin:8px 0 4px; }
+  input, select { width:100%; border:1px solid var(--line); border-radius:12px; padding:12px; font:inherit; background:#fff; }
+  .row { display:flex; gap:10px; } .row > div { flex:1; }
+  button { border:0; border-radius:14px; padding:14px 18px; font:600 16px/1 inherit; cursor:pointer; width:100%; }
+  .primary { background:var(--g); color:#fff; } .rec { background:var(--red); color:#fff; } .ghost { background:var(--g2); color:var(--g); }
+  button:disabled { opacity:.4; }
+  .sent { font-size:22px; line-height:1.5; font-weight:700; margin:8px 0 12px; word-break:keep-all; }
+  .free { font-size:18px; font-weight:600; color:#0b5a3e; }
+  .prog { font-size:13px; color:var(--sub); display:flex; justify-content:space-between; }
+  .meter { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin:10px 0; } .meter i { display:block; height:100%; width:0; background:var(--g); transition:width .08s; }
+  .msg { font-size:14px; min-height:22px; margin-top:8px; } .ok { color:var(--g); } .err { color:var(--red); }
+  .done { text-align:center; padding:30px 10px; } .done b { font-size:22px; }
+  .small { font-size:12px; color:var(--sub); } .timer { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>녹음 수집</h1>
+  <p class="lead">문장 18개를 읽어 주세요. 5분쯤 걸립니다. 조용한 곳에서, 평소 말하듯이 읽어 주시면 됩니다.</p>
+
+  <div class="card" id="form">
+    <label>이름 또는 별명 (구분용)</label><input id="name" placeholder="예) 태호">
+    <div class="row">
+      <div><label>모국어</label><select id="lang"><option>한국어</option><option>영어</option><option>중국어</option><option>일본어</option><option>베트남어</option><option>태국어</option><option>인도네시아어</option><option>러시아어</option><option>스페인어</option><option>몽골어</option><option>우즈베크어</option><option>기타</option></select></div>
+      <div><label>국적</label><input id="nat" placeholder="예) 대한민국"></div>
+    </div>
+    <div class="row">
+      <div><label>한국어 수준</label><select id="lvl"><option>원어민</option><option>고급</option><option>중급</option><option>초급</option></select></div>
+      <div><label>기기</label><select id="dev"><option>핸드폰</option><option>노트북 내장 마이크</option><option>이어폰·헤드셋</option><option>외장 마이크</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>성별 (선택)</label><select id="sex"><option value="">선택 안 함</option><option>여</option><option>남</option></select></div>
+      <div><label>연령대 (선택)</label><select id="age"><option value="">선택 안 함</option><option>10대</option><option>20대</option><option>30대</option><option>40대</option><option>50대 이상</option></select></div>
+    </div>
+    <div style="margin-top:14px"><button class="primary" id="start">시작하기</button></div>
+    <p class="small" style="margin-top:10px">녹음은 이 프로젝트의 모델 검증·개선에만 쓰입니다. 이름은 별명이어도 됩니다.</p>
+  </div>
+
+  <div class="card" id="rec" hidden>
+    <div class="prog"><span id="idx"></span><span class="timer" id="timer">0.0초</span></div>
+    <div class="sent" id="text"></div>
+    <div class="meter"><i id="lv"></i></div>
+    <button id="btn" class="primary">● 녹음 시작</button>
+    <div class="msg" id="msg"></div>
+    <div class="row" style="margin-top:10px"><div><button class="ghost" id="redo" disabled>다시 녹음</button></div><div><button class="ghost" id="skip">건너뛰기</button></div></div>
+  </div>
+
+  <div class="card done" id="fin" hidden><b>감사합니다 🙇</b><div class="small" id="finmsg" style="margin-top:8px"></div></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let items = [], i = 0, rec = null, chunks = [], ctx = null, raf = 0, t0 = 0, tick = 0, meta = {};
+fetch('sentences').then(r => r.json()).then(d => { items = d.items; });
+
+$('#start').onclick = async () => {
+  if (!$('#name').value.trim()) { $('#name').focus(); return; }
+  meta = { name: $('#name').value.trim(), native_language: $('#lang').value, nationality: $('#nat').value.trim(), device: $('#dev').value,
+           gender: $('#sex').value, age_group: $('#age').value, korean_level: $('#lvl').value };
+  try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (e) { alert('마이크 권한이 필요합니다. 주소가 https 인지, 권한을 허용했는지 확인해 주세요.'); return; }
+  $('#form').hidden = true; $('#rec').hidden = false; show();
+};
+function show() {
+  const it = items[i]; $('#idx').textContent = `${i + 1} / ${items.length}`;
+  $('#text').textContent = it.text; $('#text').className = 'sent' + (it.type === 'free' ? ' free' : '');
+  $('#msg').textContent = it.type === 'free' ? '15초 이상 자유롭게 말해 주세요.' : '버튼을 누르고 1초 뒤에 읽기 시작하세요.';
+  $('#msg').className = 'msg'; $('#btn').textContent = '● 녹음 시작'; $('#btn').className = 'primary'; $('#btn').disabled = false; $('#redo').disabled = true; $('#timer').textContent = '0.0초';
+}
+$('#btn').onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });   // 브라우저 기본(잡음 억제·AGC 켜짐) — 국적 데모(8922)와 같은 채널. 이 채널에서 한국인이 미국으로 뒤집혔다
+  chunks = []; const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : (MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '');
+  rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); cancelAnimationFrame(raf); clearInterval(tick); $('#lv').style.width = 0; upload(new Blob(chunks, { type: rec.mimeType })); };
+  ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); const an = ctx.createAnalyser(); an.fftSize = 512; ctx.createMediaStreamSource(stream).connect(an);
+  const buf = new Uint8Array(an.fftSize);
+  const loop = () => { an.getByteTimeDomainData(buf); let m = 0; for (const v of buf) m = Math.max(m, Math.abs(v - 128)); $('#lv').style.width = Math.min(100, m * 1.6) + '%'; raf = requestAnimationFrame(loop); };
+  loop(); rec.start(); t0 = Date.now(); tick = setInterval(() => $('#timer').textContent = ((Date.now() - t0) / 1000).toFixed(1) + '초', 100);
+  $('#btn').textContent = '■ 녹음 끝'; $('#btn').className = 'rec'; $('#msg').textContent = '녹음 중…'; $('#msg').className = 'msg';
+};
+async function upload(blob) {
+  const it = items[i]; const sec = (Date.now() - t0) / 1000;
+  if (sec < (it.type === 'free' ? 8 : 2)) { $('#msg').textContent = '너무 짧아요. 다시 녹음해 주세요.'; $('#msg').className = 'msg err'; show(); return; }
+  $('#btn').disabled = true; $('#msg').textContent = '올리는 중…';
+  const fd = new FormData(); fd.append('audio', blob, blob.type.includes('mp4') ? 'a.m4a' : 'a.webm');
+  fd.append('item_id', it.id); fd.append('text', it.text); fd.append('item_type', it.type);
+  for (const k in meta) fd.append(k, meta[k]);
+  try {
+    const r = await fetch('upload', { method: 'POST', body: fd }); const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || '업로드 실패');
+    $('#msg').textContent = `저장됨 (${d.sec}초)`; $('#msg').className = 'msg ok'; $('#redo').disabled = false;
+    setTimeout(next, 700);
+  } catch (e) { $('#msg').textContent = '업로드 실패: ' + e.message + ' — 다시 녹음해 주세요.'; $('#msg').className = 'msg err'; $('#btn').disabled = false; $('#btn').textContent = '● 녹음 시작'; $('#btn').className = 'primary'; }
+}
+function next() { i += 1; if (i >= items.length) { $('#rec').hidden = true; $('#fin').hidden = false; $('#finmsg').textContent = `${meta.name} 님, 문장 ${items.length}개 녹음이 끝났습니다.`; return; } show(); }
+$('#redo').onclick = () => { i -= 1; next(); };
+$('#skip').onclick = next;
+</script>
+</body>
+</html>

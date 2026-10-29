@@ -1,0 +1,63 @@
+# @package _group_
+#
+# E2 — FOREIGN 80% + NATIVE 20% (2026-09-15)
+# ─────────────────────────────────────────────────────────────────────
+# 목적: 데이터 구성만 바꿔 문장 암기(표준발음으로 되돌림)가 줄어드는지 본다. 모델·사전·하이퍼파라미터는 그대로.
+#   초기화   xlsr2_300m.pt (공개 사전학습) — 기존 MDD 체크포인트에서 이어받지 않는다
+#   데이터   manifest_mix_f80_n20 : E1 의 외국인 train 전부(200h) + KsponSpeech 원어민 50h (시간 비율 20%, 문장 중복 없음)
+#            원어민 라벨 = 발음 전사 → KoG2P → 46자모 (ㅙ·ㅞ 는 TAG 관례대로 두 자모). valid·test 는 E1 과 동일
+#   라벨     ltr (46자모, 기존 dict.ltr.txt 그대로 → CTC 출력 50)
+#   레시피   e1_foreign_clean.yaml 과 data · save_dir 만 다르다. 15k 체크포인트는 E2-F 의 출발점이라 보존한다
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/e2_native20/tb
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/e2_native20
+  best_checkpoint_metric: loss
+  save_interval_updates: 5000
+  keep_interval_updates: 4
+  no_epoch_checkpoints: true
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_mix_f80_n20
+  normalize: true
+  labels: ltr                     # TAG = 화자가 실제로 발음한 형태
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+criterion:
+  _name: ctc
+  zero_infinity: true
+optimization:
+  max_update: 20000
+  lr: [0.00003]
+  sentence_avg: true
+  update_freq: [4]
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 2000

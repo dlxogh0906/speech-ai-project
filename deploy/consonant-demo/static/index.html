@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자음 발음 지적 샘플</title>
+<style>
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --ink: #1d2330; --sub: #5c6575; --line: #e3e6eb;
+  --accent: #2f6fde; --bad: #d4382c; --bad-bg: #fdecea; --unc: #b7791f; --unc-bg: #fdf5e6; --ok: #2f8a4f; --ok-bg: #e8f5ec;
+  --chip: #eef1f5; --mute: #8a93a3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --card: #1b2029; --ink: #e8ebf0; --sub: #9aa3b2; --line: #2b313c;
+    --accent: #6c9bff; --bad: #ff7a6e; --bad-bg: #3a1f1d; --unc: #e3b05c; --unc-bg: #352b1a; --ok: #6cc98b; --ok-bg: #1d3325;
+    --chip: #252b36; --mute: #7d8695;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --card: #1b2029; --ink: #e8ebf0; --sub: #9aa3b2; --line: #2b313c;
+  --accent: #6c9bff; --bad: #ff7a6e; --bad-bg: #3a1f1d; --unc: #e3b05c; --unc-bg: #352b1a; --ok: #6cc98b; --ok-bg: #1d3325;
+  --chip: #252b36; --mute: #7d8695;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 56px; }
+h1 { font-size: 22px; margin: 4px 0 6px; }
+h2 { font-size: 16px; margin: 0 0 10px; }
+.sub { color: var(--sub); margin: 0 0 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; color: var(--sub); }
+.st { display: inline-block; border-radius: 6px; padding: 1px 7px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.st.e { background: var(--bad-bg); color: var(--bad); }
+.st.u { background: var(--unc-bg); color: var(--unc); }
+.st.n { background: var(--chip); color: var(--sub); }
+.st.r { background: transparent; color: var(--mute); border: 1px dashed var(--mute); }
+.st.ok { background: var(--ok-bg); color: var(--ok); }
+table.sum { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.sum th { text-align: left; color: var(--sub); font-weight: 500; font-size: 12px; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+table.sum td { padding: 6px; border-top: 1px solid var(--line); vertical-align: middle; }
+table.sum tr.grp td { background: var(--chip); font-weight: 600; font-size: 13px; }
+table.sum tr.row { cursor: pointer; }
+table.sum tr.row:hover td { background: var(--chip); }
+table.sum tr.row.on td { box-shadow: inset 3px 0 0 var(--accent); }
+.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bar { display: flex; align-items: center; gap: 6px; min-width: 190px; }
+.bar .track { position: relative; flex: 1; height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+.bar .track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+.bar .track i.b { background: var(--mute); opacity: .45; }
+.bar .track i.n { background: var(--bad); height: 4px; top: 2px; }
+.star { color: var(--unc); font-size: 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.fg { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fg .k { color: var(--sub); font-size: 12px; margin-right: 2px; }
+.fg button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 4px 11px; cursor: pointer; font-size: 13px; }
+.fg button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.count { color: var(--sub); font-size: 13px; margin-left: auto; }
+.pair h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.pair h2 .d { color: var(--sub); font-size: 13px; font-weight: 400; }
+.rows { display: flex; flex-direction: column; }
+.srow { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.srow .who { color: var(--sub); font-size: 12px; line-height: 1.4; }
+.srow .who b { color: var(--ink); font-size: 13px; font-weight: 600; display: block; }
+.cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cell .top { display: flex; align-items: center; gap: 8px; }
+.play { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; width: 30px; height: 30px; cursor: pointer; flex: none; font-size: 12px; }
+.play.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.kind { font-size: 12px; color: var(--sub); }
+.kind.w { color: var(--bad); font-weight: 600; }
+.sent { font-size: 18px; letter-spacing: .5px; word-break: keep-all; }
+.sent span.e { color: var(--bad); background: var(--bad-bg); border-radius: 3px; }
+.sent span.u { color: var(--unc); background: var(--unc-bg); border-radius: 3px; }
+.sent span.t { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.heard { font-size: 13px; color: var(--sub); }
+.heard b { color: var(--ink); }
+.verd { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--sub); align-items: center; }
+.empty { color: var(--sub); padding: 12px 0; }
+@media (max-width: 760px) {
+  .srow { grid-template-columns: 1fr; }
+  table.sum .hide-m { display: none; }
+  .bar { min-width: 120px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>자음 발음 지적 샘플</h1>
+  <p class="sub">같은 목소리로 <b>맞게</b> 한 번, <b>일부러 틀리게</b> 한 번 읽은 합성 녹음입니다. 각 녹음을 지금 서비스와 10-18 수정 전 서비스로 채점해 나란히 보여 줍니다.
+    밑줄 친 글자가 일부러 바꾼 자리입니다.</p>
+
+  <div class="card">
+    <div class="legend">
+      <span><span class="st e">지적됨</span> 화면에 틀렸다고 뜸</span>
+      <span><span class="st u">숨김</span> 모델은 다르게 들었지만 점수 규칙에 걸려 '애매'로 숨김</span>
+      <span><span class="st n">못 들음</span> 모델이 정답 소리로 받아 적음</span>
+      <span><span class="st r">거절</span> 말소리가 짧아 점수 없음(400)</span>
+      <span><span class="star">★</span> 섞은 모델 합성 학습에 틀린 꼴이 들어간 낱말(결과가 좋게 나올 수 있음)</span>
+    </div>
+    <p class="sub" id="meta" style="margin:10px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2>낱말별 요약 — 일부러 틀리게 읽은 녹음 중 화면에 지적된 비율</h2>
+    <table class="sum">
+      <thead><tr><th>낱말</th><th>바꾼 소리</th><th class="hide-m">모델이 틀린 소리로 들음</th><th>화면 지적 (회색 수정 전 · 빨강 지금)</th><th class="hide-m">맞게 읽었는데 지적</th></tr></thead>
+      <tbody id="sum"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="fg" id="f-series"><span class="k">계열</span></div>
+      <div class="fg" id="f-form"><span class="k">형태</span></div>
+      <div class="fg" id="f-eng"><span class="k">엔진</span></div>
+      <div class="fg" id="f-res"><span class="k">틀리게 읽은 것의 결과</span></div>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <div id="list"></div>
+</main>
+<audio id="player" preload="none"></audio>
+<script>
+const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ", JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ",
+      JONG = " ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+const VCOMB = {"ㅗㅏ": "ㅘ", "ㅗㅐ": "ㅙ", "ㅗㅣ": "ㅚ", "ㅜㅓ": "ㅝ", "ㅜㅔ": "ㅞ", "ㅜㅣ": "ㅟ", "ㅡㅣ": "ㅢ"};
+// 글자 하나의 자모(첫소리·모음·받침, 빠진 소리는 "")를 한 글자로 묶는다. 묶을 수 없으면 자모를 그대로 잇는다.
+function compose(js) {
+  const j = js.filter(Boolean);
+  let vi = j.findIndex(c => JUNG.includes(c));
+  if (vi < 0) return j.join("") || "∅";
+  let v = j[vi], end = vi + 1;
+  if (end < j.length && VCOMB[v + j[end]]) { v = VCOMB[v + j[end]]; end++; }
+  const on = vi > 0 ? j[vi - 1] : "ㅇ", co = end < j.length ? j[end] : " ";
+  if (vi > 1 || end < j.length - 1 || !CHO.includes(on) || !JONG.includes(co)) return j.join("");
+  return String.fromCharCode(0xAC00 + CHO.indexOf(on) * 588 + JUNG.indexOf(v) * 28 + JONG.indexOf(co));
+}
+const ST = {e: ["e", "지적됨"], u: ["u", "숨김"], "": ["n", "못 들음"]};
+function verdict(s, when) {
+  if (s[when].rejected) return ["r", "거절"];
+  const t = s.target; if (!t) return ["n", "—"];
+  if (s.kind === "correct") return t[when] === "e" ? ["e", "헛지적"] : ["ok", "지적 없음"];
+  return ST[t[when]] || ST[""];
+}
+let D, F = {series: "전체", form: "전부", eng: "전부", res: "전부", pair: null};
+const player = document.getElementById("player");
+let playing = null;
+function play(btn, src) {
+  if (playing === btn && !player.paused) { player.pause(); btn.classList.remove("on"); btn.textContent = "▶"; playing = null; return; }
+  if (playing) { playing.classList.remove("on"); playing.textContent = "▶"; }
+  player.src = src; player.play(); btn.classList.add("on"); btn.textContent = "■"; playing = btn;
+}
+player.addEventListener("ended", () => { if (playing) { playing.classList.remove("on"); playing.textContent = "▶"; playing = null; } });
+
+function pct(a, b) { return b ? Math.round(100 * a / b) : 0; }
+function renderSummary() {
+  const tb = document.getElementById("sum"); tb.innerHTML = "";
+  const groups = [["fixed", "예사소리를 된·거센소리로 낸 오류 — 이번(10-18)에 고친 쪽"], ["old", "거센소리를 예사소리로 낸 오류 — 원래 잡히던 쪽"]];
+  for (const [g, title] of groups) {
+    const tr = document.createElement("tr"); tr.className = "grp"; tr.innerHTML = `<td colspan="5">${title}</td>`; tb.appendChild(tr);
+    D.pairs.forEach((p, i) => {
+      if (p.dir !== g) return;
+      const s = p.stats, w = s.wrong || 0, ok = s.ok || 0;
+      const b = pct(s.wrong_shown_before || 0, w), n = pct(s.wrong_shown_now || 0, w);
+      const r = document.createElement("tr"); r.className = "row" + (F.pair === i ? " on" : "");
+      r.innerHTML = `<td><b>${p.good} → ${p.bad}</b>${p.boost ? ' <span class="star">★</span>' : ""}</td>
+        <td class="num">${p.gc} → ${p.bc}</td>
+        <td class="num hide-m">${s.wrong_heard || 0}/${w}</td>
+        <td><div class="bar"><div class="track"><i class="b" style="width:${b}%"></i><i class="n" style="width:${n}%"></i></div>
+            <span class="num">${s.wrong_shown_before || 0} → <b>${s.wrong_shown_now || 0}</b> /${w}</span></div></td>
+        <td class="num hide-m">${s.ok_flag_before || 0} → ${s.ok_flag_now || 0} /${ok}</td>`;
+      r.onclick = () => { F.pair = F.pair === i ? null : i; renderSummary(); renderList(); };
+      tb.appendChild(r);
+    });
+  }
+}
+function buttons(id, key, opts) {
+  const el = document.getElementById(id);
+  for (const o of opts) {
+    const b = document.createElement("button"); b.textContent = o; if (F[key] === o) b.classList.add("on");
+    b.onclick = () => { F[key] = o; el.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); renderList(); };
+    el.appendChild(b);
+  }
+}
+function sentHTML(s, when) {
+  const tsyl = s.target ? s.target.syl : -1;
+  return s[when].syl.map((x, i) => `<span class="${x.s}${i === tsyl ? " t" : ""}">${x.t}</span>`).join("");
+}
+function heardHTML(s) {
+  const t = s.target; if (!t) return "";
+  const syl = s.now.syl[t.syl];
+  const pr = Object.entries(t.probs || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${Math.round(v * 100)}%`).join(" · ");
+  return `정답 <b>${compose(syl.a)}</b> · 들은 그대로 <b>${compose(syl.h)}</b>` + (pr ? ` · 모델 확률 ${pr}` : "") + (t.score != null ? ` · 점수 ${t.score}` : "");
+}
+function cellHTML(s) {
+  const [cn, tn] = verdict(s, "now"), [cb, tbf] = verdict(s, "before");
+  const changed = cn !== cb ? ' <span class="st ok">달라짐</span>' : "";
+  return `<div class="cell">
+    <div class="top"><button class="play" data-src="${s.audio}">▶</button><span class="kind ${s.kind === "wrong" ? "w" : ""}">${s.kind === "wrong" ? "일부러 틀리게" : "맞게"}</span>
+      ${s.now.overall != null && !s.now.rejected ? `<span class="kind">종합 ${s.now.overall}</span>` : ""}</div>
+    <div class="sent">${sentHTML(s, "now")}</div>
+    <div class="heard">${heardHTML(s)}</div>
+    <div class="verd">지금 <span class="st ${cn}">${tn}</span> 수정 전 <span class="st ${cb}">${tbf}</span>${changed}</div></div>`;
+}
+function wrongResult(s) {
+  const now = verdict(s, "now")[1], bef = verdict(s, "before")[1];
+  if (F.res === "지금 지적됨") return now === "지적됨";
+  if (F.res === "숨김") return now === "숨김";
+  if (F.res === "못 들음") return now === "못 들음";
+  if (F.res === "수정으로 바뀐 것") return now !== bef;
+  return true;
+}
+function renderList() {
+  const list = document.getElementById("list"); list.innerHTML = "";
+  const groups = new Map();
+  for (const s of D.samples) {
+    const p = D.pairs[s.pair];
+    if (F.pair !== null && s.pair !== F.pair) continue;
+    if (F.series !== "전체" && p.series !== F.series) continue;
+    if (F.form !== "전부" && (F.form === "낱말") !== (s.form === "word")) continue;
+    if (F.eng !== "전부" && s.engine !== (F.eng === "Qwen" ? "qwen" : "chatterbox")) continue;
+    const key = s.pair + "|" + s.engine + "|" + s.voice + "|" + s.form;
+    if (!groups.has(key)) groups.set(key, {pair: s.pair, engine: s.engine, voice: s.voice, form: s.form});
+    groups.get(key)[s.kind] = s;
+  }
+  let shown = 0;
+  const byPair = new Map();
+  for (const g of groups.values()) {
+    if (!g.wrong || !g.correct) continue;
+    if (F.res !== "전부" && !wrongResult(g.wrong)) continue;
+    if (!byPair.has(g.pair)) byPair.set(g.pair, []);
+    byPair.get(g.pair).push(g); shown++;
+  }
+  document.getElementById("count").textContent = `녹음 쌍 ${shown}개`;
+  if (!shown) { list.innerHTML = '<div class="card empty">조건에 맞는 녹음이 없습니다.</div>'; return; }
+  for (const [pi, gs] of [...byPair.entries()].sort((a, b) => a[0] - b[0])) {
+    const p = D.pairs[pi];
+    const card = document.createElement("div"); card.className = "card pair";
+    card.innerHTML = `<h2>${p.good} → ${p.bad}${p.boost ? ' <span class="star">★</span>' : ""}<span class="d">${p.gc} → ${p.bc} · ${p.dir === "fixed" ? "예사→된·거센" : "거센→예사"}</span></h2><div class="rows"></div>`;
+    const rows = card.querySelector(".rows");
+    gs.sort((a, b) => (a.form + a.engine + a.voice).localeCompare(b.form + b.engine + b.voice));
+    for (const g of gs) {
+      const r = document.createElement("div"); r.className = "srow";
+      r.innerHTML = `<div class="who"><b>${g.form === "word" ? "낱말" : "문장"}</b>${g.engine === "qwen" ? "Qwen3-TTS" : "Chatterbox"} · 목소리 ${g.voice}</div>` + cellHTML(g.correct) + cellHTML(g.wrong);
+      rows.appendChild(r);
+    }
+    list.appendChild(card);
+  }
+  list.querySelectorAll(".play").forEach(b => b.onclick = () => play(b, b.dataset.src));
+}
+fetch("data.json").then(r => r.json()).then(d => {
+  D = d;
+  const m = d.meta;
+  document.getElementById("meta").textContent = `녹음 ${m.n}개 · 모델 ${m.model} · 예외 확률 기준 ${m.rule_prob} · 엔진 ${m.engines.join(", ")} · 목소리 = Zeroth 한국어 test 화자(학습에 안 쓴 목소리)`;
+  buttons("f-series", "series", ["전체", "ㄱ", "ㄷ", "ㅂ", "ㅅ", "ㅈ"]);
+  buttons("f-form", "form", ["전부", "낱말", "문장"]);
+  buttons("f-eng", "eng", ["전부", "Qwen", "Chatterbox"]);
+  buttons("f-res", "res", ["전부", "지금 지적됨", "숨김", "못 들음", "수정으로 바뀐 것"]);
+  renderSummary(); renderList();
+});
+</script>
+</body>
+</html>

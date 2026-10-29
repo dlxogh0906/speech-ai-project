@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>영어 발음 연습</title>
+<style>
+:root { --bg: #f5f6fa; --card: #fff; --ink: #1b1f2a; --mute: #6b7280; --line: #e3e6ee; --accent: #3b5bdb;
+        --good: #2f9e44; --mid: #e8890c; --bad: #e03131; --soft: #fff4e6; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 18px 16px 56px; }
+h1 { font-size: 21px; margin: 0 0 2px; }
+.sub { color: var(--mute); font-size: 13px; margin: 0 0 14px; line-height: 1.5; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tab { border: 1px solid var(--line); background: #fff; border-radius: 99px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.tab.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sent { font-size: 21px; line-height: 1.5; word-break: keep-all; min-height: 34px; }
+.sent .w { border-radius: 6px; padding: 1px 3px; cursor: pointer; }
+.sent .w.g { color: var(--good); } .sent .w.m { color: var(--mid); }
+.sent .w.b { color: var(--bad); text-decoration: underline; text-underline-offset: 4px; }
+.sent .w.u { color: var(--mid); text-decoration: underline dotted; text-underline-offset: 4px; }
+textarea { width: 100%; font: inherit; font-size: 17px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; resize: vertical; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+button.rec { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; flex: 1; font-size: 17px; padding: 14px; }
+button.rec.on { background: var(--bad); border-color: var(--bad); }
+button:disabled { opacity: .5; cursor: default; }
+.meter { height: 6px; background: #eef0f5; border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.meter i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .08s; }
+.status { font-size: 13px; color: var(--mute); min-height: 18px; margin-top: 8px; }
+.scores { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.sc { text-align: center; padding: 10px 4px; border-radius: 12px; background: #f1f3f9; }
+.sc b { display: block; font-size: 26px; line-height: 1.1; }
+.sc span { font-size: 12px; color: var(--mute); }
+.sc.g b { color: var(--good); } .sc.m b { color: var(--mid); } .sc.b b { color: var(--bad); }
+.fb { list-style: none; padding: 0; margin: 10px 0 0; }
+.fb li { padding: 10px 12px; border-radius: 10px; background: #fff5f5; margin-bottom: 6px; line-height: 1.5; font-size: 15px; }
+.fb li.u { background: var(--soft); }
+.fb li.ok { background: #ebfbee; }
+.fb .tip { display: block; color: var(--mute); font-size: 13px; margin-top: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin-top: 8px; }
+td, th { border-bottom: 1px solid var(--line); padding: 6px 4px; text-align: left; }
+.small { font-size: 12px; color: var(--mute); line-height: 1.6; }
+.sess { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; }
+.sess b { font-size: 18px; }
+details summary { cursor: pointer; color: var(--mute); font-size: 13px; }
+[hidden] { display: none !important; }
+@media (max-width: 480px) { .scores { grid-template-columns: repeat(3, 1fr); } .sent { font-size: 19px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>영어 발음 연습</h1>
+  <p class="sub">문장을 고르고 녹음하면 점수와 함께 <b>어떤 소리를 어떻게 냈는지</b> 알려 줍니다.
+    한국인이 자주 틀리는 소리(f/p, v/b, r/l, th, z, 모음)를 따로 짚어 줍니다.</p>
+
+  <div class="card">
+    <div class="tabs" id="tabs"></div>
+    <div class="sent" id="sent"></div>
+    <textarea id="custom" rows="2" placeholder="읽을 영어 문장을 입력하세요" hidden></textarea>
+    <div class="row" style="margin-top:12px">
+      <button id="listenBtn" title="브라우저 음성으로 읽어 줍니다">🔊 원어민 발음</button>
+      <button id="nextBtn">다른 문장 ›</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="rec" id="recBtn">● 녹음 시작</button>
+    </div>
+    <div class="meter"><i id="lvl"></i></div>
+    <div class="status" id="status">녹음 버튼을 누르고 문장을 읽은 뒤 다시 누르세요.</div>
+  </div>
+
+  <div class="card" id="out" hidden>
+    <div class="scores" id="scores"></div>
+    <div class="row" style="margin-top:10px; justify-content: space-between">
+      <span class="small" id="meta"></span>
+      <button id="playBtn">▶ 내 녹음</button>
+    </div>
+    <ul class="fb" id="fb"></ul>
+    <div id="detail"></div>
+    <details style="margin-top:10px"><summary>점수 읽는 법</summary>
+      <p class="small">
+        · <b>종합·유창성·운율</b>은 사람 평가자 점수를 흉내 낸 값이고, <b>발음</b>은 소리별 점수의 평균입니다.<br>
+        · 문장 하나의 점수는 흔들립니다. 아래 <b>이번 연습 평균</b>(5문장 이상)을 보세요.<br>
+        · 빨간 밑줄 = 틀린 소리가 있는 단어, 점선 = "그렇게 들렸을 수도 있어요"(확실하지 않음).<br>
+        · th(ð) 소리(the, this …)는 아직 정확히 판정하지 못해 지적하지 않습니다.
+      </p>
+    </details>
+  </div>
+
+  <div class="card" id="sessCard" hidden>
+    <div class="row" style="justify-content: space-between"><b>이번 연습 평균</b><button id="resetBtn">초기화</button></div>
+    <div class="sess" id="sess" style="margin-top:8px"></div>
+    <div class="small" id="sessNote" style="margin-top:6px"></div>
+    <ul class="fb" id="habit"></ul>
+  </div>
+</main>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const SETS = {
+  'f/p':  ["I prefer fresh fruit for breakfast.", "Please fill out the form first.", "My father found five photos.", "The coffee shop is full of people."],
+  'v/b':  ["Very few visitors have voted.", "I have a big van and a bike.", "Victor loves his video games.", "The bus driver gave me a very bad look."],
+  'r/l':  ["Please read the red book on the right.", "Larry likes to run along the river.", "The rice and the lettuce are really fresh.", "I really love my little brother."],
+  'th':   ["I think it is Thursday.", "Thank you for the three nice things.", "Both of them are thirty years old.", "The theater is north of the bank."],
+  'z/s':  ["His cousin is busy these days.", "Zoe was amazed by the zoo.", "Close the windows, please.", "These are my favorite songs."],
+  '모음': ["Is this seat taken?", "I want to live in a big city.", "The bed is bad for my back.", "Let's go home and cook a full meal."],
+  '직접 입력': []
+};
+const TIPS = {
+  f_p: "윗니를 아랫입술에 살짝 대고 바람을 내보내세요(ㅍ처럼 입술을 붙이지 않기).",
+  v_b: "f 입 모양 그대로 목을 울리세요. 입술끼리 붙이면 b가 됩니다.",
+  r_l: "혀끝을 어디에도 대지 말고 뒤로 살짝 말아 r을 내세요.",
+  l_r: "혀끝을 윗잇몸에 확실히 붙였다 떼며 l을 내세요.",
+  th_s: "혀끝을 윗니와 아랫니 사이로 살짝 내밀고 바람을 내보내세요.",
+  th_t: "혀끝을 이 사이에 둔 채 바람을 길게 — 혀로 막으면 t가 됩니다.",
+  z_s: "목을 울리면서 '즈—' 하고 이어 내세요. 끝소리 z도 울림을 유지하세요.",
+  z_jh: "혀를 입천장에 붙이지 말고 '즈'처럼 바람을 흘리세요.",
+  s_sh: "s 다음에 이(i)가 와도 '시'가 아니라 혀끝 '스이'처럼 내세요.",
+  ih_iy: "짧고 힘을 뺀 '이'(입을 덜 당기기). 길게 늘이면 다른 단어가 됩니다(ship ≠ sheep).",
+  iy_ih: "입꼬리를 당겨 길게 '이—'.",
+  eh_ae: "입을 더 크게 벌리고 턱을 내려 '애'.",
+  ae_eh: "입을 덜 벌려 짧은 '에'.",
+  ow_ao: "'오'에서 끝을 '우'로 올려 마무리하세요(오우).",
+  uh_uw: "짧고 힘을 뺀 '우'. 입술을 너무 내밀지 마세요.",
+  er_ah: "혀끝을 뒤로 말아 r 색깔을 넣으세요(어r).",
+  d_t: "목을 울려 d를 내세요(너무 세게 내면 t).", b_p: "목을 울려 b를 내세요.", g_k: "목을 울려 g를 내세요."
+};
+let base = location.pathname;
+if (!base.endsWith('/')) base = /\.[a-z0-9]+$/i.test(base) ? base.replace(/[^/]*$/, '') : base + '/';
+const qs = new URLSearchParams(location.search);
+let TOKEN = qs.get('token') || '';
+try { if (TOKEN) localStorage.setItem('pron_en_token', TOKEN); else TOKEN = localStorage.getItem('pron_en_token') || ''; } catch (e) {}
+let cat = 'f/p', idx = 0, lastBlob = null;
+const SESSION = [];                      // [{overall, pronunciation, fluency, rhythm, rules: {f_p: 1, …}}]
+try { const s = JSON.parse(sessionStorage.getItem('pron_en_session') || '[]'); s.forEach(x => SESSION.push(x)); } catch (e) {}
+
+function sentence() { return cat === '직접 입력' ? $('#custom').value.trim() : SETS[cat][idx % SETS[cat].length]; }
+function drawTabs() {
+  const T = $('#tabs'); T.innerHTML = '';
+  Object.keys(SETS).forEach(k => {
+    const b = document.createElement('button'); b.className = 'tab' + (k === cat ? ' on' : ''); b.textContent = k;
+    b.onclick = () => { cat = k; idx = 0; drawTabs(); drawSentence(); }; T.appendChild(b);
+  });
+}
+function drawSentence(res) {
+  const custom = cat === '직접 입력';
+  $('#custom').hidden = !custom; $('#sent').hidden = custom && !res; $('#nextBtn').hidden = custom;
+  const S = $('#sent'); S.innerHTML = '';
+  if (!res) { S.textContent = custom ? '' : sentence(); return; }
+  res.words.forEach(w => {
+    const span = document.createElement('span');
+    const bad = w.phonemes.some(p => p.errorType), unc = w.phonemes.some(p => p.uncertain);
+    span.className = 'w ' + (bad ? 'b' : unc ? 'u' : (w.score == null ? 'b' : w.score >= 80 ? 'g' : 'm'));
+    span.textContent = w.word; span.onclick = () => detail(w);
+    S.appendChild(span); S.appendChild(document.createTextNode(' '));
+  });
+}
+$('#nextBtn').onclick = () => { idx++; drawSentence(); $('#out').hidden = true; };
+$('#listenBtn').onclick = () => {
+  const t = sentence(); if (!t || !window.speechSynthesis) return;
+  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; u.rate = 0.9; speechSynthesis.speak(u);
+};
+
+// ───────── 녹음 (16 kHz WAV) ─────────
+let ctx = null, proc = null, chunks = [], recording = false, busy = false, micP = null, t0rec = 0, capTimer = null;
+const RS = {acc: 0, n: 0, pos: 0};
+function wakeAudio() { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); }
+function openMic() {
+  if (micP) return micP;
+  micP = (async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('이 주소에서는 마이크를 쓸 수 없습니다(HTTPS 필요)');
+    const s = await navigator.mediaDevices.getUserMedia({audio: {channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+    if (ctx.state !== 'running') await ctx.resume();
+    const src = ctx.createMediaStreamSource(s);
+    proc = ctx.createScriptProcessor(2048, 1, 1);
+    proc.onaudioprocess = e => { if (recording) onAudio(e.inputBuffer.getChannelData(0)); };
+    src.connect(proc); proc.connect(ctx.destination);
+  })().catch(e => { micP = null; throw e; });
+  return micP;
+}
+function onAudio(x) {
+  const step = ctx.sampleRate / 16000, out = []; let peak = 0;
+  for (let i = 0; i < x.length; i++) {
+    RS.acc += x[i]; RS.n++; RS.pos += 1;
+    if (RS.pos >= step) { const v = RS.acc / RS.n; out.push(v); peak = Math.max(peak, Math.abs(v)); RS.acc = 0; RS.n = 0; RS.pos -= step; }
+  }
+  chunks.push(Float32Array.from(out)); $('#lvl').style.width = Math.min(100, peak * 160) + '%';
+}
+function wav16(f32) {
+  const n = f32.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 16000, true); v.setUint32(28, 32000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const s = Math.max(-1, Math.min(1, f32[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
+  return buf;
+}
+async function stopAndSend() {
+  clearTimeout(capTimer);
+  recording = false;
+  $('#recBtn').textContent = '● 녹음 시작'; $('#recBtn').classList.remove('on'); $('#lvl').style.width = '0';
+  const n = chunks.reduce((a, c) => a + c.length, 0), pcm = new Float32Array(n);
+  let o = 0; chunks.forEach(c => { pcm.set(c, o); o += c.length; });
+  lastBlob = new Blob([wav16(pcm)], {type: 'audio/wav'});
+  busy = true; $('#recBtn').disabled = true;
+  try { await send(lastBlob); } finally { busy = false; $('#recBtn').disabled = false; }
+}
+$('#recBtn').onclick = async () => {
+  wakeAudio();
+  if (busy) return;
+  if (!recording) {
+    const t = sentence();
+    if (!t) { $('#status').textContent = '읽을 문장을 먼저 입력하세요.'; return; }
+    busy = true;
+    try { await openMic(); } catch (e) { $('#status').textContent = e.message; busy = false; return; }
+    busy = false;
+    chunks = []; RS.acc = 0; RS.n = 0; RS.pos = 0; recording = true; t0rec = performance.now();
+    $('#recBtn').textContent = '■ 다 읽었어요'; $('#recBtn').classList.add('on');
+    $('#status').textContent = '읽어 주세요… (최대 20초)';
+    capTimer = setTimeout(() => { if (recording) stopAndSend(); }, 20000);
+    return;
+  }
+  await stopAndSend();
+};
+$('#playBtn').onclick = () => { if (lastBlob) new Audio(URL.createObjectURL(lastBlob)).play(); };
+
+async function send(blob) {
+  $('#status').textContent = '채점 중…';
+  const fd = new FormData();
+  fd.append('audio', blob, 'rec.wav'); fd.append('refText', sentence()); fd.append('tokenId', 'web-' + Date.now());
+  const t0 = performance.now(); let r, d;
+  try {
+    r = await fetch(base + 'sent.eval', {method: 'POST', body: fd, headers: TOKEN ? {'Authorization': 'Bearer ' + TOKEN} : {}});
+    d = await r.json();
+  } catch (e) { $('#status').textContent = '요청 실패: ' + e.message; return; }
+  if (!r.ok) {
+    if (r.status === 401) { const t = prompt('열쇠(토큰)를 입력하세요'); if (t) { TOKEN = t.trim(); try { localStorage.setItem('pron_en_token', TOKEN); } catch (e) {} } }
+    const msg = {low_speech: '말소리가 거의 안 들려요. 마이크에 가까이 대고 다시 읽어 주세요.', too_short: '녹음이 너무 짧아요. 문장을 끝까지 읽어 주세요.',
+                 no_reftext: '읽을 영어 문장이 없어요.', reftext_too_long: '문장이 너무 길어요. 나눠서 읽어 주세요.'}[d.code];
+    $('#status').textContent = msg || d.error || ('오류 ' + r.status); return;
+  }
+  $('#status').textContent = '';
+  render(d, Math.round(performance.now() - t0));
+}
+
+const cls = v => v == null ? 'b' : v >= 80 ? 'g' : v >= 60 ? 'm' : 'b';
+const fmt = v => v == null ? '—' : v;
+function feedbackItems(R) {
+  const items = [];
+  R.words.forEach(w => w.phonemes.forEach(p => {
+    if (p.errorType) {
+      let text, tip = '';
+      if (p.errorRule && p.errorHint) {
+        const [a, b] = p.errorHint.split('→').map(x => x.trim());
+        text = `<b>${w.word}</b> — /${a}/ 를 /${b}/ 로 발음했어요`; tip = TIPS[p.errorRule] || '';
+      } else if (p.errorType === '음운탈락') {
+        text = `<b>${w.word}</b> — /${p.alpha_ipa}/ 소리가 빠졌어요`;
+      } else {
+        text = `<b>${w.word}</b> — /${p.alpha_ipa}/ 소리가 부정확해요`;
+      }
+      items.push({cls: '', html: text + (tip ? `<span class="tip">💡 ${tip}</span>` : ''), rule: p.errorRule});
+    } else if (p.uncertain && p.actual_ipa && p.actual_ipa !== p.alpha_ipa) {
+      items.push({cls: 'u', html: `<b>${w.word}</b> — /${p.alpha_ipa}/ 가 /${p.actual_ipa}/ 처럼 들렸을 수도 있어요 (확실하지 않음)`, rule: null});
+    }
+  }));
+  return items;
+}
+function render(d, ms) {
+  const R = d.result;
+  $('#out').hidden = false;
+  drawSentence(R);
+  $('#scores').innerHTML = [['종합', R.overall], ['발음', R.pronunciation], ['유창성', R.fluency], ['운율', R.rhythm], ['완결성', R.integrity]]
+    .map(([k, v]) => `<div class="sc ${cls(v)}"><b>${fmt(v)}</b><span>${k}</span></div>`).join('');
+  $('#meta').textContent = `채점 ${d._meta.ms} ms · 왕복 ${ms} ms · 말 속도 ${fmt(R.speed)} 단어/분`;
+  const items = feedbackItems(R);
+  $('#fb').innerHTML = items.length ? items.map(x => `<li class="${x.cls}">${x.html}</li>`).join('')
+                                    : '<li class="ok">짚을 만한 오류가 없어요 👍</li>';
+  $('#detail').innerHTML = '';
+  const rules = {};
+  items.forEach(x => { if (x.rule) rules[x.rule] = (rules[x.rule] || 0) + 1; });
+  SESSION.push({overall: R.overall, pronunciation: R.pronunciation, fluency: R.fluency, rhythm: R.rhythm, rules: rules});
+  try { sessionStorage.setItem('pron_en_session', JSON.stringify(SESSION.slice(-50))); } catch (e) {}
+  drawSession();
+}
+function detail(w) {
+  const rows = w.phonemes.map(p => {
+    const said = p.actual_src === 'unclear' ? '부정확' : (p.actual_ipa == null ? '(안 냄)' : '/' + p.actual_ipa + '/');
+    const mark = p.errorType ? `<b style="color:var(--bad)">${p.errorHint || p.errorType}</b>` : p.uncertain ? '<span style="color:var(--mid)">불확실</span>' : '';
+    return `<tr><td>/${p.alpha_ipa}/</td><td>${said}</td><td>${fmt(p.pronunciation)}</td><td>${mark}</td></tr>`;
+  }).join('');
+  $('#detail').innerHTML = `<h3 style="margin:14px 0 4px; font-size:16px">${w.word} — ${fmt(w.score)}점</h3>
+    <table><tr><th>내야 할 소리</th><th>들린 소리</th><th>점수</th><th></th></tr>${rows}</table>`;
+}
+function drawSession() {
+  if (!SESSION.length) { $('#sessCard').hidden = true; return; }
+  $('#sessCard').hidden = false;
+  const avg = k => { const v = SESSION.map(x => x[k]).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : '—'; };
+  $('#sess').innerHTML = `<span>문장 <b>${SESSION.length}</b></span><span>종합 <b>${avg('overall')}</b></span>
+    <span>발음 <b>${avg('pronunciation')}</b></span><span>유창성 <b>${avg('fluency')}</b></span><span>운율 <b>${avg('rhythm')}</b></span>`;
+  $('#sessNote').textContent = SESSION.length < 5 ? `${5 - SESSION.length}문장 더 읽으면 평균이 믿을 만해져요(문장 하나의 점수는 흔들립니다).`
+                                                  : '여러 문장 평균이라 문장 하나의 점수보다 믿을 만합니다.';
+  const tot = {};
+  SESSION.forEach(s => Object.entries(s.rules || {}).forEach(([k, v]) => { tot[k] = (tot[k] || 0) + v; }));
+  const top = Object.entries(tot).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const NAME = {f_p: 'f → p', v_b: 'v → b', r_l: 'r → l', l_r: 'l → r', th_s: 'th(θ) → s', th_t: 'th(θ) → t', z_s: 'z → s', z_jh: 'z → j',
+                s_sh: 's → sh', ih_iy: '짧은 이 → 긴 이', iy_ih: '긴 이 → 짧은 이', eh_ae: '에 → 애', ae_eh: '애 → 에', ow_ao: '오우 → 오',
+                uh_uw: '짧은 우 → 긴 우', er_ah: 'er → 어', d_t: 'd → t', b_p: 'b → p', g_k: 'g → k'};
+  $('#habit').innerHTML = top.length ? top.map(([k, v]) => `<li>자주 나온 소리: <b>${NAME[k] || k}</b> (${v}번)<span class="tip">💡 ${TIPS[k] || ''}</span></li>`).join('') : '';
+}
+$('#resetBtn').onclick = () => { SESSION.length = 0; try { sessionStorage.removeItem('pron_en_session'); } catch (e) {} drawSession(); };
+
+drawTabs(); drawSentence(); drawSession();
+</script>
+</body>
+</html>

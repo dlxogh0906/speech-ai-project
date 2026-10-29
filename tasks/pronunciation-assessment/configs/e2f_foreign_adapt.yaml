@@ -1,0 +1,67 @@
+# @package _group_
+#
+# E2-F — MIXED 15k → FOREIGN 5k (2026-09-15)
+# ─────────────────────────────────────────────────────────────────────
+# 목적: 원어민 보조 데이터로 문장 다양성은 얻되, 마지막 5k 스텝을 외국인 TAG 만으로 적응시켜
+#       모델이 정상 발음 쪽으로 치우치지 않게 한다. 총 20k 스텝 — E2 와 같은 수.
+#
+# 실행: E2(e2_native20) 의 15,000 스텝 체크포인트를 옵티마이저·LR 스케줄러 상태째로 이어받아
+#       데이터만 외국인 매니페스트로 바꿔 20,000 스텝까지 돈다. tri_stage 스케줄은 E2 와 완전히 같은 곡선을 따른다.
+#   checkpoint.restore_file 은 실행 시 지정한다(파일명에 에폭 번호가 들어가서 미리 알 수 없다):
+#     bash .../run_ctc_experiment.sh e2f_foreign_adapt e2f_foreign_adapt 0 \
+#          checkpoint.restore_file=$SPEECH_AI_DATA/checkpoints/e2_native20/checkpoint_<ep>_15000.pt
+#   reset_dataloader=true : 데이터가 바뀌므로 이터레이터 위치는 버린다 (옵티마이저·LR·num_updates 는 유지)
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/e2f_foreign_adapt/tb
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/e2f_foreign_adapt
+  best_checkpoint_metric: loss
+  save_interval_updates: 5000
+  keep_interval_updates: 4
+  no_epoch_checkpoints: true
+  reset_dataloader: true
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_foreign_clean_v2
+  normalize: true
+  labels: ltr
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+criterion:
+  _name: ctc
+  zero_infinity: true
+optimization:
+  max_update: 20000
+  lr: [0.00003]
+  sentence_avg: true
+  update_freq: [4]
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 2000

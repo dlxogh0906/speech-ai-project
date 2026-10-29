@@ -1,0 +1,6734 @@
+{
+ "note": "영어 발음 평가(2026-10-04~05). 원본은 $MDD_OUTPUTS/english/ — 각 항목의 source 키 참고. v0 = 리뷰 수정 전.",
+ "bakeoff": {
+  "source": "english/bakeoff/summary.json",
+  "data": {
+   "lv60-espeak": {
+    "license": "Apache-2.0 (CV CC0 · LibriLight) — 상업 가능",
+    "hf": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2324,
+      "recall": 0.2309,
+      "f1": 0.2316,
+      "frr": 0.0793,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2474,
+      "recall": 0.2222,
+      "f1": 0.2342,
+      "frr": 0.0703,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 20.3,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6659,
+     "per_vs_perceived": 0.1792
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1295,
+      "recall": 0.864,
+      "f1": 0.2252,
+      "frr": 0.2532,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.132,
+      "recall": 0.8549,
+      "f1": 0.2288,
+      "frr": 0.2449,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 16.9,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1659,
+      "recall": 0.8432,
+      "f1": 0.2772,
+      "frr": 0.2443,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1695,
+      "recall": 0.8335,
+      "f1": 0.2817,
+      "frr": 0.2353,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 17.4,
+     "n_utts": 2500
+    }
+   },
+   "xlsr53-espeak": {
+    "license": "Apache-2.0 (사전학습에 BABEL 포함 — 검토)",
+    "hf": "facebook/wav2vec2-xlsr-53-espeak-cv-ft",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2358,
+      "recall": 0.3312,
+      "f1": 0.2755,
+      "frr": 0.1116,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2471,
+      "recall": 0.322,
+      "f1": 0.2796,
+      "frr": 0.102,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 21.3,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6645,
+     "per_vs_perceived": 0.1986
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1213,
+      "recall": 0.863,
+      "f1": 0.2128,
+      "frr": 0.2723,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1243,
+      "recall": 0.8534,
+      "f1": 0.2171,
+      "frr": 0.2619,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 18.0,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1575,
+      "recall": 0.8518,
+      "f1": 0.2658,
+      "frr": 0.2625,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.162,
+      "recall": 0.8444,
+      "f1": 0.2718,
+      "frr": 0.2516,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 18.0,
+     "n_utts": 2500
+    }
+   },
+   "huper": {
+    "license": "MIT 가중치 · TIMIT 기반 — 법무 검토 필요",
+    "hf": "huper29/huper_recognizer",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2277,
+      "recall": 0.4924,
+      "f1": 0.3114,
+      "frr": 0.1737,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.248,
+      "recall": 0.479,
+      "f1": 0.3268,
+      "frr": 0.151,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 23.8,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6528,
+     "per_vs_perceived": 0.265
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1158,
+      "recall": 0.8645,
+      "f1": 0.2042,
+      "frr": 0.2877,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1193,
+      "recall": 0.8544,
+      "f1": 0.2094,
+      "frr": 0.2748,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 23.6,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1479,
+      "recall": 0.844,
+      "f1": 0.2517,
+      "frr": 0.2801,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1536,
+      "recall": 0.837,
+      "f1": 0.2596,
+      "frr": 0.2656,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 23.7,
+     "n_utts": 2500
+    }
+   },
+   "slplab-l2": {
+    "license": "라이선스 없음 · 한국인 학습자 데이터 — 상업 불가(협약 필요)",
+    "hf": "slplab/wav2vec2-large-robust-L2-english-phoneme-recognition",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.217,
+      "recall": 0.2718,
+      "f1": 0.2413,
+      "frr": 0.102,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2182,
+      "recall": 0.2638,
+      "f1": 0.2388,
+      "frr": 0.0983,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 21.4,
+     "n_utts": 600,
+     "correct_diagnosis": 0.5734,
+     "per_vs_perceived": 0.1808
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1341,
+      "recall": 0.8397,
+      "f1": 0.2312,
+      "frr": 0.2364,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1354,
+      "recall": 0.8276,
+      "f1": 0.2327,
+      "frr": 0.2303,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 17.9,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1706,
+      "recall": 0.8319,
+      "f1": 0.2832,
+      "frr": 0.2329,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1732,
+      "recall": 0.8222,
+      "f1": 0.2862,
+      "frr": 0.226,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 18.0,
+     "n_utts": 2500
+    }
+   },
+   "charsiu-ctc": {
+    "license": "가중치 라이선스 표기 없음 — 확인 필요",
+    "hf": "charsiu/en_w2v2_ctc_libris_and_cv",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2196,
+      "recall": 0.199,
+      "f1": 0.2088,
+      "frr": 0.0735,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2245,
+      "recall": 0.198,
+      "f1": 0.2104,
+      "frr": 0.0711,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 10.4,
+     "n_utts": 600,
+     "correct_diagnosis": 0.5583,
+     "per_vs_perceived": 0.1637
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1569,
+      "recall": 0.822,
+      "f1": 0.2636,
+      "frr": 0.1924,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1594,
+      "recall": 0.8155,
+      "f1": 0.2666,
+      "frr": 0.1874,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 10.0,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1994,
+      "recall": 0.8151,
+      "f1": 0.3204,
+      "frr": 0.1886,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.2019,
+      "recall": 0.8054,
+      "f1": 0.3229,
+      "frr": 0.1834,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 10.2,
+     "n_utts": 2500
+    }
+   },
+   "en037-v1": {
+    "license": "lv60(Apache-2.0) + AIHub 037(학습 이용 가능 · 출처 표기)",
+    "hf": "/data/speech-ai/corpus/checkpoints/en_ctc_037_v1/best",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2309,
+      "recall": 0.2384,
+      "f1": 0.2346,
+      "frr": 0.0825,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2375,
+      "recall": 0.2335,
+      "f1": 0.2355,
+      "frr": 0.0779,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 20.3,
+     "n_utts": 600,
+     "correct_diagnosis": 0.5905,
+     "per_vs_perceived": 0.1695
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1296,
+      "recall": 0.8478,
+      "f1": 0.2248,
+      "frr": 0.2481,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1324,
+      "recall": 0.8387,
+      "f1": 0.2287,
+      "frr": 0.2395,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 17.0,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1686,
+      "recall": 0.8401,
+      "f1": 0.2809,
+      "frr": 0.2386,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1729,
+      "recall": 0.8342,
+      "f1": 0.2864,
+      "frr": 0.2299,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 17.7,
+     "n_utts": 2500
+    }
+   },
+   "synth-a": {
+    "license": "en037-v1 + Kokoro-82M(Apache-2.0) 합성 음성",
+    "hf": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1a/step_3000",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.3227,
+      "recall": 0.5939,
+      "f1": 0.4182,
+      "frr": 0.1296,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.3324,
+      "recall": 0.5771,
+      "f1": 0.4218,
+      "frr": 0.1205,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 37.7,
+     "n_utts": 600,
+     "correct_diagnosis": 0.8011,
+     "per_vs_perceived": 0.1844
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1178,
+      "recall": 0.8483,
+      "f1": 0.2069,
+      "frr": 0.2768,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1239,
+      "recall": 0.8382,
+      "f1": 0.2159,
+      "frr": 0.2583,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 29.4,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1518,
+      "recall": 0.8186,
+      "f1": 0.2561,
+      "frr": 0.2635,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1602,
+      "recall": 0.8116,
+      "f1": 0.2675,
+      "frr": 0.2452,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 30.6,
+     "n_utts": 2500
+    }
+   },
+   "synth-b": {
+    "license": "en037-v1 + Kokoro-82M 합성 + AIHub 037",
+    "hf": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1b/step_3000",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2834,
+      "recall": 0.3155,
+      "f1": 0.2986,
+      "frr": 0.0829,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2904,
+      "recall": 0.308,
+      "f1": 0.299,
+      "frr": 0.0782,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 32.8,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6889,
+     "per_vs_perceived": 0.1622
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1321,
+      "recall": 0.8397,
+      "f1": 0.2283,
+      "frr": 0.2404,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1357,
+      "recall": 0.8306,
+      "f1": 0.2333,
+      "frr": 0.2306,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 34.3,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1733,
+      "recall": 0.8339,
+      "f1": 0.2869,
+      "frr": 0.2292,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1786,
+      "recall": 0.8276,
+      "f1": 0.2939,
+      "frr": 0.2192,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 35.5,
+     "n_utts": 2500
+    }
+   },
+   "synth-d": {
+    "license": "en037-v1 + Kokoro-82M 합성 + AIHub 037(의사라벨)",
+    "hf": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v2d/step_3000",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.3108,
+      "recall": 0.2751,
+      "f1": 0.2918,
+      "frr": 0.0634,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.3158,
+      "recall": 0.2686,
+      "f1": 0.2903,
+      "frr": 0.0605,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 20.4,
+     "n_utts": 600,
+     "correct_diagnosis": 0.7961,
+     "per_vs_perceived": 0.1444
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1673,
+      "recall": 0.82,
+      "f1": 0.278,
+      "frr": 0.1778,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1741,
+      "recall": 0.8089,
+      "f1": 0.2865,
+      "frr": 0.1673,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 17.1,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.2153,
+      "recall": 0.8062,
+      "f1": 0.3399,
+      "frr": 0.1692,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.2246,
+      "recall": 0.7984,
+      "f1": 0.3505,
+      "frr": 0.1588,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 17.8,
+     "n_utts": 2500
+    }
+   }
+  }
+ },
+ "bakeoff_v0": {
+  "source": "english/bakeoff/summary_v0.json",
+  "data": {
+   "lv60-espeak": {
+    "license": "Apache-2.0 (CV CC0 · LibriLight) — 상업 가능",
+    "hf": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2273,
+      "recall": 0.2201,
+      "f1": 0.2236,
+      "frr": 0.0778,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2403,
+      "recall": 0.2071,
+      "f1": 0.2225,
+      "frr": 0.0681,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 31.0,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6422,
+     "per_vs_perceived": 0.1783
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1298,
+      "recall": 0.8645,
+      "f1": 0.2257,
+      "frr": 0.2525,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1331,
+      "recall": 0.8554,
+      "f1": 0.2304,
+      "frr": 0.2427,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 26.3,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1664,
+      "recall": 0.8452,
+      "f1": 0.278,
+      "frr": 0.2439,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.171,
+      "recall": 0.8358,
+      "f1": 0.2839,
+      "frr": 0.2334,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 26.8,
+     "n_utts": 2500
+    }
+   },
+   "xlsr53-espeak": {
+    "license": "Apache-2.0 (사전학습에 BABEL 포함 — 검토)",
+    "hf": "facebook/wav2vec2-xlsr-53-espeak-cv-ft",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2413,
+      "recall": 0.3463,
+      "f1": 0.2844,
+      "frr": 0.1132,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2516,
+      "recall": 0.3279,
+      "f1": 0.2847,
+      "frr": 0.1014,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 26.1,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6355,
+     "per_vs_perceived": 0.2003
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1217,
+      "recall": 0.8686,
+      "f1": 0.2135,
+      "frr": 0.2731,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1257,
+      "recall": 0.8574,
+      "f1": 0.2192,
+      "frr": 0.26,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 25.5,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1571,
+      "recall": 0.8522,
+      "f1": 0.2653,
+      "frr": 0.2633,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.163,
+      "recall": 0.8432,
+      "f1": 0.2731,
+      "frr": 0.2495,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 23.4,
+     "n_utts": 2500
+    }
+   },
+   "huper": {
+    "license": "MIT 가중치 · TIMIT 기반 — 법무 검토 필요",
+    "hf": "huper29/huper_recognizer",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2225,
+      "recall": 0.4881,
+      "f1": 0.3057,
+      "frr": 0.1773,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2385,
+      "recall": 0.4639,
+      "f1": 0.315,
+      "frr": 0.154,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 33.0,
+     "n_utts": 600,
+     "correct_diagnosis": 0.6453,
+     "per_vs_perceived": 0.2678
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1159,
+      "recall": 0.863,
+      "f1": 0.2043,
+      "frr": 0.2869,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1199,
+      "recall": 0.8519,
+      "f1": 0.2102,
+      "frr": 0.2726,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 32.4,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1475,
+      "recall": 0.8424,
+      "f1": 0.251,
+      "frr": 0.2805,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1536,
+      "recall": 0.8342,
+      "f1": 0.2595,
+      "frr": 0.2647,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 32.0,
+     "n_utts": 2500
+    }
+   },
+   "slplab-l2": {
+    "license": "라이선스 없음 · 한국인 학습자 데이터 — 상업 불가(협약 필요)",
+    "hf": "slplab/wav2vec2-large-robust-L2-english-phoneme-recognition",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2083,
+      "recall": 0.2611,
+      "f1": 0.2317,
+      "frr": 0.1032,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2096,
+      "recall": 0.2519,
+      "f1": 0.2288,
+      "frr": 0.0988,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 26.0,
+     "n_utts": 600,
+     "correct_diagnosis": 0.5496,
+     "per_vs_perceived": 0.1825
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1334,
+      "recall": 0.8372,
+      "f1": 0.2301,
+      "frr": 0.237,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1355,
+      "recall": 0.8266,
+      "f1": 0.2328,
+      "frr": 0.2298,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 25.4,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1689,
+      "recall": 0.8225,
+      "f1": 0.2802,
+      "frr": 0.2332,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.1722,
+      "recall": 0.8108,
+      "f1": 0.284,
+      "frr": 0.2246,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 24.3,
+     "n_utts": 2500
+    }
+   },
+   "charsiu-ctc": {
+    "license": "가중치 라이선스 표기 없음 — 확인 필요",
+    "hf": "charsiu/en_w2v2_ctc_libris_and_cv",
+    "l2arctic": {
+     "strict": {
+      "precision": 0.2191,
+      "recall": 0.2017,
+      "f1": 0.2101,
+      "frr": 0.0748,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "lenient": {
+      "precision": 0.2211,
+      "recall": 0.1963,
+      "f1": 0.208,
+      "frr": 0.0719,
+      "n_human_err": 1854,
+      "n_sites": 19686
+     },
+     "ms_median": 19.1,
+     "n_utts": 600,
+     "correct_diagnosis": 0.5749,
+     "per_vs_perceived": 0.1652
+    },
+    "so762": {
+     "strict": {
+      "precision": 0.1565,
+      "recall": 0.8225,
+      "f1": 0.2629,
+      "frr": 0.1932,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "lenient": {
+      "precision": 0.1599,
+      "recall": 0.8145,
+      "f1": 0.2673,
+      "frr": 0.1865,
+      "n_human_err": 1978,
+      "n_sites": 47369
+     },
+     "ms_median": 18.6,
+     "n_utts": 2500
+    },
+    "so762train": {
+     "strict": {
+      "precision": 0.1998,
+      "recall": 0.8159,
+      "f1": 0.3209,
+      "frr": 0.1883,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "lenient": {
+      "precision": 0.204,
+      "recall": 0.8046,
+      "f1": 0.3254,
+      "frr": 0.1809,
+      "n_human_err": 2564,
+      "n_sites": 47076
+     },
+     "ms_median": 16.7,
+     "n_utts": 2500
+    }
+   }
+  }
+ },
+ "scorer": {
+  "charsiu-ctc": {
+   "phone_scorer": {
+    "source": "english/scorer/charsiu-ctc/phone_scorer.json",
+    "data": {
+     "model": "charsiu-ctc",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6076,
+      "so762_phone_auc": 0.9302,
+      "so762_word_pcc": 0.5766,
+      "l2arctic_auc": 0.7477
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5937,
+      "so762_phone_auc": 0.9325,
+      "so762_word_pcc": 0.582,
+      "l2arctic_auc": 0.6621
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6001,
+      "so762_phone_auc": 0.9339,
+      "so762_word_pcc": 0.5736,
+      "l2arctic_auc": 0.7119
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5536,
+      "so762_phone_auc": 0.927,
+      "so762_word_pcc": 0.5377,
+      "l2arctic_auc": 0.6411
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4341,
+      "l2arctic_auc": 0.6865
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 74.4,
+       "so762train_oof": {
+        "precision": 0.547,
+        "recall": 0.519,
+        "f1": 0.533,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.487,
+        "recall": 0.516,
+        "f1": 0.501,
+        "frr": 0.04
+       },
+       "l2arctic": {
+        "precision": 0.346,
+        "recall": 0.073,
+        "f1": 0.121,
+        "frr": 0.014
+       },
+       "so762_frr_on_acc2": 0.0308
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 74.4,
+       "so762train_oof": {
+        "precision": 0.555,
+        "recall": 0.479,
+        "f1": 0.514,
+        "frr": 0.035
+       },
+       "so762": {
+        "precision": 0.495,
+        "recall": 0.483,
+        "f1": 0.489,
+        "frr": 0.037
+       },
+       "l2arctic": {
+        "precision": 0.364,
+        "recall": 0.069,
+        "f1": 0.116,
+        "frr": 0.013
+       },
+       "so762_frr_on_acc2": 0.0276
+      },
+      "score<T(frr5%)": {
+       "T": 81.94,
+       "so762train_oof": {
+        "precision": 0.474,
+        "recall": 0.621,
+        "f1": 0.537,
+        "frr": 0.063
+       },
+       "so762": {
+        "precision": 0.414,
+        "recall": 0.62,
+        "f1": 0.497,
+        "frr": 0.065
+       },
+       "l2arctic": {
+        "precision": 0.339,
+        "recall": 0.102,
+        "f1": 0.157,
+        "frr": 0.021
+       },
+       "so762_frr_on_acc2": 0.051
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 81.94,
+       "so762train_oof": {
+        "precision": 0.489,
+        "recall": 0.566,
+        "f1": 0.525,
+        "frr": 0.054
+       },
+       "so762": {
+        "precision": 0.426,
+        "recall": 0.573,
+        "f1": 0.489,
+        "frr": 0.057
+       },
+       "l2arctic": {
+        "precision": 0.356,
+        "recall": 0.096,
+        "f1": 0.151,
+        "frr": 0.018
+       },
+       "so762_frr_on_acc2": 0.0443
+      },
+      "score<T(frr10%)": {
+       "T": 89.92,
+       "so762train_oof": {
+        "precision": 0.365,
+        "recall": 0.761,
+        "f1": 0.494,
+        "frr": 0.122
+       },
+       "so762": {
+        "precision": 0.303,
+        "recall": 0.754,
+        "f1": 0.433,
+        "frr": 0.129
+       },
+       "l2arctic": {
+        "precision": 0.316,
+        "recall": 0.191,
+        "f1": 0.238,
+        "frr": 0.043
+       },
+       "so762_frr_on_acc2": 0.1058
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.92,
+       "so762train_oof": {
+        "precision": 0.395,
+        "recall": 0.659,
+        "f1": 0.494,
+        "frr": 0.093
+       },
+       "so762": {
+        "precision": 0.332,
+        "recall": 0.67,
+        "f1": 0.444,
+        "frr": 0.1
+       },
+       "l2arctic": {
+        "precision": 0.341,
+        "recall": 0.151,
+        "f1": 0.209,
+        "frr": 0.03
+       },
+       "so762_frr_on_acc2": 0.0814
+      },
+      "score<T(frr20%)": {
+       "T": 94.34,
+       "so762train_oof": {
+        "precision": 0.249,
+        "recall": 0.877,
+        "f1": 0.388,
+        "frr": 0.243
+       },
+       "so762": {
+        "precision": 0.204,
+        "recall": 0.868,
+        "f1": 0.33,
+        "frr": 0.252
+       },
+       "l2arctic": {
+        "precision": 0.287,
+        "recall": 0.4,
+        "f1": 0.334,
+        "frr": 0.103
+       },
+       "so762_frr_on_acc2": 0.2063
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.34,
+       "so762train_oof": {
+        "precision": 0.34,
+        "recall": 0.693,
+        "f1": 0.456,
+        "frr": 0.124
+       },
+       "so762": {
+        "precision": 0.288,
+        "recall": 0.706,
+        "f1": 0.409,
+        "frr": 0.13
+       },
+       "l2arctic": {
+        "precision": 0.314,
+        "recall": 0.173,
+        "f1": 0.223,
+        "frr": 0.039
+       },
+       "so762_frr_on_acc2": 0.1086
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.319,
+        "recall": 0.701,
+        "f1": 0.438,
+        "frr": 0.137
+       },
+       "so762": {
+        "precision": 0.272,
+        "recall": 0.712,
+        "f1": 0.393,
+        "frr": 0.142
+       },
+       "l2arctic": {
+        "precision": 0.307,
+        "recall": 0.181,
+        "f1": 0.228,
+        "frr": 0.042
+       },
+       "so762_frr_on_acc2": 0.1208
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.658,
+        "recall": 0.326,
+        "f1": 0.436,
+        "frr": 0.016
+       },
+       "so762": {
+        "precision": 0.619,
+        "recall": 0.334,
+        "f1": 0.434,
+        "frr": 0.015
+       },
+       "l2arctic": {
+        "precision": 0.364,
+        "recall": 0.039,
+        "f1": 0.07,
+        "frr": 0.007
+       },
+       "so762_frr_on_acc2": 0.0109
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr5%)",
+      "T": 81.94,
+      "frr_target": "5%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/charsiu-ctc/sent_scorer.json",
+    "data": {
+     "model": "charsiu-ctc",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7276,
+      "fluency": 0.7895,
+      "prosodic": 0.7659,
+      "total": 0.7431,
+      "completeness": 0.122
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.736,
+      "fluency": 7.866,
+      "prosodic": 7.539,
+      "total": 7.307,
+      "completeness": 9.993
+     }
+    }
+   },
+   "phone_scorer_v0": {
+    "source": "english/scorer/charsiu-ctc/phone_scorer_v0.json",
+    "data": {
+     "model": "charsiu-ctc",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6176,
+      "so762_phone_auc": 0.9335,
+      "so762_word_pcc": 0.5891,
+      "l2arctic_auc": 0.7544
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6061,
+      "so762_phone_auc": 0.9346,
+      "so762_word_pcc": 0.597,
+      "l2arctic_auc": 0.6802
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6108,
+      "so762_phone_auc": 0.9358,
+      "so762_word_pcc": 0.5882,
+      "l2arctic_auc": 0.7219
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5793,
+      "so762_phone_auc": 0.93,
+      "so762_word_pcc": 0.562,
+      "l2arctic_auc": 0.6268
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4452,
+      "l2arctic_auc": 0.679
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 77.29,
+       "so762train": {
+        "precision": 0.582,
+        "recall": 0.629,
+        "f1": 0.605,
+        "frr": 0.041
+       },
+       "so762": {
+        "precision": 0.471,
+        "recall": 0.567,
+        "f1": 0.514,
+        "frr": 0.047
+       },
+       "l2arctic": {
+        "precision": 0.388,
+        "recall": 0.093,
+        "f1": 0.15,
+        "frr": 0.015
+       }
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 77.29,
+       "so762train": {
+        "precision": 0.584,
+        "recall": 0.561,
+        "f1": 0.572,
+        "frr": 0.037
+       },
+       "so762": {
+        "precision": 0.481,
+        "recall": 0.526,
+        "f1": 0.503,
+        "frr": 0.042
+       },
+       "l2arctic": {
+        "precision": 0.399,
+        "recall": 0.088,
+        "f1": 0.144,
+        "frr": 0.014
+       }
+      },
+      "score<T(frr5%)": {
+       "T": 83.5,
+       "so762train": {
+        "precision": 0.5,
+        "recall": 0.706,
+        "f1": 0.585,
+        "frr": 0.065
+       },
+       "so762": {
+        "precision": 0.403,
+        "recall": 0.654,
+        "f1": 0.499,
+        "frr": 0.072
+       },
+       "l2arctic": {
+        "precision": 0.357,
+        "recall": 0.121,
+        "f1": 0.181,
+        "frr": 0.023
+       }
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 83.5,
+       "so762train": {
+        "precision": 0.509,
+        "recall": 0.623,
+        "f1": 0.56,
+        "frr": 0.055
+       },
+       "so762": {
+        "precision": 0.416,
+        "recall": 0.597,
+        "f1": 0.49,
+        "frr": 0.062
+       },
+       "l2arctic": {
+        "precision": 0.377,
+        "recall": 0.112,
+        "f1": 0.172,
+        "frr": 0.019
+       }
+      },
+      "score<T(frr10%)": {
+       "T": 90.51,
+       "so762train": {
+        "precision": 0.376,
+        "recall": 0.815,
+        "f1": 0.515,
+        "frr": 0.124
+       },
+       "so762": {
+        "precision": 0.302,
+        "recall": 0.767,
+        "f1": 0.433,
+        "frr": 0.132
+       },
+       "l2arctic": {
+        "precision": 0.323,
+        "recall": 0.206,
+        "f1": 0.251,
+        "frr": 0.045
+       }
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.51,
+       "so762train": {
+        "precision": 0.406,
+        "recall": 0.68,
+        "f1": 0.509,
+        "frr": 0.091
+       },
+       "so762": {
+        "precision": 0.335,
+        "recall": 0.67,
+        "f1": 0.447,
+        "frr": 0.099
+       },
+       "l2arctic": {
+        "precision": 0.342,
+        "recall": 0.146,
+        "f1": 0.205,
+        "frr": 0.029
+       }
+      },
+      "score<T(frr20%)": {
+       "T": 94.53,
+       "so762train": {
+        "precision": 0.252,
+        "recall": 0.901,
+        "f1": 0.394,
+        "frr": 0.246
+       },
+       "so762": {
+        "precision": 0.204,
+        "recall": 0.869,
+        "f1": 0.33,
+        "frr": 0.252
+       },
+       "l2arctic": {
+        "precision": 0.276,
+        "recall": 0.404,
+        "f1": 0.328,
+        "frr": 0.11
+       }
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.53,
+       "so762train": {
+        "precision": 0.354,
+        "recall": 0.695,
+        "f1": 0.469,
+        "frr": 0.116
+       },
+       "so762": {
+        "precision": 0.296,
+        "recall": 0.697,
+        "f1": 0.416,
+        "frr": 0.123
+       },
+       "l2arctic": {
+        "precision": 0.317,
+        "recall": 0.166,
+        "f1": 0.218,
+        "frr": 0.037
+       }
+      },
+      "mismatch": {
+       "T": null,
+       "so762train": {
+        "precision": 0.327,
+        "recall": 0.698,
+        "f1": 0.445,
+        "frr": 0.132
+       },
+       "so762": {
+        "precision": 0.276,
+        "recall": 0.705,
+        "f1": 0.397,
+        "frr": 0.137
+       },
+       "l2arctic": {
+        "precision": 0.309,
+        "recall": 0.177,
+        "f1": 0.225,
+        "frr": 0.041
+       }
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train": {
+        "precision": 0.776,
+        "recall": 0.395,
+        "f1": 0.524,
+        "frr": 0.01
+       },
+       "so762": {
+        "precision": 0.627,
+        "recall": 0.353,
+        "f1": 0.452,
+        "frr": 0.016
+       },
+       "l2arctic": {
+        "precision": 0.451,
+        "recall": 0.05,
+        "f1": 0.09,
+        "frr": 0.006
+       }
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 77.29
+     }
+    }
+   }
+  },
+  "en037-v1": {
+   "phone_scorer": {
+    "source": "english/scorer/en037-v1/phone_scorer.json",
+    "data": {
+     "model": "en037-v1",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6415,
+      "so762_phone_auc": 0.9362,
+      "so762_word_pcc": 0.6234,
+      "l2arctic_auc": 0.769
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6247,
+      "so762_phone_auc": 0.9357,
+      "so762_word_pcc": 0.6254,
+      "l2arctic_auc": 0.7069
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6274,
+      "so762_phone_auc": 0.9374,
+      "so762_word_pcc": 0.6122,
+      "l2arctic_auc": 0.7481
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5948,
+      "so762_phone_auc": 0.9302,
+      "so762_word_pcc": 0.6044,
+      "l2arctic_auc": 0.6573
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.401,
+      "l2arctic_auc": 0.7392
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 76.09,
+       "so762train_oof": {
+        "precision": 0.553,
+        "recall": 0.531,
+        "f1": 0.542,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.494,
+        "recall": 0.548,
+        "f1": 0.519,
+        "frr": 0.042
+       },
+       "l2arctic": {
+        "precision": 0.417,
+        "recall": 0.071,
+        "f1": 0.121,
+        "frr": 0.01
+       },
+       "so762_frr_on_acc2": 0.0322
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 76.09,
+       "so762train_oof": {
+        "precision": 0.562,
+        "recall": 0.496,
+        "f1": 0.527,
+        "frr": 0.035
+       },
+       "so762": {
+        "precision": 0.498,
+        "recall": 0.516,
+        "f1": 0.507,
+        "frr": 0.039
+       },
+       "l2arctic": {
+        "precision": 0.421,
+        "recall": 0.067,
+        "f1": 0.116,
+        "frr": 0.01
+       },
+       "so762_frr_on_acc2": 0.0297
+      },
+      "score<T(frr5%)": {
+       "T": 82.4,
+       "so762train_oof": {
+        "precision": 0.48,
+        "recall": 0.632,
+        "f1": 0.546,
+        "frr": 0.063
+       },
+       "so762": {
+        "precision": 0.413,
+        "recall": 0.642,
+        "f1": 0.502,
+        "frr": 0.068
+       },
+       "l2arctic": {
+        "precision": 0.385,
+        "recall": 0.092,
+        "f1": 0.148,
+        "frr": 0.015
+       },
+       "so762_frr_on_acc2": 0.0533
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 82.4,
+       "so762train_oof": {
+        "precision": 0.494,
+        "recall": 0.58,
+        "f1": 0.534,
+        "frr": 0.055
+       },
+       "so762": {
+        "precision": 0.42,
+        "recall": 0.596,
+        "f1": 0.493,
+        "frr": 0.061
+       },
+       "l2arctic": {
+        "precision": 0.397,
+        "recall": 0.088,
+        "f1": 0.144,
+        "frr": 0.014
+       },
+       "so762_frr_on_acc2": 0.0476
+      },
+      "score<T(frr10%)": {
+       "T": 89.71,
+       "so762train_oof": {
+        "precision": 0.365,
+        "recall": 0.763,
+        "f1": 0.494,
+        "frr": 0.122
+       },
+       "so762": {
+        "precision": 0.309,
+        "recall": 0.77,
+        "f1": 0.441,
+        "frr": 0.128
+       },
+       "l2arctic": {
+        "precision": 0.343,
+        "recall": 0.154,
+        "f1": 0.212,
+        "frr": 0.031
+       },
+       "so762_frr_on_acc2": 0.1041
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.71,
+       "so762train_oof": {
+        "precision": 0.391,
+        "recall": 0.674,
+        "f1": 0.495,
+        "frr": 0.096
+       },
+       "so762": {
+        "precision": 0.327,
+        "recall": 0.691,
+        "f1": 0.444,
+        "frr": 0.105
+       },
+       "l2arctic": {
+        "precision": 0.367,
+        "recall": 0.138,
+        "f1": 0.2,
+        "frr": 0.025
+       },
+       "so762_frr_on_acc2": 0.0852
+      },
+      "score<T(frr20%)": {
+       "T": 94.38,
+       "so762train_oof": {
+        "precision": 0.249,
+        "recall": 0.88,
+        "f1": 0.389,
+        "frr": 0.243
+       },
+       "so762": {
+        "precision": 0.203,
+        "recall": 0.872,
+        "f1": 0.33,
+        "frr": 0.253
+       },
+       "l2arctic": {
+        "precision": 0.345,
+        "recall": 0.398,
+        "f1": 0.37,
+        "frr": 0.078
+       },
+       "so762_frr_on_acc2": 0.2094
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.38,
+       "so762train_oof": {
+        "precision": 0.318,
+        "recall": 0.727,
+        "f1": 0.443,
+        "frr": 0.143
+       },
+       "so762": {
+        "precision": 0.264,
+        "recall": 0.74,
+        "f1": 0.389,
+        "frr": 0.153
+       },
+       "l2arctic": {
+        "precision": 0.331,
+        "recall": 0.186,
+        "f1": 0.238,
+        "frr": 0.039
+       },
+       "so762_frr_on_acc2": 0.1293
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.283,
+        "recall": 0.742,
+        "f1": 0.41,
+        "frr": 0.173
+       },
+       "so762": {
+        "precision": 0.237,
+        "recall": 0.754,
+        "f1": 0.361,
+        "frr": 0.18
+       },
+       "l2arctic": {
+        "precision": 0.306,
+        "recall": 0.21,
+        "f1": 0.249,
+        "frr": 0.05
+       },
+       "so762_frr_on_acc2": 0.1567
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.713,
+        "recall": 0.339,
+        "f1": 0.459,
+        "frr": 0.013
+       },
+       "so762": {
+        "precision": 0.676,
+        "recall": 0.347,
+        "f1": 0.458,
+        "frr": 0.012
+       },
+       "l2arctic": {
+        "precision": 0.46,
+        "recall": 0.031,
+        "f1": 0.059,
+        "frr": 0.004
+       },
+       "so762_frr_on_acc2": 0.0088
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr5%)",
+      "T": 82.4,
+      "frr_target": "5%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/en037-v1/sent_scorer.json",
+    "data": {
+     "model": "en037-v1",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7398,
+      "fluency": 0.7814,
+      "prosodic": 0.7659,
+      "total": 0.7538,
+      "completeness": 0.5186
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.738,
+      "fluency": 7.863,
+      "prosodic": 7.537,
+      "total": 7.301,
+      "completeness": 9.994
+     }
+    }
+   },
+   "engine_eval": {
+    "source": "english/scorer/en037-v1/engine_eval.json",
+    "data": {
+     "model": "en037-v1",
+     "device": "cuda",
+     "flag_T": 82.4,
+     "so762": {
+      "n_utts": 2500,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.6222,
+      "overall_vs_total": 0.7558,
+      "pronunciation_vs_accuracy": 0.6493,
+      "fluency_vs_fluency": 0.7853,
+      "rhythm_vs_prosodic": 0.768
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.7085,
+      "recall": 0.1078,
+      "f1": 0.1872,
+      "frr": 0.0182
+     },
+     "l2arctic_word_sweep": {
+      "70.0": {
+       "precision": 0.7609,
+       "recall": 0.0647,
+       "f1": 0.1193,
+       "frr": 0.0083
+      },
+      "80.0": {
+       "precision": 0.723,
+       "recall": 0.0949,
+       "f1": 0.1678,
+       "frr": 0.0149
+      },
+      "85.0": {
+       "precision": 0.6821,
+       "recall": 0.1269,
+       "f1": 0.214,
+       "frr": 0.0242
+      },
+      "88.0": {
+       "precision": 0.6546,
+       "recall": 0.1565,
+       "f1": 0.2526,
+       "frr": 0.0338
+      },
+      "90.0": {
+       "precision": 0.6334,
+       "recall": 0.1916,
+       "f1": 0.2942,
+       "frr": 0.0454
+      },
+      "92.0": {
+       "precision": 0.6176,
+       "recall": 0.2717,
+       "f1": 0.3774,
+       "frr": 0.0689
+      },
+      "94.0": {
+       "precision": 0.5559,
+       "recall": 0.4473,
+       "f1": 0.4957,
+       "frr": 0.1464
+      },
+      "96.0": {
+       "precision": 0.4584,
+       "recall": 0.5459,
+       "f1": 0.4983,
+       "frr": 0.2642
+      }
+     },
+     "ms": {
+      "median": 43.3,
+      "p90": 57.9
+     }
+    }
+   }
+  },
+  "huper": {
+   "phone_scorer": {
+    "source": "english/scorer/huper/phone_scorer.json",
+    "data": {
+     "model": "huper",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.565,
+      "so762_phone_auc": 0.9158,
+      "so762_word_pcc": 0.5417,
+      "l2arctic_auc": 0.7394
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5518,
+      "so762_phone_auc": 0.9158,
+      "so762_word_pcc": 0.5512,
+      "l2arctic_auc": 0.7131
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.5639,
+      "so762_phone_auc": 0.9207,
+      "so762_word_pcc": 0.5491,
+      "l2arctic_auc": 0.7155
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5107,
+      "so762_phone_auc": 0.9084,
+      "so762_word_pcc": 0.5092,
+      "l2arctic_auc": 0.6629
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3574,
+      "l2arctic_auc": 0.7429
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 73.94,
+       "so762train_oof": {
+        "precision": 0.513,
+        "recall": 0.45,
+        "f1": 0.479,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.462,
+        "recall": 0.461,
+        "f1": 0.462,
+        "frr": 0.04
+       },
+       "l2arctic": {
+        "precision": 0.387,
+        "recall": 0.133,
+        "f1": 0.198,
+        "frr": 0.022
+       },
+       "so762_frr_on_acc2": 0.029
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 73.94,
+       "so762train_oof": {
+        "precision": 0.521,
+        "recall": 0.429,
+        "f1": 0.47,
+        "frr": 0.036
+       },
+       "so762": {
+        "precision": 0.467,
+        "recall": 0.442,
+        "f1": 0.454,
+        "frr": 0.037
+       },
+       "l2arctic": {
+        "precision": 0.406,
+        "recall": 0.131,
+        "f1": 0.198,
+        "frr": 0.02
+       },
+       "so762_frr_on_acc2": 0.027
+      },
+      "score<T(frr5%)": {
+       "T": 79.67,
+       "so762train_oof": {
+        "precision": 0.443,
+        "recall": 0.559,
+        "f1": 0.494,
+        "frr": 0.065
+       },
+       "so762": {
+        "precision": 0.4,
+        "recall": 0.582,
+        "f1": 0.474,
+        "frr": 0.065
+       },
+       "l2arctic": {
+        "precision": 0.345,
+        "recall": 0.191,
+        "f1": 0.246,
+        "frr": 0.038
+       },
+       "so762_frr_on_acc2": 0.0492
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 79.67,
+       "so762train_oof": {
+        "precision": 0.452,
+        "recall": 0.525,
+        "f1": 0.485,
+        "frr": 0.058
+       },
+       "so762": {
+        "precision": 0.407,
+        "recall": 0.553,
+        "f1": 0.469,
+        "frr": 0.06
+       },
+       "l2arctic": {
+        "precision": 0.369,
+        "recall": 0.186,
+        "f1": 0.247,
+        "frr": 0.033
+       },
+       "so762_frr_on_acc2": 0.0448
+      },
+      "score<T(frr10%)": {
+       "T": 87.95,
+       "so762train_oof": {
+        "precision": 0.348,
+        "recall": 0.73,
+        "f1": 0.471,
+        "frr": 0.126
+       },
+       "so762": {
+        "precision": 0.302,
+        "recall": 0.742,
+        "f1": 0.43,
+        "frr": 0.127
+       },
+       "l2arctic": {
+        "precision": 0.293,
+        "recall": 0.312,
+        "f1": 0.302,
+        "frr": 0.078
+       },
+       "so762_frr_on_acc2": 0.1002
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 87.95,
+       "so762train_oof": {
+        "precision": 0.361,
+        "recall": 0.665,
+        "f1": 0.468,
+        "frr": 0.108
+       },
+       "so762": {
+        "precision": 0.316,
+        "recall": 0.69,
+        "f1": 0.433,
+        "frr": 0.111
+       },
+       "l2arctic": {
+        "precision": 0.345,
+        "recall": 0.295,
+        "f1": 0.318,
+        "frr": 0.058
+       },
+       "so762_frr_on_acc2": 0.0857
+      },
+      "score<T(frr20%)": {
+       "T": 93.83,
+       "so762train_oof": {
+        "precision": 0.246,
+        "recall": 0.853,
+        "f1": 0.382,
+        "frr": 0.24
+       },
+       "so762": {
+        "precision": 0.207,
+        "recall": 0.861,
+        "f1": 0.333,
+        "frr": 0.246
+       },
+       "l2arctic": {
+        "precision": 0.232,
+        "recall": 0.483,
+        "f1": 0.313,
+        "frr": 0.166
+       },
+       "so762_frr_on_acc2": 0.2039
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 93.83,
+       "so762train_oof": {
+        "precision": 0.282,
+        "recall": 0.74,
+        "f1": 0.408,
+        "frr": 0.173
+       },
+       "so762": {
+        "precision": 0.24,
+        "recall": 0.762,
+        "f1": 0.365,
+        "frr": 0.179
+       },
+       "l2arctic": {
+        "precision": 0.293,
+        "recall": 0.395,
+        "f1": 0.336,
+        "frr": 0.099
+       },
+       "so762_frr_on_acc2": 0.1446
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.235,
+        "recall": 0.768,
+        "f1": 0.36,
+        "frr": 0.229
+       },
+       "so762": {
+        "precision": 0.197,
+        "recall": 0.788,
+        "f1": 0.315,
+        "frr": 0.239
+       },
+       "l2arctic": {
+        "precision": 0.255,
+        "recall": 0.471,
+        "f1": 0.331,
+        "frr": 0.143
+       },
+       "so762_frr_on_acc2": 0.2059
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.654,
+        "recall": 0.251,
+        "f1": 0.363,
+        "frr": 0.012
+       },
+       "so762": {
+        "precision": 0.605,
+        "recall": 0.27,
+        "f1": 0.374,
+        "frr": 0.013
+       },
+       "l2arctic": {
+        "precision": 0.433,
+        "recall": 0.056,
+        "f1": 0.099,
+        "frr": 0.008
+       },
+       "so762_frr_on_acc2": 0.0089
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr5%)",
+      "T": 79.67,
+      "frr_target": "5%"
+     }
+    }
+   },
+   "phone_scorer_v0": {
+    "source": "english/scorer/huper/phone_scorer_v0.json",
+    "data": {
+     "model": "huper",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.5732,
+      "so762_phone_auc": 0.9208,
+      "so762_word_pcc": 0.5578,
+      "l2arctic_auc": 0.7468
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5571,
+      "so762_phone_auc": 0.9206,
+      "so762_word_pcc": 0.5589,
+      "l2arctic_auc": 0.7077
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.5649,
+      "so762_phone_auc": 0.9236,
+      "so762_word_pcc": 0.5526,
+      "l2arctic_auc": 0.7238
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5296,
+      "so762_phone_auc": 0.9147,
+      "so762_word_pcc": 0.5283,
+      "l2arctic_auc": 0.6738
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3675,
+      "l2arctic_auc": 0.7468
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 76.71,
+       "so762train": {
+        "precision": 0.576,
+        "recall": 0.615,
+        "f1": 0.595,
+        "frr": 0.042
+       },
+       "so762": {
+        "precision": 0.431,
+        "recall": 0.548,
+        "f1": 0.483,
+        "frr": 0.054
+       },
+       "l2arctic": {
+        "precision": 0.347,
+        "recall": 0.148,
+        "f1": 0.207,
+        "frr": 0.029
+       }
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 76.71,
+       "so762train": {
+        "precision": 0.569,
+        "recall": 0.56,
+        "f1": 0.564,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.436,
+        "recall": 0.515,
+        "f1": 0.472,
+        "frr": 0.049
+       },
+       "l2arctic": {
+        "precision": 0.36,
+        "recall": 0.144,
+        "f1": 0.206,
+        "frr": 0.027
+       }
+      },
+      "score<T(frr5%)": {
+       "T": 82.16,
+       "so762train": {
+        "precision": 0.485,
+        "recall": 0.696,
+        "f1": 0.572,
+        "frr": 0.068
+       },
+       "so762": {
+        "precision": 0.375,
+        "recall": 0.642,
+        "f1": 0.473,
+        "frr": 0.079
+       },
+       "l2arctic": {
+        "precision": 0.324,
+        "recall": 0.205,
+        "f1": 0.251,
+        "frr": 0.044
+       }
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 82.16,
+       "so762train": {
+        "precision": 0.483,
+        "recall": 0.626,
+        "f1": 0.545,
+        "frr": 0.062
+       },
+       "so762": {
+        "precision": 0.381,
+        "recall": 0.596,
+        "f1": 0.465,
+        "frr": 0.072
+       },
+       "l2arctic": {
+        "precision": 0.351,
+        "recall": 0.198,
+        "f1": 0.254,
+        "frr": 0.038
+       }
+      },
+      "score<T(frr10%)": {
+       "T": 89.13,
+       "so762train": {
+        "precision": 0.362,
+        "recall": 0.801,
+        "f1": 0.499,
+        "frr": 0.129
+       },
+       "so762": {
+        "precision": 0.293,
+        "recall": 0.769,
+        "f1": 0.424,
+        "frr": 0.138
+       },
+       "l2arctic": {
+        "precision": 0.277,
+        "recall": 0.317,
+        "f1": 0.296,
+        "frr": 0.086
+       }
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.13,
+       "so762train": {
+        "precision": 0.369,
+        "recall": 0.703,
+        "f1": 0.484,
+        "frr": 0.11
+       },
+       "so762": {
+        "precision": 0.305,
+        "recall": 0.701,
+        "f1": 0.425,
+        "frr": 0.118
+       },
+       "l2arctic": {
+        "precision": 0.323,
+        "recall": 0.295,
+        "f1": 0.308,
+        "frr": 0.064
+       }
+      },
+      "score<T(frr20%)": {
+       "T": 94.29,
+       "so762train": {
+        "precision": 0.252,
+        "recall": 0.895,
+        "f1": 0.393,
+        "frr": 0.244
+       },
+       "so762": {
+        "precision": 0.203,
+        "recall": 0.869,
+        "f1": 0.329,
+        "frr": 0.253
+       },
+       "l2arctic": {
+        "precision": 0.236,
+        "recall": 0.504,
+        "f1": 0.321,
+        "frr": 0.17
+       }
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.29,
+       "so762train": {
+        "precision": 0.288,
+        "recall": 0.75,
+        "f1": 0.416,
+        "frr": 0.17
+       },
+       "so762": {
+        "precision": 0.24,
+        "recall": 0.76,
+        "f1": 0.364,
+        "frr": 0.179
+       },
+       "l2arctic": {
+        "precision": 0.284,
+        "recall": 0.388,
+        "f1": 0.328,
+        "frr": 0.102
+       }
+      },
+      "mismatch": {
+       "T": null,
+       "so762train": {
+        "precision": 0.235,
+        "recall": 0.765,
+        "f1": 0.36,
+        "frr": 0.228
+       },
+       "so762": {
+        "precision": 0.198,
+        "recall": 0.782,
+        "f1": 0.316,
+        "frr": 0.236
+       },
+       "l2arctic": {
+        "precision": 0.243,
+        "recall": 0.455,
+        "f1": 0.317,
+        "frr": 0.147
+       }
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train": {
+        "precision": 0.812,
+        "recall": 0.337,
+        "f1": 0.476,
+        "frr": 0.007
+       },
+       "so762": {
+        "precision": 0.597,
+        "recall": 0.275,
+        "f1": 0.377,
+        "frr": 0.014
+       },
+       "l2arctic": {
+        "precision": 0.42,
+        "recall": 0.056,
+        "f1": 0.098,
+        "frr": 0.008
+       }
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 76.71
+     }
+    }
+   }
+  },
+  "lv60-espeak": {
+   "phone_scorer": {
+    "source": "english/scorer/lv60-espeak/phone_scorer.json",
+    "data": {
+     "model": "lv60-espeak",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.5984,
+      "so762_phone_auc": 0.9258,
+      "so762_word_pcc": 0.577,
+      "l2arctic_auc": 0.7113
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5872,
+      "so762_phone_auc": 0.928,
+      "so762_word_pcc": 0.5836,
+      "l2arctic_auc": 0.6333
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.5955,
+      "so762_phone_auc": 0.93,
+      "so762_word_pcc": 0.5821,
+      "l2arctic_auc": 0.711
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5543,
+      "so762_phone_auc": 0.9212,
+      "so762_word_pcc": 0.5489,
+      "l2arctic_auc": 0.5639
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3838,
+      "l2arctic_auc": 0.6788
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 75.03,
+       "so762train_oof": {
+        "precision": 0.546,
+        "recall": 0.514,
+        "f1": 0.53,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.473,
+        "recall": 0.503,
+        "f1": 0.488,
+        "frr": 0.042
+       },
+       "l2arctic": {
+        "precision": 0.363,
+        "recall": 0.073,
+        "f1": 0.122,
+        "frr": 0.013
+       },
+       "so762_frr_on_acc2": 0.0317
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 75.03,
+       "so762train_oof": {
+        "precision": 0.557,
+        "recall": 0.488,
+        "f1": 0.52,
+        "frr": 0.036
+       },
+       "so762": {
+        "precision": 0.482,
+        "recall": 0.477,
+        "f1": 0.48,
+        "frr": 0.038
+       },
+       "l2arctic": {
+        "precision": 0.43,
+        "recall": 0.068,
+        "f1": 0.117,
+        "frr": 0.009
+       },
+       "so762_frr_on_acc2": 0.0288
+      },
+      "score<T(frr5%)": {
+       "T": 81.68,
+       "so762train_oof": {
+        "precision": 0.472,
+        "recall": 0.613,
+        "f1": 0.533,
+        "frr": 0.063
+       },
+       "so762": {
+        "precision": 0.398,
+        "recall": 0.605,
+        "f1": 0.481,
+        "frr": 0.068
+       },
+       "l2arctic": {
+        "precision": 0.34,
+        "recall": 0.105,
+        "f1": 0.161,
+        "frr": 0.021
+       },
+       "so762_frr_on_acc2": 0.0534
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 81.68,
+       "so762train_oof": {
+        "precision": 0.484,
+        "recall": 0.571,
+        "f1": 0.524,
+        "frr": 0.056
+       },
+       "so762": {
+        "precision": 0.407,
+        "recall": 0.565,
+        "f1": 0.473,
+        "frr": 0.061
+       },
+       "l2arctic": {
+        "precision": 0.422,
+        "recall": 0.096,
+        "f1": 0.156,
+        "frr": 0.014
+       },
+       "so762_frr_on_acc2": 0.0476
+      },
+      "score<T(frr10%)": {
+       "T": 89.15,
+       "so762train_oof": {
+        "precision": 0.36,
+        "recall": 0.747,
+        "f1": 0.486,
+        "frr": 0.122
+       },
+       "so762": {
+        "precision": 0.305,
+        "recall": 0.752,
+        "f1": 0.434,
+        "frr": 0.127
+       },
+       "l2arctic": {
+        "precision": 0.278,
+        "recall": 0.151,
+        "f1": 0.196,
+        "frr": 0.041
+       },
+       "so762_frr_on_acc2": 0.1045
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.15,
+       "so762train_oof": {
+        "precision": 0.379,
+        "recall": 0.676,
+        "f1": 0.486,
+        "frr": 0.102
+       },
+       "so762": {
+        "precision": 0.316,
+        "recall": 0.693,
+        "f1": 0.434,
+        "frr": 0.111
+       },
+       "l2arctic": {
+        "precision": 0.374,
+        "recall": 0.136,
+        "f1": 0.2,
+        "frr": 0.024
+       },
+       "so762_frr_on_acc2": 0.0896
+      },
+      "score<T(frr20%)": {
+       "T": 94.33,
+       "so762train_oof": {
+        "precision": 0.245,
+        "recall": 0.865,
+        "f1": 0.382,
+        "frr": 0.244
+       },
+       "so762": {
+        "precision": 0.204,
+        "recall": 0.863,
+        "f1": 0.33,
+        "frr": 0.25
+       },
+       "l2arctic": {
+        "precision": 0.267,
+        "recall": 0.359,
+        "f1": 0.306,
+        "frr": 0.102
+       },
+       "so762_frr_on_acc2": 0.2054
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.33,
+       "so762train_oof": {
+        "precision": 0.299,
+        "recall": 0.736,
+        "f1": 0.425,
+        "frr": 0.158
+       },
+       "so762": {
+        "precision": 0.247,
+        "recall": 0.758,
+        "f1": 0.373,
+        "frr": 0.171
+       },
+       "l2arctic": {
+        "precision": 0.301,
+        "recall": 0.183,
+        "f1": 0.228,
+        "frr": 0.044
+       },
+       "so762_frr_on_acc2": 0.1448
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.256,
+        "recall": 0.754,
+        "f1": 0.382,
+        "frr": 0.201
+       },
+       "so762": {
+        "precision": 0.216,
+        "recall": 0.776,
+        "f1": 0.338,
+        "frr": 0.209
+       },
+       "l2arctic": {
+        "precision": 0.276,
+        "recall": 0.215,
+        "f1": 0.242,
+        "frr": 0.059
+       },
+       "so762_frr_on_acc2": 0.1836
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.702,
+        "recall": 0.308,
+        "f1": 0.428,
+        "frr": 0.012
+       },
+       "so762": {
+        "precision": 0.644,
+        "recall": 0.296,
+        "f1": 0.405,
+        "frr": 0.012
+       },
+       "l2arctic": {
+        "precision": 0.478,
+        "recall": 0.036,
+        "f1": 0.066,
+        "frr": 0.004
+       },
+       "so762_frr_on_acc2": 0.0087
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr5%)",
+      "T": 81.68,
+      "frr_target": "5%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/lv60-espeak/sent_scorer.json",
+    "data": {
+     "model": "lv60-espeak",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7468,
+      "fluency": 0.7844,
+      "prosodic": 0.7704,
+      "total": 0.751,
+      "completeness": 0.2261
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.715,
+      "fluency": 7.862,
+      "prosodic": 7.529,
+      "total": 7.269,
+      "completeness": 9.994
+     }
+    }
+   },
+   "engine_eval": {
+    "source": "english/scorer/lv60-espeak/engine_eval.json",
+    "data": {
+     "model": "lv60-espeak",
+     "device": "cuda",
+     "flag_T": 81.68,
+     "so762": {
+      "n_utts": 2500,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.5733,
+      "overall_vs_total": 0.7515,
+      "pronunciation_vs_accuracy": 0.6275,
+      "fluency_vs_fluency": 0.7859,
+      "rhythm_vs_prosodic": 0.7738
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.5964,
+      "recall": 0.1429,
+      "f1": 0.2306,
+      "frr": 0.0396
+     },
+     "ms": {
+      "median": 42.2,
+      "p90": 56.5
+     }
+    }
+   },
+   "phone_scorer_v0": {
+    "source": "english/scorer/lv60-espeak/phone_scorer_v0.json",
+    "data": {
+     "model": "lv60-espeak",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6138,
+      "so762_phone_auc": 0.9316,
+      "so762_word_pcc": 0.5986,
+      "l2arctic_auc": 0.7307
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5932,
+      "so762_phone_auc": 0.9317,
+      "so762_word_pcc": 0.5941,
+      "l2arctic_auc": 0.5957
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6007,
+      "so762_phone_auc": 0.9326,
+      "so762_word_pcc": 0.5858,
+      "l2arctic_auc": 0.6895
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5718,
+      "so762_phone_auc": 0.9253,
+      "so762_word_pcc": 0.5658,
+      "l2arctic_auc": 0.5547
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3899,
+      "l2arctic_auc": 0.6649
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 79.38,
+       "so762train": {
+        "precision": 0.593,
+        "recall": 0.665,
+        "f1": 0.627,
+        "frr": 0.042
+       },
+       "so762": {
+        "precision": 0.445,
+        "recall": 0.594,
+        "f1": 0.509,
+        "frr": 0.055
+       },
+       "l2arctic": {
+        "precision": 0.32,
+        "recall": 0.101,
+        "f1": 0.154,
+        "frr": 0.022
+       }
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 79.38,
+       "so762train": {
+        "precision": 0.597,
+        "recall": 0.595,
+        "f1": 0.596,
+        "frr": 0.037
+       },
+       "so762": {
+        "precision": 0.457,
+        "recall": 0.55,
+        "f1": 0.5,
+        "frr": 0.048
+       },
+       "l2arctic": {
+        "precision": 0.399,
+        "recall": 0.087,
+        "f1": 0.143,
+        "frr": 0.014
+       }
+      },
+      "score<T(frr5%)": {
+       "T": 84.71,
+       "so762train": {
+        "precision": 0.504,
+        "recall": 0.741,
+        "f1": 0.6,
+        "frr": 0.067
+       },
+       "so762": {
+        "precision": 0.385,
+        "recall": 0.675,
+        "f1": 0.49,
+        "frr": 0.08
+       },
+       "l2arctic": {
+        "precision": 0.302,
+        "recall": 0.128,
+        "f1": 0.18,
+        "frr": 0.031
+       }
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 84.71,
+       "so762train": {
+        "precision": 0.509,
+        "recall": 0.653,
+        "f1": 0.572,
+        "frr": 0.058
+       },
+       "so762": {
+        "precision": 0.399,
+        "recall": 0.62,
+        "f1": 0.485,
+        "frr": 0.069
+       },
+       "l2arctic": {
+        "precision": 0.4,
+        "recall": 0.108,
+        "f1": 0.17,
+        "frr": 0.017
+       }
+      },
+      "score<T(frr10%)": {
+       "T": 90.69,
+       "so762train": {
+        "precision": 0.375,
+        "recall": 0.832,
+        "f1": 0.517,
+        "frr": 0.127
+       },
+       "so762": {
+        "precision": 0.294,
+        "recall": 0.789,
+        "f1": 0.428,
+        "frr": 0.141
+       },
+       "l2arctic": {
+        "precision": 0.263,
+        "recall": 0.196,
+        "f1": 0.224,
+        "frr": 0.057
+       }
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.69,
+       "so762train": {
+        "precision": 0.395,
+        "recall": 0.711,
+        "f1": 0.507,
+        "frr": 0.1
+       },
+       "so762": {
+        "precision": 0.318,
+        "recall": 0.709,
+        "f1": 0.44,
+        "frr": 0.113
+       },
+       "l2arctic": {
+        "precision": 0.365,
+        "recall": 0.143,
+        "f1": 0.206,
+        "frr": 0.026
+       }
+      },
+      "score<T(frr20%)": {
+       "T": 94.74,
+       "so762train": {
+        "precision": 0.251,
+        "recall": 0.908,
+        "f1": 0.393,
+        "frr": 0.248
+       },
+       "so762": {
+        "precision": 0.2,
+        "recall": 0.878,
+        "f1": 0.326,
+        "frr": 0.26
+       },
+       "l2arctic": {
+        "precision": 0.241,
+        "recall": 0.413,
+        "f1": 0.304,
+        "frr": 0.135
+       }
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.74,
+       "so762train": {
+        "precision": 0.311,
+        "recall": 0.742,
+        "f1": 0.439,
+        "frr": 0.151
+       },
+       "so762": {
+        "precision": 0.257,
+        "recall": 0.756,
+        "f1": 0.383,
+        "frr": 0.163
+       },
+       "l2arctic": {
+        "precision": 0.305,
+        "recall": 0.175,
+        "f1": 0.222,
+        "frr": 0.041
+       }
+      },
+      "mismatch": {
+       "T": null,
+       "so762train": {
+        "precision": 0.259,
+        "recall": 0.751,
+        "f1": 0.385,
+        "frr": 0.198
+       },
+       "so762": {
+        "precision": 0.219,
+        "recall": 0.775,
+        "f1": 0.341,
+        "frr": 0.205
+       },
+       "l2arctic": {
+        "precision": 0.274,
+        "recall": 0.201,
+        "f1": 0.232,
+        "frr": 0.055
+       }
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train": {
+        "precision": 0.842,
+        "recall": 0.419,
+        "f1": 0.56,
+        "frr": 0.007
+       },
+       "so762": {
+        "precision": 0.622,
+        "recall": 0.334,
+        "f1": 0.434,
+        "frr": 0.015
+       },
+       "l2arctic": {
+        "precision": 0.389,
+        "recall": 0.039,
+        "f1": 0.071,
+        "frr": 0.006
+       }
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 79.38
+     }
+    }
+   },
+   "sent_scorer_v0": {
+    "source": "english/scorer/lv60-espeak/sent_scorer_v0.json",
+    "data": {
+     "model": "lv60-espeak",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.758,
+      "fluency": 0.7895,
+      "prosodic": 0.7771,
+      "total": 0.7679,
+      "completeness": 0.4076
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.719,
+      "fluency": 7.874,
+      "prosodic": 7.548,
+      "total": 7.293,
+      "completeness": 9.992
+     }
+    }
+   },
+   "engine_eval_v0": {
+    "source": "english/scorer/lv60-espeak/engine_eval_v0.json",
+    "data": {
+     "model": "lv60-espeak",
+     "device": "cuda",
+     "flag_T": 79.38,
+     "so762": {
+      "n_utts": 2500,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.5683,
+      "overall_vs_total": 0.7551,
+      "pronunciation_vs_accuracy": 0.6351,
+      "fluency_vs_fluency": 0.7784,
+      "rhythm_vs_prosodic": 0.7693
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.6016,
+      "recall": 0.1405,
+      "f1": 0.2278,
+      "frr": 0.0381
+     },
+     "ms": {
+      "median": 46.2,
+      "p90": 62.9
+     }
+    }
+   }
+  },
+  "slplab-l2": {
+   "phone_scorer": {
+    "source": "english/scorer/slplab-l2/phone_scorer.json",
+    "data": {
+     "model": "slplab-l2",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.5994,
+      "so762_phone_auc": 0.9308,
+      "so762_word_pcc": 0.5563,
+      "l2arctic_auc": 0.7686
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.5882,
+      "so762_phone_auc": 0.9313,
+      "so762_word_pcc": 0.5616,
+      "l2arctic_auc": 0.7513
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.5977,
+      "so762_phone_auc": 0.9338,
+      "so762_word_pcc": 0.5593,
+      "l2arctic_auc": 0.7545
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5677,
+      "so762_phone_auc": 0.9281,
+      "so762_word_pcc": 0.5453,
+      "l2arctic_auc": 0.6891
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4304,
+      "l2arctic_auc": 0.7722
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 74.08,
+       "so762train_oof": {
+        "precision": 0.549,
+        "recall": 0.504,
+        "f1": 0.526,
+        "frr": 0.038
+       },
+       "so762": {
+        "precision": 0.492,
+        "recall": 0.506,
+        "f1": 0.499,
+        "frr": 0.039
+       },
+       "l2arctic": {
+        "precision": 0.43,
+        "recall": 0.053,
+        "f1": 0.094,
+        "frr": 0.007
+       },
+       "so762_frr_on_acc2": 0.03
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 74.08,
+       "so762train_oof": {
+        "precision": 0.554,
+        "recall": 0.465,
+        "f1": 0.506,
+        "frr": 0.034
+       },
+       "so762": {
+        "precision": 0.498,
+        "recall": 0.47,
+        "f1": 0.483,
+        "frr": 0.035
+       },
+       "l2arctic": {
+        "precision": 0.45,
+        "recall": 0.049,
+        "f1": 0.088,
+        "frr": 0.006
+       },
+       "so762_frr_on_acc2": 0.0269
+      },
+      "score<T(frr5%)": {
+       "T": 81.75,
+       "so762train_oof": {
+        "precision": 0.473,
+        "recall": 0.609,
+        "f1": 0.533,
+        "frr": 0.062
+       },
+       "so762": {
+        "precision": 0.415,
+        "recall": 0.622,
+        "f1": 0.498,
+        "frr": 0.065
+       },
+       "l2arctic": {
+        "precision": 0.375,
+        "recall": 0.074,
+        "f1": 0.123,
+        "frr": 0.013
+       },
+       "so762_frr_on_acc2": 0.0509
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 81.75,
+       "so762train_oof": {
+        "precision": 0.485,
+        "recall": 0.555,
+        "f1": 0.518,
+        "frr": 0.054
+       },
+       "so762": {
+        "precision": 0.424,
+        "recall": 0.573,
+        "f1": 0.487,
+        "frr": 0.058
+       },
+       "l2arctic": {
+        "precision": 0.388,
+        "recall": 0.067,
+        "f1": 0.115,
+        "frr": 0.011
+       },
+       "so762_frr_on_acc2": 0.0447
+      },
+      "score<T(frr10%)": {
+       "T": 89.57,
+       "so762train_oof": {
+        "precision": 0.361,
+        "recall": 0.751,
+        "f1": 0.488,
+        "frr": 0.122
+       },
+       "so762": {
+        "precision": 0.31,
+        "recall": 0.754,
+        "f1": 0.44,
+        "frr": 0.124
+       },
+       "l2arctic": {
+        "precision": 0.356,
+        "recall": 0.161,
+        "f1": 0.222,
+        "frr": 0.03
+       },
+       "so762_frr_on_acc2": 0.101
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.57,
+       "so762train_oof": {
+        "precision": 0.382,
+        "recall": 0.658,
+        "f1": 0.483,
+        "frr": 0.098
+       },
+       "so762": {
+        "precision": 0.327,
+        "recall": 0.673,
+        "f1": 0.44,
+        "frr": 0.103
+       },
+       "l2arctic": {
+        "precision": 0.36,
+        "recall": 0.122,
+        "f1": 0.183,
+        "frr": 0.023
+       },
+       "so762_frr_on_acc2": 0.0824
+      },
+      "score<T(frr20%)": {
+       "T": 94.24,
+       "so762train_oof": {
+        "precision": 0.248,
+        "recall": 0.868,
+        "f1": 0.385,
+        "frr": 0.242
+       },
+       "so762": {
+        "precision": 0.208,
+        "recall": 0.867,
+        "f1": 0.335,
+        "frr": 0.246
+       },
+       "l2arctic": {
+        "precision": 0.303,
+        "recall": 0.388,
+        "f1": 0.34,
+        "frr": 0.093
+       },
+       "so762_frr_on_acc2": 0.2028
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.24,
+       "so762train_oof": {
+        "precision": 0.318,
+        "recall": 0.709,
+        "f1": 0.439,
+        "frr": 0.14
+       },
+       "so762": {
+        "precision": 0.271,
+        "recall": 0.722,
+        "f1": 0.394,
+        "frr": 0.144
+       },
+       "l2arctic": {
+        "precision": 0.325,
+        "recall": 0.186,
+        "f1": 0.236,
+        "frr": 0.04
+       },
+       "so762_frr_on_acc2": 0.1203
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.26,
+        "recall": 0.722,
+        "f1": 0.383,
+        "frr": 0.188
+       },
+       "so762": {
+        "precision": 0.222,
+        "recall": 0.736,
+        "f1": 0.342,
+        "frr": 0.191
+       },
+       "l2arctic": {
+        "precision": 0.243,
+        "recall": 0.257,
+        "f1": 0.25,
+        "frr": 0.083
+       },
+       "so762_frr_on_acc2": 0.1698
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.68,
+        "recall": 0.318,
+        "f1": 0.433,
+        "frr": 0.014
+       },
+       "so762": {
+        "precision": 0.608,
+        "recall": 0.325,
+        "f1": 0.423,
+        "frr": 0.016
+       },
+       "l2arctic": {
+        "precision": 0.469,
+        "recall": 0.029,
+        "f1": 0.054,
+        "frr": 0.003
+       },
+       "so762_frr_on_acc2": 0.0119
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr5%)",
+      "T": 81.75,
+      "frr_target": "5%"
+     }
+    }
+   },
+   "phone_scorer_v0": {
+    "source": "english/scorer/slplab-l2/phone_scorer_v0.json",
+    "data": {
+     "model": "slplab-l2",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.599,
+      "so762_phone_auc": 0.9307,
+      "so762_word_pcc": 0.5572,
+      "l2arctic_auc": 0.7699
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.583,
+      "so762_phone_auc": 0.929,
+      "so762_word_pcc": 0.5544,
+      "l2arctic_auc": 0.7346
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.5962,
+      "so762_phone_auc": 0.9339,
+      "so762_word_pcc": 0.5542,
+      "l2arctic_auc": 0.7444
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5725,
+      "so762_phone_auc": 0.9298,
+      "so762_word_pcc": 0.5409,
+      "l2arctic_auc": 0.6909
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4402,
+      "l2arctic_auc": 0.7709
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 77.77,
+       "so762train": {
+        "precision": 0.59,
+        "recall": 0.632,
+        "f1": 0.611,
+        "frr": 0.04
+       },
+       "so762": {
+        "precision": 0.46,
+        "recall": 0.564,
+        "f1": 0.507,
+        "frr": 0.049
+       },
+       "l2arctic": {
+        "precision": 0.387,
+        "recall": 0.056,
+        "f1": 0.097,
+        "frr": 0.009
+       }
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 77.77,
+       "so762train": {
+        "precision": 0.59,
+        "recall": 0.558,
+        "f1": 0.573,
+        "frr": 0.036
+       },
+       "so762": {
+        "precision": 0.465,
+        "recall": 0.516,
+        "f1": 0.489,
+        "frr": 0.044
+       },
+       "l2arctic": {
+        "precision": 0.416,
+        "recall": 0.052,
+        "f1": 0.092,
+        "frr": 0.008
+       }
+      },
+      "score<T(frr5%)": {
+       "T": 83.55,
+       "so762train": {
+        "precision": 0.502,
+        "recall": 0.712,
+        "f1": 0.589,
+        "frr": 0.065
+       },
+       "so762": {
+        "precision": 0.403,
+        "recall": 0.653,
+        "f1": 0.498,
+        "frr": 0.072
+       },
+       "l2arctic": {
+        "precision": 0.342,
+        "recall": 0.076,
+        "f1": 0.124,
+        "frr": 0.015
+       }
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 83.55,
+       "so762train": {
+        "precision": 0.506,
+        "recall": 0.615,
+        "f1": 0.555,
+        "frr": 0.055
+       },
+       "so762": {
+        "precision": 0.413,
+        "recall": 0.591,
+        "f1": 0.486,
+        "frr": 0.062
+       },
+       "l2arctic": {
+        "precision": 0.374,
+        "recall": 0.069,
+        "f1": 0.117,
+        "frr": 0.012
+       }
+      },
+      "score<T(frr10%)": {
+       "T": 90.08,
+       "so762train": {
+        "precision": 0.375,
+        "recall": 0.822,
+        "f1": 0.515,
+        "frr": 0.126
+       },
+       "so762": {
+        "precision": 0.304,
+        "recall": 0.764,
+        "f1": 0.435,
+        "frr": 0.13
+       },
+       "l2arctic": {
+        "precision": 0.381,
+        "recall": 0.203,
+        "f1": 0.265,
+        "frr": 0.034
+       }
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.08,
+       "so762train": {
+        "precision": 0.396,
+        "recall": 0.681,
+        "f1": 0.501,
+        "frr": 0.095
+       },
+       "so762": {
+        "precision": 0.331,
+        "recall": 0.671,
+        "f1": 0.444,
+        "frr": 0.101
+       },
+       "l2arctic": {
+        "precision": 0.371,
+        "recall": 0.126,
+        "f1": 0.188,
+        "frr": 0.022
+       }
+      },
+      "score<T(frr20%)": {
+       "T": 94.47,
+       "so762train": {
+        "precision": 0.249,
+        "recall": 0.895,
+        "f1": 0.389,
+        "frr": 0.248
+       },
+       "so762": {
+        "precision": 0.203,
+        "recall": 0.862,
+        "f1": 0.329,
+        "frr": 0.251
+       },
+       "l2arctic": {
+        "precision": 0.296,
+        "recall": 0.391,
+        "f1": 0.337,
+        "frr": 0.096
+       }
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.47,
+       "so762train": {
+        "precision": 0.326,
+        "recall": 0.702,
+        "f1": 0.445,
+        "frr": 0.133
+       },
+       "so762": {
+        "precision": 0.278,
+        "recall": 0.715,
+        "f1": 0.4,
+        "frr": 0.138
+       },
+       "l2arctic": {
+        "precision": 0.325,
+        "recall": 0.172,
+        "f1": 0.225,
+        "frr": 0.037
+       }
+      },
+      "mismatch": {
+       "T": null,
+       "so762train": {
+        "precision": 0.261,
+        "recall": 0.709,
+        "f1": 0.382,
+        "frr": 0.184
+       },
+       "so762": {
+        "precision": 0.224,
+        "recall": 0.73,
+        "f1": 0.343,
+        "frr": 0.187
+       },
+       "l2arctic": {
+        "precision": 0.234,
+        "recall": 0.244,
+        "f1": 0.239,
+        "frr": 0.083
+       }
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train": {
+        "precision": 0.801,
+        "recall": 0.393,
+        "f1": 0.527,
+        "frr": 0.009
+       },
+       "so762": {
+        "precision": 0.592,
+        "recall": 0.322,
+        "f1": 0.417,
+        "frr": 0.016
+       },
+       "l2arctic": {
+        "precision": 0.468,
+        "recall": 0.028,
+        "f1": 0.052,
+        "frr": 0.003
+       }
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 77.77
+     }
+    }
+   }
+  },
+  "synth-a": {
+   "phone_scorer": {
+    "source": "english/scorer/synth-a/phone_scorer.json",
+    "data": {
+     "model": "synth-a",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6311,
+      "so762_phone_auc": 0.9324,
+      "so762_word_pcc": 0.6053,
+      "l2arctic_auc": 0.8118
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6163,
+      "so762_phone_auc": 0.9334,
+      "so762_word_pcc": 0.6133,
+      "l2arctic_auc": 0.8047
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6257,
+      "so762_phone_auc": 0.9367,
+      "so762_word_pcc": 0.6065,
+      "l2arctic_auc": 0.8066
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5909,
+      "so762_phone_auc": 0.927,
+      "so762_word_pcc": 0.5899,
+      "l2arctic_auc": 0.7734
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3694,
+      "l2arctic_auc": 0.8382
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 77.15,
+       "so762train_oof": {
+        "precision": 0.562,
+        "recall": 0.557,
+        "f1": 0.56,
+        "frr": 0.04
+       },
+       "so762": {
+        "precision": 0.488,
+        "recall": 0.568,
+        "f1": 0.525,
+        "frr": 0.044
+       },
+       "l2arctic": {
+        "precision": 0.458,
+        "recall": 0.105,
+        "f1": 0.17,
+        "frr": 0.013
+       },
+       "so762_frr_on_acc2": 0.0334
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 77.15,
+       "so762train_oof": {
+        "precision": 0.573,
+        "recall": 0.511,
+        "f1": 0.54,
+        "frr": 0.035
+       },
+       "so762": {
+        "precision": 0.498,
+        "recall": 0.526,
+        "f1": 0.512,
+        "frr": 0.039
+       },
+       "l2arctic": {
+        "precision": 0.476,
+        "recall": 0.098,
+        "f1": 0.163,
+        "frr": 0.011
+       },
+       "so762_frr_on_acc2": 0.0292
+      },
+      "score<T(frr5%)": {
+       "T": 83.21,
+       "so762train_oof": {
+        "precision": 0.477,
+        "recall": 0.648,
+        "f1": 0.55,
+        "frr": 0.065
+       },
+       "so762": {
+        "precision": 0.409,
+        "recall": 0.665,
+        "f1": 0.507,
+        "frr": 0.071
+       },
+       "l2arctic": {
+        "precision": 0.451,
+        "recall": 0.148,
+        "f1": 0.223,
+        "frr": 0.019
+       },
+       "so762_frr_on_acc2": 0.0535
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 83.21,
+       "so762train_oof": {
+        "precision": 0.496,
+        "recall": 0.589,
+        "f1": 0.538,
+        "frr": 0.055
+       },
+       "so762": {
+        "precision": 0.421,
+        "recall": 0.608,
+        "f1": 0.498,
+        "frr": 0.062
+       },
+       "l2arctic": {
+        "precision": 0.477,
+        "recall": 0.138,
+        "f1": 0.214,
+        "frr": 0.016
+       },
+       "so762_frr_on_acc2": 0.0451
+      },
+      "score<T(frr10%)": {
+       "T": 90.21,
+       "so762train_oof": {
+        "precision": 0.356,
+        "recall": 0.768,
+        "f1": 0.486,
+        "frr": 0.127
+       },
+       "so762": {
+        "precision": 0.294,
+        "recall": 0.783,
+        "f1": 0.428,
+        "frr": 0.139
+       },
+       "l2arctic": {
+        "precision": 0.413,
+        "recall": 0.277,
+        "f1": 0.331,
+        "frr": 0.041
+       },
+       "so762_frr_on_acc2": 0.1078
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.21,
+       "so762train_oof": {
+        "precision": 0.383,
+        "recall": 0.676,
+        "f1": 0.489,
+        "frr": 0.1
+       },
+       "so762": {
+        "precision": 0.316,
+        "recall": 0.697,
+        "f1": 0.435,
+        "frr": 0.112
+       },
+       "l2arctic": {
+        "precision": 0.45,
+        "recall": 0.255,
+        "f1": 0.325,
+        "frr": 0.032
+       },
+       "so762_frr_on_acc2": 0.0829
+      },
+      "score<T(frr20%)": {
+       "T": 94.63,
+       "so762train_oof": {
+        "precision": 0.246,
+        "recall": 0.867,
+        "f1": 0.383,
+        "frr": 0.244
+       },
+       "so762": {
+        "precision": 0.202,
+        "recall": 0.887,
+        "f1": 0.329,
+        "frr": 0.259
+       },
+       "l2arctic": {
+        "precision": 0.325,
+        "recall": 0.482,
+        "f1": 0.388,
+        "frr": 0.104
+       },
+       "so762_frr_on_acc2": 0.2131
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.63,
+       "so762train_oof": {
+        "precision": 0.3,
+        "recall": 0.726,
+        "f1": 0.425,
+        "frr": 0.155
+       },
+       "so762": {
+        "precision": 0.25,
+        "recall": 0.748,
+        "f1": 0.375,
+        "frr": 0.167
+       },
+       "l2arctic": {
+        "precision": 0.414,
+        "recall": 0.393,
+        "f1": 0.404,
+        "frr": 0.058
+       },
+       "so762_frr_on_acc2": 0.1313
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.248,
+        "recall": 0.747,
+        "f1": 0.373,
+        "frr": 0.208
+       },
+       "so762": {
+        "precision": 0.205,
+        "recall": 0.77,
+        "f1": 0.324,
+        "frr": 0.222
+       },
+       "l2arctic": {
+        "precision": 0.368,
+        "recall": 0.571,
+        "f1": 0.447,
+        "frr": 0.102
+       },
+       "so762_frr_on_acc2": 0.1874
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.722,
+        "recall": 0.347,
+        "f1": 0.469,
+        "frr": 0.012
+       },
+       "so762": {
+        "precision": 0.649,
+        "recall": 0.35,
+        "f1": 0.455,
+        "frr": 0.014
+       },
+       "l2arctic": {
+        "precision": 0.523,
+        "recall": 0.043,
+        "f1": 0.08,
+        "frr": 0.004
+       },
+       "so762_frr_on_acc2": 0.0105
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 77.15,
+      "frr_target": "3%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/synth-a/sent_scorer.json",
+    "data": {
+     "model": "synth-a",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7583,
+      "fluency": 0.792,
+      "prosodic": 0.7791,
+      "total": 0.7723,
+      "completeness": 0.2689
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.704,
+      "fluency": 7.844,
+      "prosodic": 7.519,
+      "total": 7.268,
+      "completeness": 9.994
+     }
+    }
+   },
+   "engine_eval": {
+    "source": "english/scorer/synth-a/engine_eval.json",
+    "data": {
+     "model": "synth-a",
+     "device": "cuda",
+     "flag_T": 77.15,
+     "so762": {
+      "n_utts": 2500,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.596,
+      "overall_vs_total": 0.7698,
+      "pronunciation_vs_accuracy": 0.6614,
+      "fluency_vs_fluency": 0.7918,
+      "rhythm_vs_prosodic": 0.7788
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.6811,
+      "recall": 0.1263,
+      "f1": 0.2131,
+      "frr": 0.0242
+     },
+     "l2arctic_word_sweep": {
+      "70.0": {
+       "precision": 0.6981,
+       "recall": 0.0912,
+       "f1": 0.1613,
+       "frr": 0.0161
+      },
+      "80.0": {
+       "precision": 0.6818,
+       "recall": 0.1479,
+       "f1": 0.243,
+       "frr": 0.0283
+      },
+      "85.0": {
+       "precision": 0.6564,
+       "recall": 0.2095,
+       "f1": 0.3176,
+       "frr": 0.0449
+      },
+      "88.0": {
+       "precision": 0.6409,
+       "recall": 0.276,
+       "f1": 0.3859,
+       "frr": 0.0633
+      },
+      "90.0": {
+       "precision": 0.6105,
+       "recall": 0.3235,
+       "f1": 0.4229,
+       "frr": 0.0845
+      },
+      "92.0": {
+       "precision": 0.5544,
+       "recall": 0.4048,
+       "f1": 0.4679,
+       "frr": 0.1332
+      },
+      "94.0": {
+       "precision": 0.4971,
+       "recall": 0.5274,
+       "f1": 0.5118,
+       "frr": 0.2185
+      },
+      "96.0": {
+       "precision": 0.4405,
+       "recall": 0.7234,
+       "f1": 0.5476,
+       "frr": 0.3762
+      }
+     },
+     "ms": {
+      "median": 43.8,
+      "p90": 58.3
+     }
+    }
+   }
+  },
+  "synth-b": {
+   "phone_scorer": {
+    "source": "english/scorer/synth-b/phone_scorer.json",
+    "data": {
+     "model": "synth-b",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6452,
+      "so762_phone_auc": 0.937,
+      "so762_word_pcc": 0.6238,
+      "l2arctic_auc": 0.7932
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6293,
+      "so762_phone_auc": 0.9366,
+      "so762_word_pcc": 0.6245,
+      "l2arctic_auc": 0.7538
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6315,
+      "so762_phone_auc": 0.9384,
+      "so762_word_pcc": 0.6146,
+      "l2arctic_auc": 0.7741
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.601,
+      "so762_phone_auc": 0.9322,
+      "so762_word_pcc": 0.6044,
+      "l2arctic_auc": 0.701
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4081,
+      "l2arctic_auc": 0.7844
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 76.41,
+       "so762train_oof": {
+        "precision": 0.558,
+        "recall": 0.55,
+        "f1": 0.554,
+        "frr": 0.04
+       },
+       "so762": {
+        "precision": 0.492,
+        "recall": 0.566,
+        "f1": 0.526,
+        "frr": 0.043
+       },
+       "l2arctic": {
+        "precision": 0.422,
+        "recall": 0.075,
+        "f1": 0.127,
+        "frr": 0.011
+       },
+       "so762_frr_on_acc2": 0.0328
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 76.41,
+       "so762train_oof": {
+        "precision": 0.567,
+        "recall": 0.513,
+        "f1": 0.539,
+        "frr": 0.036
+       },
+       "so762": {
+        "precision": 0.497,
+        "recall": 0.526,
+        "f1": 0.511,
+        "frr": 0.04
+       },
+       "l2arctic": {
+        "precision": 0.438,
+        "recall": 0.072,
+        "f1": 0.124,
+        "frr": 0.01
+       },
+       "so762_frr_on_acc2": 0.0296
+      },
+      "score<T(frr5%)": {
+       "T": 82.89,
+       "so762train_oof": {
+        "precision": 0.481,
+        "recall": 0.647,
+        "f1": 0.552,
+        "frr": 0.064
+       },
+       "so762": {
+        "precision": 0.405,
+        "recall": 0.66,
+        "f1": 0.502,
+        "frr": 0.072
+       },
+       "l2arctic": {
+        "precision": 0.401,
+        "recall": 0.107,
+        "f1": 0.169,
+        "frr": 0.017
+       },
+       "so762_frr_on_acc2": 0.0556
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 82.89,
+       "so762train_oof": {
+        "precision": 0.495,
+        "recall": 0.594,
+        "f1": 0.54,
+        "frr": 0.056
+       },
+       "so762": {
+        "precision": 0.415,
+        "recall": 0.604,
+        "f1": 0.492,
+        "frr": 0.063
+       },
+       "l2arctic": {
+        "precision": 0.417,
+        "recall": 0.103,
+        "f1": 0.165,
+        "frr": 0.015
+       },
+       "so762_frr_on_acc2": 0.0479
+      },
+      "score<T(frr10%)": {
+       "T": 90.02,
+       "so762train_oof": {
+        "precision": 0.363,
+        "recall": 0.774,
+        "f1": 0.494,
+        "frr": 0.125
+       },
+       "so762": {
+        "precision": 0.304,
+        "recall": 0.784,
+        "f1": 0.438,
+        "frr": 0.133
+       },
+       "l2arctic": {
+        "precision": 0.379,
+        "recall": 0.199,
+        "f1": 0.261,
+        "frr": 0.034
+       },
+       "so762_frr_on_acc2": 0.1057
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.02,
+       "so762train_oof": {
+        "precision": 0.393,
+        "recall": 0.684,
+        "f1": 0.499,
+        "frr": 0.097
+       },
+       "so762": {
+        "precision": 0.328,
+        "recall": 0.694,
+        "f1": 0.445,
+        "frr": 0.106
+       },
+       "l2arctic": {
+        "precision": 0.398,
+        "recall": 0.169,
+        "f1": 0.237,
+        "frr": 0.027
+       },
+       "so762_frr_on_acc2": 0.0822
+      },
+      "score<T(frr20%)": {
+       "T": 94.67,
+       "so762train_oof": {
+        "precision": 0.249,
+        "recall": 0.882,
+        "f1": 0.388,
+        "frr": 0.244
+       },
+       "so762": {
+        "precision": 0.205,
+        "recall": 0.88,
+        "f1": 0.332,
+        "frr": 0.254
+       },
+       "l2arctic": {
+        "precision": 0.34,
+        "recall": 0.411,
+        "f1": 0.372,
+        "frr": 0.083
+       },
+       "so762_frr_on_acc2": 0.2086
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.67,
+       "so762train_oof": {
+        "precision": 0.323,
+        "recall": 0.731,
+        "f1": 0.448,
+        "frr": 0.14
+       },
+       "so762": {
+        "precision": 0.268,
+        "recall": 0.738,
+        "f1": 0.393,
+        "frr": 0.15
+       },
+       "l2arctic": {
+        "precision": 0.37,
+        "recall": 0.228,
+        "f1": 0.282,
+        "frr": 0.04
+       },
+       "so762_frr_on_acc2": 0.1225
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.289,
+        "recall": 0.74,
+        "f1": 0.415,
+        "frr": 0.168
+       },
+       "so762": {
+        "precision": 0.241,
+        "recall": 0.756,
+        "f1": 0.365,
+        "frr": 0.177
+       },
+       "l2arctic": {
+        "precision": 0.37,
+        "recall": 0.293,
+        "f1": 0.327,
+        "frr": 0.052
+       },
+       "so762_frr_on_acc2": 0.1501
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.714,
+        "recall": 0.344,
+        "f1": 0.464,
+        "frr": 0.013
+       },
+       "so762": {
+        "precision": 0.673,
+        "recall": 0.36,
+        "f1": 0.469,
+        "frr": 0.013
+       },
+       "l2arctic": {
+        "precision": 0.464,
+        "recall": 0.035,
+        "f1": 0.064,
+        "frr": 0.004
+       },
+       "so762_frr_on_acc2": 0.0091
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 76.41,
+      "frr_target": "3%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/synth-b/sent_scorer.json",
+    "data": {
+     "model": "synth-b",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.74,
+      "fluency": 0.7818,
+      "prosodic": 0.7625,
+      "total": 0.7542,
+      "completeness": 0.5029
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.716,
+      "fluency": 7.853,
+      "prosodic": 7.533,
+      "total": 7.288,
+      "completeness": 9.993
+     }
+    }
+   },
+   "engine_eval": {
+    "source": "english/scorer/synth-b/engine_eval.json",
+    "data": {
+     "model": "synth-b",
+     "device": "cuda",
+     "flag_T": 76.41,
+     "so762": {
+      "n_utts": 2500,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.622,
+      "overall_vs_total": 0.7587,
+      "pronunciation_vs_accuracy": 0.655,
+      "fluency_vs_fluency": 0.7863,
+      "rhythm_vs_prosodic": 0.7662
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.7371,
+      "recall": 0.0881,
+      "f1": 0.1574,
+      "frr": 0.0129
+     },
+     "l2arctic_word_sweep": {
+      "70.0": {
+       "precision": 0.7687,
+       "recall": 0.0635,
+       "f1": 0.1172,
+       "frr": 0.0078
+      },
+      "80.0": {
+       "precision": 0.7229,
+       "recall": 0.1109,
+       "f1": 0.1923,
+       "frr": 0.0174
+      },
+      "85.0": {
+       "precision": 0.6977,
+       "recall": 0.1479,
+       "f1": 0.244,
+       "frr": 0.0262
+      },
+      "88.0": {
+       "precision": 0.6652,
+       "recall": 0.1922,
+       "f1": 0.2983,
+       "frr": 0.0396
+      },
+      "90.0": {
+       "precision": 0.6525,
+       "recall": 0.236,
+       "f1": 0.3466,
+       "frr": 0.0515
+      },
+      "92.0": {
+       "precision": 0.6179,
+       "recall": 0.3068,
+       "f1": 0.41,
+       "frr": 0.0777
+      },
+      "94.0": {
+       "precision": 0.5627,
+       "recall": 0.4313,
+       "f1": 0.4883,
+       "frr": 0.1373
+      },
+      "96.0": {
+       "precision": 0.4617,
+       "recall": 0.594,
+       "f1": 0.5195,
+       "frr": 0.2836
+      }
+     },
+     "ms": {
+      "median": 43.9,
+      "p90": 58.8
+     }
+    }
+   }
+  },
+  "synth-d": {
+   "phone_scorer": {
+    "source": "english/scorer/synth-d/phone_scorer.json",
+    "data": {
+     "model": "synth-d",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6551,
+      "so762_phone_auc": 0.9442,
+      "so762_word_pcc": 0.6198,
+      "l2arctic_auc": 0.7885
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6421,
+      "so762_phone_auc": 0.9455,
+      "so762_word_pcc": 0.6302,
+      "l2arctic_auc": 0.7745
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6486,
+      "so762_phone_auc": 0.9481,
+      "so762_word_pcc": 0.6192,
+      "l2arctic_auc": 0.7784
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.6121,
+      "so762_phone_auc": 0.9417,
+      "so762_word_pcc": 0.5999,
+      "l2arctic_auc": 0.7424
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.4573,
+      "l2arctic_auc": 0.8053
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 77.27,
+       "so762train_oof": {
+        "precision": 0.576,
+        "recall": 0.594,
+        "f1": 0.585,
+        "frr": 0.04
+       },
+       "so762": {
+        "precision": 0.496,
+        "recall": 0.605,
+        "f1": 0.545,
+        "frr": 0.046
+       },
+       "l2arctic": {
+        "precision": 0.371,
+        "recall": 0.063,
+        "f1": 0.107,
+        "frr": 0.011
+       },
+       "so762_frr_on_acc2": 0.0338
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 77.27,
+       "so762train_oof": {
+        "precision": 0.589,
+        "recall": 0.535,
+        "f1": 0.561,
+        "frr": 0.034
+       },
+       "so762": {
+        "precision": 0.508,
+        "recall": 0.553,
+        "f1": 0.53,
+        "frr": 0.04
+       },
+       "l2arctic": {
+        "precision": 0.389,
+        "recall": 0.058,
+        "f1": 0.101,
+        "frr": 0.009
+       },
+       "so762_frr_on_acc2": 0.0289
+      },
+      "score<T(frr5%)": {
+       "T": 84.13,
+       "so762train_oof": {
+        "precision": 0.496,
+        "recall": 0.7,
+        "f1": 0.58,
+        "frr": 0.065
+       },
+       "so762": {
+        "precision": 0.416,
+        "recall": 0.688,
+        "f1": 0.519,
+        "frr": 0.072
+       },
+       "l2arctic": {
+        "precision": 0.376,
+        "recall": 0.094,
+        "f1": 0.151,
+        "frr": 0.016
+       },
+       "so762_frr_on_acc2": 0.0548
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 84.13,
+       "so762train_oof": {
+        "precision": 0.521,
+        "recall": 0.61,
+        "f1": 0.562,
+        "frr": 0.051
+       },
+       "so762": {
+        "precision": 0.439,
+        "recall": 0.616,
+        "f1": 0.512,
+        "frr": 0.058
+       },
+       "l2arctic": {
+        "precision": 0.402,
+        "recall": 0.085,
+        "f1": 0.141,
+        "frr": 0.013
+       },
+       "so762_frr_on_acc2": 0.0435
+      },
+      "score<T(frr10%)": {
+       "T": 90.6,
+       "so762train_oof": {
+        "precision": 0.368,
+        "recall": 0.807,
+        "f1": 0.506,
+        "frr": 0.127
+       },
+       "so762": {
+        "precision": 0.302,
+        "recall": 0.795,
+        "f1": 0.438,
+        "frr": 0.136
+       },
+       "l2arctic": {
+        "precision": 0.378,
+        "recall": 0.163,
+        "f1": 0.228,
+        "frr": 0.028
+       },
+       "so762_frr_on_acc2": 0.1066
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 90.6,
+       "so762train_oof": {
+        "precision": 0.433,
+        "recall": 0.658,
+        "f1": 0.522,
+        "frr": 0.079
+       },
+       "so762": {
+        "precision": 0.356,
+        "recall": 0.675,
+        "f1": 0.466,
+        "frr": 0.091
+       },
+       "l2arctic": {
+        "precision": 0.405,
+        "recall": 0.125,
+        "f1": 0.191,
+        "frr": 0.019
+       },
+       "so762_frr_on_acc2": 0.0689
+      },
+      "score<T(frr20%)": {
+       "T": 95.16,
+       "so762train_oof": {
+        "precision": 0.25,
+        "recall": 0.9,
+        "f1": 0.392,
+        "frr": 0.248
+       },
+       "so762": {
+        "precision": 0.205,
+        "recall": 0.895,
+        "f1": 0.333,
+        "frr": 0.258
+       },
+       "l2arctic": {
+        "precision": 0.35,
+        "recall": 0.38,
+        "f1": 0.365,
+        "frr": 0.073
+       },
+       "so762_frr_on_acc2": 0.2125
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 95.16,
+       "so762train_oof": {
+        "precision": 0.379,
+        "recall": 0.68,
+        "f1": 0.487,
+        "frr": 0.102
+       },
+       "so762": {
+        "precision": 0.314,
+        "recall": 0.704,
+        "f1": 0.434,
+        "frr": 0.114
+       },
+       "l2arctic": {
+        "precision": 0.416,
+        "recall": 0.188,
+        "f1": 0.259,
+        "frr": 0.027
+       },
+       "so762_frr_on_acc2": 0.0906
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.349,
+        "recall": 0.686,
+        "f1": 0.463,
+        "frr": 0.117
+       },
+       "so762": {
+        "precision": 0.297,
+        "recall": 0.708,
+        "f1": 0.419,
+        "frr": 0.124
+       },
+       "l2arctic": {
+        "precision": 0.419,
+        "recall": 0.263,
+        "f1": 0.323,
+        "frr": 0.038
+       },
+       "so762_frr_on_acc2": 0.1009
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.711,
+        "recall": 0.389,
+        "f1": 0.503,
+        "frr": 0.015
+       },
+       "so762": {
+        "precision": 0.663,
+        "recall": 0.391,
+        "f1": 0.492,
+        "frr": 0.015
+       },
+       "l2arctic": {
+        "precision": 0.406,
+        "recall": 0.031,
+        "f1": 0.058,
+        "frr": 0.005
+       },
+       "so762_frr_on_acc2": 0.0104
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 77.27,
+      "frr_target": "3%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/synth-d/sent_scorer.json",
+    "data": {
+     "model": "synth-d",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7498,
+      "fluency": 0.7826,
+      "prosodic": 0.759,
+      "total": 0.7547,
+      "completeness": 0.6324
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.718,
+      "fluency": 7.853,
+      "prosodic": 7.521,
+      "total": 7.281,
+      "completeness": 9.994
+     }
+    }
+   },
+   "engine_eval": {
+    "source": "english/scorer/synth-d/engine_eval.json",
+    "data": {
+     "model": "synth-d",
+     "device": "cuda",
+     "flag_T": 77.27,
+     "so762": {
+      "n_utts": 2500,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": 0.6177,
+      "overall_vs_total": 0.7561,
+      "pronunciation_vs_accuracy": 0.6398,
+      "fluency_vs_fluency": 0.7826,
+      "rhythm_vs_prosodic": 0.7607
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.6774,
+      "recall": 0.0776,
+      "f1": 0.1393,
+      "frr": 0.0151
+     },
+     "l2arctic_word_sweep": {
+      "70.0": {
+       "precision": 0.6791,
+       "recall": 0.0561,
+       "f1": 0.1036,
+       "frr": 0.0109
+      },
+      "80.0": {
+       "precision": 0.6667,
+       "recall": 0.0887,
+       "f1": 0.1566,
+       "frr": 0.0182
+      },
+      "85.0": {
+       "precision": 0.6405,
+       "recall": 0.1208,
+       "f1": 0.2032,
+       "frr": 0.0278
+      },
+      "88.0": {
+       "precision": 0.6285,
+       "recall": 0.1522,
+       "f1": 0.245,
+       "frr": 0.0368
+      },
+      "90.0": {
+       "precision": 0.627,
+       "recall": 0.1885,
+       "f1": 0.2899,
+       "frr": 0.0459
+      },
+      "92.0": {
+       "precision": 0.6089,
+       "recall": 0.26,
+       "f1": 0.3644,
+       "frr": 0.0684
+      },
+      "94.0": {
+       "precision": 0.5529,
+       "recall": 0.3574,
+       "f1": 0.4341,
+       "frr": 0.1183
+      },
+      "96.0": {
+       "precision": 0.4477,
+       "recall": 0.557,
+       "f1": 0.4964,
+       "frr": 0.2814
+      }
+     },
+     "ms": {
+      "median": 42.2,
+      "p90": 57.1
+     }
+    }
+   },
+   "engine_eval_v1": {
+    "source": "english/scorer/synth-d/engine_eval_v1.json",
+    "data": {
+     "model": "synth-d",
+     "device": "cuda",
+     "flag_T": 77.27,
+     "policy": "v1",
+     "so762": {
+      "n_utts": 0,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": null,
+      "overall_vs_total": null,
+      "pronunciation_vs_accuracy": null,
+      "fluency_vs_fluency": null,
+      "rhythm_vs_prosodic": null
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.6774,
+      "recall": 0.0776,
+      "f1": 0.1393,
+      "frr": 0.0151
+     },
+     "l2arctic_phone": {
+      "precision": 0.4464,
+      "recall": 0.057,
+      "f1": 0.1011,
+      "frr": 0.0075,
+      "display_frr": 0.0345,
+      "correct_diagnosis_of_flags": 0.6538,
+      "unclear_sites": 0,
+      "counts": {
+       "tp": 104,
+       "fp": 129,
+       "fn": 1721,
+       "tn": 17070,
+       "cd": 68,
+       "show_fp": 593,
+       "n_ok": 17199,
+       "unclear": 0
+      }
+     },
+     "l2arctic_pairs": {
+      "DH>D": {
+       "n_err": 356,
+       "flagged_with_right_sound": 0.006
+      },
+      "Z>S": {
+       "n_err": 293,
+       "flagged_with_right_sound": 0.014
+      },
+      "Z>JH": {
+       "n_err": 21,
+       "flagged_with_right_sound": 0.048
+      },
+      "TH>S": {
+       "n_err": 18,
+       "flagged_with_right_sound": 0.111
+      },
+      "TH>T": {
+       "n_err": 9,
+       "flagged_with_right_sound": 0.0
+      },
+      "F>P": {
+       "n_err": 7,
+       "flagged_with_right_sound": 0.286
+      },
+      "V>B": {
+       "n_err": 19,
+       "flagged_with_right_sound": 0.0
+      },
+      "R>L": {
+       "n_err": 14,
+       "flagged_with_right_sound": 0.143
+      },
+      "L>R": {
+       "n_err": 27,
+       "flagged_with_right_sound": 0.0
+      },
+      "S>SH": {
+       "n_err": 1,
+       "flagged_with_right_sound": 0.0
+      },
+      "D>T": {
+       "n_err": 39,
+       "flagged_with_right_sound": 0.0
+      },
+      "B>P": {
+       "n_err": 7,
+       "flagged_with_right_sound": 0.0
+      },
+      "G>K": {
+       "n_err": 14,
+       "flagged_with_right_sound": 0.0
+      },
+      "IH>IY": {
+       "n_err": 113,
+       "flagged_with_right_sound": 0.0
+      },
+      "IY>IH": {
+       "n_err": 28,
+       "flagged_with_right_sound": 0.0
+      },
+      "EH>AE": {
+       "n_err": 68,
+       "flagged_with_right_sound": 0.015
+      },
+      "AE>EH": {
+       "n_err": 2,
+       "flagged_with_right_sound": 0.0
+      },
+      "OW>AO": {
+       "n_err": 80,
+       "flagged_with_right_sound": 0.062
+      },
+      "UH>UW": {
+       "n_err": 5,
+       "flagged_with_right_sound": 0.0
+      },
+      "ER>AH": {
+       "n_err": 30,
+       "flagged_with_right_sound": 0.067
+      }
+     },
+     "l2arctic_word_sweep": {
+      "77.27": {
+       "precision": 0.6774,
+       "recall": 0.0776,
+       "f1": 0.1393,
+       "frr": 0.0151
+      },
+      "84.0": {
+       "precision": 0.6312,
+       "recall": 0.1097,
+       "f1": 0.1869,
+       "frr": 0.0262
+      },
+      "88.0": {
+       "precision": 0.6285,
+       "recall": 0.1522,
+       "f1": 0.245,
+       "frr": 0.0368
+      },
+      "90.0": {
+       "precision": 0.627,
+       "recall": 0.1885,
+       "f1": 0.2899,
+       "frr": 0.0459
+      }
+     },
+     "ms": {
+      "median": 56.0,
+      "p90": 77.4
+     }
+    }
+   },
+   "engine_eval_v2": {
+    "source": "english/scorer/synth-d/engine_eval_v2.json",
+    "data": {
+     "model": "synth-d",
+     "device": "cuda",
+     "flag_T": 77.27,
+     "policy": "v2",
+     "so762": {
+      "n_utts": 0,
+      "align_error_utts": 0,
+      "word_count_mismatch_utts": 0,
+      "word_pcc": null,
+      "overall_vs_total": null,
+      "pronunciation_vs_accuracy": null,
+      "fluency_vs_fluency": null,
+      "rhythm_vs_prosodic": null
+     },
+     "l2arctic_word": {
+      "n_utts": 600,
+      "skipped_utts": 3,
+      "human_err_words": 1623,
+      "words": 5586,
+      "precision": 0.6555,
+      "recall": 0.1571,
+      "f1": 0.2535,
+      "frr": 0.0338
+     },
+     "l2arctic_phone": {
+      "precision": 0.4667,
+      "recall": 0.1189,
+      "f1": 0.1895,
+      "frr": 0.0144,
+      "display_frr": 0.0184,
+      "correct_diagnosis_of_flags": 0.6728,
+      "unclear_sites": 135,
+      "counts": {
+       "tp": 217,
+       "fp": 248,
+       "fn": 1608,
+       "tn": 16951,
+       "cd": 146,
+       "show_fp": 317,
+       "n_ok": 17199,
+       "unclear": 135
+      }
+     },
+     "l2arctic_pairs": {
+      "DH>D": {
+       "n_err": 356,
+       "flagged_with_right_sound": 0.0
+      },
+      "Z>S": {
+       "n_err": 293,
+       "flagged_with_right_sound": 0.061
+      },
+      "Z>JH": {
+       "n_err": 21,
+       "flagged_with_right_sound": 0.0
+      },
+      "TH>S": {
+       "n_err": 18,
+       "flagged_with_right_sound": 0.5
+      },
+      "TH>T": {
+       "n_err": 9,
+       "flagged_with_right_sound": 0.111
+      },
+      "F>P": {
+       "n_err": 7,
+       "flagged_with_right_sound": 0.714
+      },
+      "V>B": {
+       "n_err": 19,
+       "flagged_with_right_sound": 0.368
+      },
+      "R>L": {
+       "n_err": 14,
+       "flagged_with_right_sound": 0.429
+      },
+      "L>R": {
+       "n_err": 27,
+       "flagged_with_right_sound": 0.037
+      },
+      "S>SH": {
+       "n_err": 1,
+       "flagged_with_right_sound": 0.0
+      },
+      "D>T": {
+       "n_err": 39,
+       "flagged_with_right_sound": 0.026
+      },
+      "B>P": {
+       "n_err": 7,
+       "flagged_with_right_sound": 0.429
+      },
+      "G>K": {
+       "n_err": 14,
+       "flagged_with_right_sound": 0.214
+      },
+      "IH>IY": {
+       "n_err": 113,
+       "flagged_with_right_sound": 0.23
+      },
+      "IY>IH": {
+       "n_err": 28,
+       "flagged_with_right_sound": 0.179
+      },
+      "EH>AE": {
+       "n_err": 68,
+       "flagged_with_right_sound": 0.294
+      },
+      "AE>EH": {
+       "n_err": 2,
+       "flagged_with_right_sound": 0.0
+      },
+      "OW>AO": {
+       "n_err": 80,
+       "flagged_with_right_sound": 0.138
+      },
+      "UH>UW": {
+       "n_err": 5,
+       "flagged_with_right_sound": 0.2
+      },
+      "ER>AH": {
+       "n_err": 30,
+       "flagged_with_right_sound": 0.167
+      }
+     },
+     "l2arctic_word_sweep": {
+      "77.27": {
+       "precision": 0.6555,
+       "recall": 0.1571,
+       "f1": 0.2535,
+       "frr": 0.0338
+      },
+      "84.0": {
+       "precision": 0.6272,
+       "recall": 0.1762,
+       "f1": 0.2751,
+       "frr": 0.0429
+      },
+      "88.0": {
+       "precision": 0.6169,
+       "recall": 0.2064,
+       "f1": 0.3093,
+       "frr": 0.0525
+      },
+      "90.0": {
+       "precision": 0.613,
+       "recall": 0.2323,
+       "f1": 0.3369,
+       "frr": 0.0601
+      }
+     },
+     "ms": {
+      "median": 55.5,
+      "p90": 76.7
+     }
+    }
+   },
+   "flag_policy": {
+    "source": "english/scorer/synth-d/flag_policy.json",
+    "data": {
+     "pair_margins": {
+      "l_r": -4.279,
+      "iy_ih": 0.646,
+      "z_s": 2.454,
+      "epenthesis": -0.825,
+      "d_t": -3.31,
+      "ow_ao": 1.42,
+      "final_del": -0.337,
+      "f_p": -2.712,
+      "ae_eh": 1.442,
+      "dh_d": 2.483,
+      "r_l": -3.304,
+      "s_sh": -4.385,
+      "b_p": -3.734,
+      "final_del_d": -0.644,
+      "er_ah": -1.02,
+      "ih_iy": 1.488,
+      "eh_ae": 0.962,
+      "v_b": 1.58,
+      "g_k": -4.441,
+      "th_s": 2.529,
+      "th_t": -0.133,
+      "uh_uw": 0.678
+     },
+     "disabled": [
+      "dh_d"
+     ],
+     "llr_floor": 0.0,
+     "source": "en_calibrate_pair_margins.py --model-dir en_ctc_synth_v2d/step_3000 --n 2000 (037 조음 ≥ 4.5 화자에서 규칙마다 5%)",
+     "note": "ð→d 는 구분력이 없어(L2 AUC 0.50) 끈다. 문턱은 0 아래로 내리지 않는다(llr_floor)."
+    }
+   }
+  },
+  "xlsr53-espeak": {
+   "phone_scorer": {
+    "source": "english/scorer/xlsr53-espeak/phone_scorer.json",
+    "data": {
+     "model": "xlsr53-espeak",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6223,
+      "so762_phone_auc": 0.9306,
+      "so762_word_pcc": 0.5993,
+      "l2arctic_auc": 0.7355
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6062,
+      "so762_phone_auc": 0.9321,
+      "so762_word_pcc": 0.5993,
+      "l2arctic_auc": 0.6458
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.6088,
+      "so762_phone_auc": 0.9335,
+      "so762_word_pcc": 0.5912,
+      "l2arctic_auc": 0.6911
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.5794,
+      "so762_phone_auc": 0.9251,
+      "so762_word_pcc": 0.575,
+      "l2arctic_auc": 0.5911
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3735,
+      "l2arctic_auc": 0.7006
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 76.98,
+       "so762train_oof": {
+        "precision": 0.554,
+        "recall": 0.537,
+        "f1": 0.545,
+        "frr": 0.04
+       },
+       "so762": {
+        "precision": 0.48,
+        "recall": 0.547,
+        "f1": 0.512,
+        "frr": 0.044
+       },
+       "l2arctic": {
+        "precision": 0.387,
+        "recall": 0.088,
+        "f1": 0.143,
+        "frr": 0.014
+       },
+       "so762_frr_on_acc2": 0.0323
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 76.98,
+       "so762train_oof": {
+        "precision": 0.565,
+        "recall": 0.5,
+        "f1": 0.53,
+        "frr": 0.035
+       },
+       "so762": {
+        "precision": 0.491,
+        "recall": 0.512,
+        "f1": 0.501,
+        "frr": 0.039
+       },
+       "l2arctic": {
+        "precision": 0.437,
+        "recall": 0.08,
+        "f1": 0.136,
+        "frr": 0.011
+       },
+       "so762_frr_on_acc2": 0.0285
+      },
+      "score<T(frr5%)": {
+       "T": 82.91,
+       "so762train_oof": {
+        "precision": 0.475,
+        "recall": 0.634,
+        "f1": 0.543,
+        "frr": 0.064
+       },
+       "so762": {
+        "precision": 0.407,
+        "recall": 0.646,
+        "f1": 0.5,
+        "frr": 0.07
+       },
+       "l2arctic": {
+        "precision": 0.324,
+        "recall": 0.117,
+        "f1": 0.171,
+        "frr": 0.025
+       },
+       "so762_frr_on_acc2": 0.0532
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 82.91,
+       "so762train_oof": {
+        "precision": 0.49,
+        "recall": 0.582,
+        "f1": 0.532,
+        "frr": 0.056
+       },
+       "so762": {
+        "precision": 0.421,
+        "recall": 0.597,
+        "f1": 0.494,
+        "frr": 0.061
+       },
+       "l2arctic": {
+        "precision": 0.392,
+        "recall": 0.106,
+        "f1": 0.167,
+        "frr": 0.017
+       },
+       "so762_frr_on_acc2": 0.0459
+      },
+      "score<T(frr10%)": {
+       "T": 89.72,
+       "so762train_oof": {
+        "precision": 0.363,
+        "recall": 0.767,
+        "f1": 0.493,
+        "frr": 0.124
+       },
+       "so762": {
+        "precision": 0.302,
+        "recall": 0.773,
+        "f1": 0.434,
+        "frr": 0.132
+       },
+       "l2arctic": {
+        "precision": 0.283,
+        "recall": 0.206,
+        "f1": 0.238,
+        "frr": 0.054
+       },
+       "so762_frr_on_acc2": 0.1066
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 89.72,
+       "so762train_oof": {
+        "precision": 0.382,
+        "recall": 0.684,
+        "f1": 0.491,
+        "frr": 0.101
+       },
+       "so762": {
+        "precision": 0.321,
+        "recall": 0.702,
+        "f1": 0.441,
+        "frr": 0.11
+       },
+       "l2arctic": {
+        "precision": 0.349,
+        "recall": 0.175,
+        "f1": 0.233,
+        "frr": 0.034
+       },
+       "so762_frr_on_acc2": 0.0877
+      },
+      "score<T(frr20%)": {
+       "T": 94.32,
+       "so762train_oof": {
+        "precision": 0.247,
+        "recall": 0.87,
+        "f1": 0.384,
+        "frr": 0.244
+       },
+       "so762": {
+        "precision": 0.204,
+        "recall": 0.869,
+        "f1": 0.33,
+        "frr": 0.252
+       },
+       "l2arctic": {
+        "precision": 0.248,
+        "recall": 0.413,
+        "f1": 0.31,
+        "frr": 0.13
+       },
+       "so762_frr_on_acc2": 0.2061
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.32,
+       "so762train_oof": {
+        "precision": 0.293,
+        "recall": 0.744,
+        "f1": 0.421,
+        "frr": 0.165
+       },
+       "so762": {
+        "precision": 0.246,
+        "recall": 0.76,
+        "f1": 0.371,
+        "frr": 0.173
+       },
+       "l2arctic": {
+        "precision": 0.288,
+        "recall": 0.264,
+        "f1": 0.276,
+        "frr": 0.068
+       },
+       "so762_frr_on_acc2": 0.1452
+      },
+      "mismatch": {
+       "T": null,
+       "so762train_oof": {
+        "precision": 0.242,
+        "recall": 0.769,
+        "f1": 0.368,
+        "frr": 0.221
+       },
+       "so762": {
+        "precision": 0.202,
+        "recall": 0.787,
+        "f1": 0.322,
+        "frr": 0.231
+       },
+       "l2arctic": {
+        "precision": 0.26,
+        "recall": 0.317,
+        "f1": 0.286,
+        "frr": 0.094
+       },
+       "so762_frr_on_acc2": 0.2026
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train_oof": {
+        "precision": 0.707,
+        "recall": 0.332,
+        "f1": 0.452,
+        "frr": 0.013
+       },
+       "so762": {
+        "precision": 0.648,
+        "recall": 0.331,
+        "f1": 0.439,
+        "frr": 0.013
+       },
+       "l2arctic": {
+        "precision": 0.47,
+        "recall": 0.038,
+        "f1": 0.07,
+        "frr": 0.004
+       },
+       "so762_frr_on_acc2": 0.009
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 76.98,
+      "frr_target": "3%"
+     }
+    }
+   },
+   "sent_scorer": {
+    "source": "english/scorer/xlsr53-espeak/sent_scorer.json",
+    "data": {
+     "model": "xlsr53-espeak",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7431,
+      "fluency": 0.7918,
+      "prosodic": 0.778,
+      "total": 0.7591,
+      "completeness": 0.4062
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.716,
+      "fluency": 7.858,
+      "prosodic": 7.533,
+      "total": 7.282,
+      "completeness": 9.993
+     }
+    }
+   },
+   "phone_scorer_v0": {
+    "source": "english/scorer/xlsr53-espeak/phone_scorer_v0.json",
+    "data": {
+     "model": "xlsr53-espeak",
+     "variants": true,
+     "n_train_phones": 47076,
+     "label_note": "so762 오류 = 5명 평균 < 1.0. l2arctic 오류 = 사람 주석 대치·삭제(억양 수준 대치도 포함)",
+     "reg": {
+      "so762_phone_pcc": 0.6408,
+      "so762_phone_auc": 0.9357,
+      "so762_word_pcc": 0.6182,
+      "l2arctic_auc": 0.7483
+     },
+     "cls1.0": {
+      "so762_phone_pcc": 0.6252,
+      "so762_phone_auc": 0.9376,
+      "so762_word_pcc": 0.6192,
+      "l2arctic_auc": 0.6433
+     },
+     "cls1.5": {
+      "so762_phone_pcc": 0.632,
+      "so762_phone_auc": 0.9398,
+      "so762_word_pcc": 0.6134,
+      "l2arctic_auc": 0.7031
+     },
+     "logistic1.0": {
+      "so762_phone_pcc": 0.6008,
+      "so762_phone_auc": 0.929,
+      "so762_word_pcc": 0.5877,
+      "l2arctic_auc": 0.6065
+     },
+     "p_af_only": {
+      "so762_phone_pcc": 0.3808,
+      "l2arctic_auc": 0.6985
+     },
+     "flag_policies": {
+      "score<T(frr3%)": {
+       "T": 80.52,
+       "so762train": {
+        "precision": 0.592,
+        "recall": 0.691,
+        "f1": 0.638,
+        "frr": 0.044
+       },
+       "so762": {
+        "precision": 0.454,
+        "recall": 0.616,
+        "f1": 0.523,
+        "frr": 0.055
+       },
+       "l2arctic": {
+        "precision": 0.346,
+        "recall": 0.11,
+        "f1": 0.167,
+        "frr": 0.022
+       }
+      },
+      "mismatch&score<T(frr3%)": {
+       "T": 80.52,
+       "so762train": {
+        "precision": 0.597,
+        "recall": 0.622,
+        "f1": 0.609,
+        "frr": 0.039
+       },
+       "so762": {
+        "precision": 0.463,
+        "recall": 0.566,
+        "f1": 0.509,
+        "frr": 0.049
+       },
+       "l2arctic": {
+        "precision": 0.392,
+        "recall": 0.099,
+        "f1": 0.158,
+        "frr": 0.016
+       }
+      },
+      "score<T(frr5%)": {
+       "T": 85.56,
+       "so762train": {
+        "precision": 0.502,
+        "recall": 0.756,
+        "f1": 0.604,
+        "frr": 0.069
+       },
+       "so762": {
+        "precision": 0.385,
+        "recall": 0.697,
+        "f1": 0.496,
+        "frr": 0.083
+       },
+       "l2arctic": {
+        "precision": 0.33,
+        "recall": 0.159,
+        "f1": 0.214,
+        "frr": 0.033
+       }
+      },
+      "mismatch&score<T(frr5%)": {
+       "T": 85.56,
+       "so762train": {
+        "precision": 0.509,
+        "recall": 0.672,
+        "f1": 0.579,
+        "frr": 0.06
+       },
+       "so762": {
+        "precision": 0.399,
+        "recall": 0.636,
+        "f1": 0.49,
+        "frr": 0.071
+       },
+       "l2arctic": {
+        "precision": 0.379,
+        "recall": 0.14,
+        "f1": 0.204,
+        "frr": 0.024
+       }
+      },
+      "score<T(frr10%)": {
+       "T": 91.1,
+       "so762train": {
+        "precision": 0.374,
+        "recall": 0.847,
+        "f1": 0.519,
+        "frr": 0.13
+       },
+       "so762": {
+        "precision": 0.289,
+        "recall": 0.792,
+        "f1": 0.423,
+        "frr": 0.145
+       },
+       "l2arctic": {
+        "precision": 0.312,
+        "recall": 0.278,
+        "f1": 0.294,
+        "frr": 0.064
+       }
+      },
+      "mismatch&score<T(frr10%)": {
+       "T": 91.1,
+       "so762train": {
+        "precision": 0.394,
+        "recall": 0.726,
+        "f1": 0.511,
+        "frr": 0.102
+       },
+       "so762": {
+        "precision": 0.315,
+        "recall": 0.709,
+        "f1": 0.436,
+        "frr": 0.114
+       },
+       "l2arctic": {
+        "precision": 0.351,
+        "recall": 0.202,
+        "f1": 0.257,
+        "frr": 0.039
+       }
+      },
+      "score<T(frr20%)": {
+       "T": 94.78,
+       "so762train": {
+        "precision": 0.25,
+        "recall": 0.917,
+        "f1": 0.393,
+        "frr": 0.252
+       },
+       "so762": {
+        "precision": 0.196,
+        "recall": 0.877,
+        "f1": 0.32,
+        "frr": 0.268
+       },
+       "l2arctic": {
+        "precision": 0.257,
+        "recall": 0.46,
+        "f1": 0.329,
+        "frr": 0.138
+       }
+      },
+      "mismatch&score<T(frr20%)": {
+       "T": 94.78,
+       "so762train": {
+        "precision": 0.303,
+        "recall": 0.76,
+        "f1": 0.433,
+        "frr": 0.16
+       },
+       "so762": {
+        "precision": 0.247,
+        "recall": 0.76,
+        "f1": 0.373,
+        "frr": 0.172
+       },
+       "l2arctic": {
+        "precision": 0.294,
+        "recall": 0.269,
+        "f1": 0.281,
+        "frr": 0.067
+       }
+      },
+      "mismatch": {
+       "T": null,
+       "so762train": {
+        "precision": 0.244,
+        "recall": 0.768,
+        "f1": 0.37,
+        "frr": 0.218
+       },
+       "so762": {
+        "precision": 0.204,
+        "recall": 0.787,
+        "f1": 0.324,
+        "frr": 0.228
+       },
+       "l2arctic": {
+        "precision": 0.266,
+        "recall": 0.324,
+        "f1": 0.292,
+        "frr": 0.093
+       }
+      },
+      "mismatch&score<60": {
+       "T": 60.0,
+       "so762train": {
+        "precision": 0.846,
+        "recall": 0.427,
+        "f1": 0.567,
+        "frr": 0.007
+       },
+       "so762": {
+        "precision": 0.659,
+        "recall": 0.351,
+        "f1": 0.458,
+        "frr": 0.013
+       },
+       "l2arctic": {
+        "precision": 0.464,
+        "recall": 0.048,
+        "f1": 0.087,
+        "frr": 0.006
+       }
+      }
+     },
+     "flag_rule": {
+      "name": "score<T(frr3%)",
+      "T": 80.52
+     }
+    }
+   },
+   "sent_scorer_v0": {
+    "source": "english/scorer/xlsr53-espeak/sent_scorer_v0.json",
+    "data": {
+     "model": "xlsr53-espeak",
+     "published": {
+      "GOPT": {
+       "accuracy": 0.714,
+       "fluency": 0.753,
+       "prosodic": 0.76,
+       "total": 0.742,
+       "completeness": 0.155
+      }
+     },
+     "pcc": {
+      "accuracy": 0.7574,
+      "fluency": 0.7902,
+      "prosodic": 0.7774,
+      "total": 0.774,
+      "completeness": 0.637
+     },
+     "human_test_mean": {
+      "accuracy": 7.696,
+      "fluency": 7.84,
+      "prosodic": 7.502,
+      "total": 7.263,
+      "completeness": 9.966
+     },
+     "pred_test_mean": {
+      "accuracy": 7.735,
+      "fluency": 7.881,
+      "prosodic": 7.561,
+      "total": 7.303,
+      "completeness": 9.993
+     }
+    }
+   }
+  }
+ },
+ "pair_margins": {
+  "en_ctc_synth_v1a_step_1000": {
+   "source": "english/pair_margins/en_ctc_synth_v1a_step_1000.json",
+   "data": {
+    "model": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1a/step_1000",
+    "min_art": 4.5,
+    "target_fa": 0.05,
+    "n_utts": 2000,
+    "margins": {
+     "l_r": -9.229,
+     "iy_ih": 5.526,
+     "z_s": 13.484,
+     "epenthesis": -1.698,
+     "d_t": -3.783,
+     "ow_ao": 7.427,
+     "f_p": -2.865,
+     "ae_eh": 6.525,
+     "dh_d": 12.416,
+     "r_l": -5.649,
+     "s_sh": -7.261,
+     "b_p": -5.268,
+     "final_del_d": 0.961,
+     "er_ah": 1.144,
+     "ih_iy": 2.775,
+     "eh_ae": 3.209,
+     "v_b": 7.668,
+     "final_del": 1.284,
+     "g_k": -3.158,
+     "th_s": 8.255,
+     "th_t": 3.928,
+     "uh_uw": 4.011
+    },
+    "n": {
+     "l_r": 2170,
+     "iy_ih": 1571,
+     "z_s": 3142,
+     "epenthesis": 11084,
+     "d_t": 834,
+     "ow_ao": 1073,
+     "f_p": 1752,
+     "ae_eh": 2145,
+     "dh_d": 2787,
+     "r_l": 2565,
+     "s_sh": 478,
+     "b_p": 1103,
+     "final_del_d": 1039,
+     "er_ah": 2563,
+     "ih_iy": 2767,
+     "eh_ae": 2463,
+     "v_b": 1681,
+     "final_del": 1140,
+     "g_k": 433,
+     "th_s": 389,
+     "th_t": 389,
+     "uh_uw": 447,
+     "z_jh": 8
+    },
+    "l2": {
+     "f_p": {
+      "recall": 0.714,
+      "n_err": 7,
+      "false_alarm": 0.0367,
+      "n_ok": 409,
+      "precision": 0.25
+     },
+     "r_l": {
+      "recall": 1.0,
+      "n_err": 12,
+      "false_alarm": 0.0907,
+      "n_ok": 485,
+      "precision": 0.214
+     },
+     "er_ah": {
+      "recall": 0.394,
+      "n_err": 33,
+      "false_alarm": 0.0619,
+      "n_ok": 501,
+      "precision": 0.295
+     },
+     "dh_d": {
+      "recall": 0.235,
+      "n_err": 357,
+      "false_alarm": 0.1842,
+      "n_ok": 266,
+      "precision": 0.632
+     },
+     "eh_ae": {
+      "recall": 0.353,
+      "n_err": 68,
+      "false_alarm": 0.0705,
+      "n_ok": 440,
+      "precision": 0.436
+     },
+     "th_s": {
+      "recall": 0.667,
+      "n_err": 18,
+      "false_alarm": 0.0562,
+      "n_ok": 89,
+      "precision": 0.706
+     },
+     "th_t": {
+      "recall": 0.333,
+      "n_err": 9,
+      "false_alarm": 0.0337,
+      "n_ok": 89,
+      "precision": 0.5
+     },
+     "ae_eh": {
+      "recall": 0.0,
+      "n_err": 2,
+      "false_alarm": 0.0226,
+      "n_ok": 530,
+      "precision": 0.0
+     },
+     "iy_ih": {
+      "recall": 0.308,
+      "n_err": 26,
+      "false_alarm": 0.0161,
+      "n_ok": 434,
+      "precision": 0.533
+     },
+     "v_b": {
+      "recall": 0.368,
+      "n_err": 19,
+      "false_alarm": 0.0341,
+      "n_ok": 410,
+      "precision": 0.333
+     },
+     "uh_uw": {
+      "recall": 0.4,
+      "n_err": 5,
+      "false_alarm": 0.0351,
+      "n_ok": 114,
+      "precision": 0.333
+     },
+     "z_s": {
+      "recall": 0.057,
+      "n_err": 296,
+      "false_alarm": 0.0088,
+      "n_ok": 339,
+      "precision": 0.85
+     },
+     "ih_iy": {
+      "recall": 0.3,
+      "n_err": 90,
+      "false_alarm": 0.0518,
+      "n_ok": 657,
+      "precision": 0.443
+     },
+     "g_k": {
+      "recall": 0.556,
+      "n_err": 9,
+      "false_alarm": 0.0211,
+      "n_ok": 95,
+      "precision": 0.714
+     },
+     "b_p": {
+      "recall": 1.0,
+      "n_err": 5,
+      "false_alarm": 0.0735,
+      "n_ok": 204,
+      "precision": 0.25
+     },
+     "l_r": {
+      "recall": 1.0,
+      "n_err": 3,
+      "false_alarm": 0.0174,
+      "n_ok": 459,
+      "precision": 0.273
+     },
+     "ow_ao": {
+      "recall": 0.175,
+      "n_err": 80,
+      "false_alarm": 0.0181,
+      "n_ok": 221,
+      "precision": 0.778
+     },
+     "s_sh": {
+      "recall": 0.0,
+      "n_err": 0,
+      "false_alarm": 0.0137,
+      "n_ok": 73,
+      "precision": 0.0
+     },
+     "d_t": {
+      "recall": 1.0,
+      "n_err": 2,
+      "false_alarm": 0.0397,
+      "n_ok": 126,
+      "precision": 0.286
+     },
+     "_all": {
+      "recall": 0.233,
+      "n_err": 1041,
+      "false_alarm": 0.0483,
+      "n_ok": 5941,
+      "precision": 0.458
+     }
+    }
+   }
+  },
+  "en_ctc_037_v1_best": {
+   "source": "english/pair_margins/en_ctc_037_v1_best.json",
+   "data": {
+    "model": "/data/speech-ai/corpus/checkpoints/en_ctc_037_v1/best",
+    "min_art": 4.5,
+    "target_fa": 0.05,
+    "n_utts": 2000,
+    "margins": {
+     "l_r": -8.751,
+     "iy_ih": 3.121,
+     "z_s": 0.089,
+     "epenthesis": -2.548,
+     "d_t": -3.89,
+     "ow_ao": -1.694,
+     "final_del": 0.243,
+     "f_p": -5.321,
+     "ae_eh": 2.342,
+     "dh_d": -0.602,
+     "r_l": -4.571,
+     "s_sh": -7.998,
+     "b_p": -7.07,
+     "final_del_d": 0.101,
+     "er_ah": -4.839,
+     "ih_iy": -1.675,
+     "eh_ae": -0.073,
+     "v_b": -0.464,
+     "g_k": -5.167,
+     "th_s": -0.025,
+     "th_t": -1.742,
+     "uh_uw": 1.155
+    },
+    "n": {
+     "l_r": 2170,
+     "iy_ih": 1578,
+     "z_s": 3144,
+     "epenthesis": 11090,
+     "d_t": 834,
+     "ow_ao": 1074,
+     "final_del": 1148,
+     "f_p": 1752,
+     "ae_eh": 1664,
+     "dh_d": 2621,
+     "r_l": 2558,
+     "s_sh": 526,
+     "b_p": 1103,
+     "final_del_d": 1038,
+     "er_ah": 2877,
+     "ih_iy": 2869,
+     "eh_ae": 2409,
+     "v_b": 1681,
+     "g_k": 433,
+     "th_s": 555,
+     "th_t": 555,
+     "uh_uw": 489,
+     "z_jh": 8
+    },
+    "l2": {
+     "f_p": {
+      "recall": 0.571,
+      "n_err": 7,
+      "false_alarm": 0.0367,
+      "n_ok": 409,
+      "precision": 0.211
+     },
+     "r_l": {
+      "recall": 0.833,
+      "n_err": 12,
+      "false_alarm": 0.0577,
+      "n_ok": 485,
+      "precision": 0.263
+     },
+     "er_ah": {
+      "recall": 0.364,
+      "n_err": 33,
+      "false_alarm": 0.0519,
+      "n_ok": 501,
+      "precision": 0.316
+     },
+     "dh_d": {
+      "recall": 0.106,
+      "n_err": 357,
+      "false_alarm": 0.1053,
+      "n_ok": 266,
+      "precision": 0.576
+     },
+     "eh_ae": {
+      "recall": 0.221,
+      "n_err": 68,
+      "false_alarm": 0.0432,
+      "n_ok": 440,
+      "precision": 0.441
+     },
+     "th_s": {
+      "recall": 0.611,
+      "n_err": 18,
+      "false_alarm": 0.0562,
+      "n_ok": 89,
+      "precision": 0.688
+     },
+     "th_t": {
+      "recall": 0.111,
+      "n_err": 9,
+      "false_alarm": 0.0674,
+      "n_ok": 89,
+      "precision": 0.143
+     },
+     "ae_eh": {
+      "recall": 0.0,
+      "n_err": 2,
+      "false_alarm": 0.0755,
+      "n_ok": 530,
+      "precision": 0.0
+     },
+     "iy_ih": {
+      "recall": 0.231,
+      "n_err": 26,
+      "false_alarm": 0.0346,
+      "n_ok": 434,
+      "precision": 0.286
+     },
+     "v_b": {
+      "recall": 0.158,
+      "n_err": 19,
+      "false_alarm": 0.0146,
+      "n_ok": 410,
+      "precision": 0.333
+     },
+     "uh_uw": {
+      "recall": 0.2,
+      "n_err": 5,
+      "false_alarm": 0.0351,
+      "n_ok": 114,
+      "precision": 0.2
+     },
+     "z_s": {
+      "recall": 0.061,
+      "n_err": 296,
+      "false_alarm": 0.0147,
+      "n_ok": 339,
+      "precision": 0.783
+     },
+     "ih_iy": {
+      "recall": 0.233,
+      "n_err": 90,
+      "false_alarm": 0.0396,
+      "n_ok": 657,
+      "precision": 0.447
+     },
+     "g_k": {
+      "recall": 0.222,
+      "n_err": 9,
+      "false_alarm": 0.0316,
+      "n_ok": 95,
+      "precision": 0.4
+     },
+     "b_p": {
+      "recall": 0.6,
+      "n_err": 5,
+      "false_alarm": 0.0392,
+      "n_ok": 204,
+      "precision": 0.273
+     },
+     "l_r": {
+      "recall": 1.0,
+      "n_err": 3,
+      "false_alarm": 0.0087,
+      "n_ok": 459,
+      "precision": 0.429
+     },
+     "ow_ao": {
+      "recall": 0.075,
+      "n_err": 80,
+      "false_alarm": 0.0045,
+      "n_ok": 221,
+      "precision": 0.857
+     },
+     "s_sh": {
+      "recall": 0.0,
+      "n_err": 0,
+      "false_alarm": 0.0,
+      "n_ok": 73,
+      "precision": 0.0
+     },
+     "d_t": {
+      "recall": 1.0,
+      "n_err": 2,
+      "false_alarm": 0.0,
+      "n_ok": 126,
+      "precision": 1.0
+     },
+     "_all": {
+      "recall": 0.15,
+      "n_err": 1041,
+      "false_alarm": 0.0402,
+      "n_ok": 5941,
+      "precision": 0.395
+     }
+    }
+   }
+  },
+  "synth-d": {
+   "source": "english/pair_margins/synth-d.json",
+   "data": {
+    "model": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v2d/step_3000",
+    "min_art": 4.5,
+    "target_fa": 0.05,
+    "n_utts": 2000,
+    "margins": {
+     "l_r": -4.279,
+     "iy_ih": 0.646,
+     "z_s": 2.454,
+     "epenthesis": -0.825,
+     "d_t": -3.31,
+     "ow_ao": 1.42,
+     "final_del": -0.337,
+     "f_p": -2.712,
+     "ae_eh": 1.442,
+     "dh_d": 2.483,
+     "r_l": -3.304,
+     "s_sh": -4.385,
+     "b_p": -3.734,
+     "final_del_d": -0.644,
+     "er_ah": -1.02,
+     "ih_iy": 1.488,
+     "eh_ae": 0.962,
+     "v_b": 1.58,
+     "g_k": -4.441,
+     "th_s": 2.529,
+     "th_t": -0.133,
+     "uh_uw": 0.678
+    },
+    "n": {
+     "l_r": 2170,
+     "iy_ih": 1569,
+     "z_s": 3142,
+     "epenthesis": 11094,
+     "d_t": 834,
+     "ow_ao": 1072,
+     "final_del": 1150,
+     "f_p": 1752,
+     "ae_eh": 2160,
+     "dh_d": 2794,
+     "r_l": 2563,
+     "s_sh": 483,
+     "b_p": 1103,
+     "final_del_d": 1040,
+     "er_ah": 2504,
+     "ih_iy": 2778,
+     "eh_ae": 2466,
+     "v_b": 1681,
+     "g_k": 433,
+     "th_s": 383,
+     "th_t": 383,
+     "uh_uw": 448,
+     "z_jh": 8
+    },
+    "l2": {
+     "f_p": {
+      "recall": 0.714,
+      "n_err": 7,
+      "false_alarm": 0.0465,
+      "n_ok": 409,
+      "precision": 0.208
+     },
+     "r_l": {
+      "recall": 0.917,
+      "n_err": 12,
+      "false_alarm": 0.0804,
+      "n_ok": 485,
+      "precision": 0.22
+     },
+     "er_ah": {
+      "recall": 0.333,
+      "n_err": 33,
+      "false_alarm": 0.0519,
+      "n_ok": 501,
+      "precision": 0.297
+     },
+     "dh_d": {
+      "recall": 0.241,
+      "n_err": 357,
+      "false_alarm": 0.2331,
+      "n_ok": 266,
+      "precision": 0.581
+     },
+     "eh_ae": {
+      "recall": 0.294,
+      "n_err": 68,
+      "false_alarm": 0.0477,
+      "n_ok": 440,
+      "precision": 0.488
+     },
+     "th_s": {
+      "recall": 0.556,
+      "n_err": 18,
+      "false_alarm": 0.0674,
+      "n_ok": 89,
+      "precision": 0.625
+     },
+     "th_t": {
+      "recall": 0.111,
+      "n_err": 9,
+      "false_alarm": 0.0562,
+      "n_ok": 89,
+      "precision": 0.167
+     },
+     "ae_eh": {
+      "recall": 0.0,
+      "n_err": 2,
+      "false_alarm": 0.0396,
+      "n_ok": 530,
+      "precision": 0.0
+     },
+     "iy_ih": {
+      "recall": 0.192,
+      "n_err": 26,
+      "false_alarm": 0.0438,
+      "n_ok": 434,
+      "precision": 0.208
+     },
+     "v_b": {
+      "recall": 0.474,
+      "n_err": 19,
+      "false_alarm": 0.0293,
+      "n_ok": 410,
+      "precision": 0.429
+     },
+     "uh_uw": {
+      "recall": 0.2,
+      "n_err": 5,
+      "false_alarm": 0.0702,
+      "n_ok": 114,
+      "precision": 0.111
+     },
+     "z_s": {
+      "recall": 0.071,
+      "n_err": 296,
+      "false_alarm": 0.0236,
+      "n_ok": 339,
+      "precision": 0.724
+     },
+     "ih_iy": {
+      "recall": 0.289,
+      "n_err": 90,
+      "false_alarm": 0.0518,
+      "n_ok": 657,
+      "precision": 0.433
+     },
+     "g_k": {
+      "recall": 0.444,
+      "n_err": 9,
+      "false_alarm": 0.0316,
+      "n_ok": 95,
+      "precision": 0.571
+     },
+     "b_p": {
+      "recall": 1.0,
+      "n_err": 5,
+      "false_alarm": 0.049,
+      "n_ok": 204,
+      "precision": 0.333
+     },
+     "l_r": {
+      "recall": 1.0,
+      "n_err": 3,
+      "false_alarm": 0.0174,
+      "n_ok": 459,
+      "precision": 0.273
+     },
+     "ow_ao": {
+      "recall": 0.138,
+      "n_err": 80,
+      "false_alarm": 0.0181,
+      "n_ok": 221,
+      "precision": 0.733
+     },
+     "s_sh": {
+      "recall": 0.0,
+      "n_err": 0,
+      "false_alarm": 0.0137,
+      "n_ok": 73,
+      "precision": 0.0
+     },
+     "d_t": {
+      "recall": 1.0,
+      "n_err": 2,
+      "false_alarm": 0.0397,
+      "n_ok": 126,
+      "precision": 0.286
+     },
+     "_all": {
+      "recall": 0.222,
+      "n_err": 1041,
+      "false_alarm": 0.0523,
+      "n_ok": 5941,
+      "precision": 0.426
+     }
+    }
+   }
+  }
+ },
+ "pair_auc": {
+  "v1a": {
+   "source": "english/pair_auc/v1a.json",
+   "data": {
+    "/data/speech-ai/corpus/checkpoints/en_ctc_037_v1/best": {
+     "dh_d": {
+      "auc": 0.496,
+      "n_pos": 357,
+      "n_neg": 266,
+      "greedy_like_fa": 0.09,
+      "greedy_like_recall": 0.087
+     },
+     "z_s": {
+      "auc": 0.589,
+      "n_pos": 296,
+      "n_neg": 339,
+      "greedy_like_fa": 0.015,
+      "greedy_like_recall": 0.061
+     },
+     "ih_iy": {
+      "auc": 0.744,
+      "n_pos": 90,
+      "n_neg": 657,
+      "greedy_like_fa": 0.027,
+      "greedy_like_recall": 0.2
+     },
+     "ow_ao": {
+      "auc": 0.723,
+      "n_pos": 80,
+      "n_neg": 221,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 0.075
+     },
+     "eh_ae": {
+      "auc": 0.765,
+      "n_pos": 68,
+      "n_neg": 440,
+      "greedy_like_fa": 0.043,
+      "greedy_like_recall": 0.221
+     },
+     "er_ah": {
+      "auc": 0.825,
+      "n_pos": 33,
+      "n_neg": 501,
+      "greedy_like_fa": 0.02,
+      "greedy_like_recall": 0.121
+     },
+     "iy_ih": {
+      "auc": 0.83,
+      "n_pos": 26,
+      "n_neg": 434,
+      "greedy_like_fa": 0.06,
+      "greedy_like_recall": 0.231
+     },
+     "v_b": {
+      "auc": 0.765,
+      "n_pos": 19,
+      "n_neg": 410,
+      "greedy_like_fa": 0.015,
+      "greedy_like_recall": 0.158
+     },
+     "th_s": {
+      "auc": 0.897,
+      "n_pos": 18,
+      "n_neg": 89,
+      "greedy_like_fa": 0.056,
+      "greedy_like_recall": 0.611
+     },
+     "r_l": {
+      "auc": 0.97,
+      "n_pos": 12,
+      "n_neg": 485,
+      "greedy_like_fa": 0.004,
+      "greedy_like_recall": 0.75
+     },
+     "th_t": {
+      "auc": 0.73,
+      "n_pos": 9,
+      "n_neg": 89,
+      "greedy_like_fa": 0.034,
+      "greedy_like_recall": 0.111
+     },
+     "g_k": {
+      "auc": 0.8,
+      "n_pos": 9,
+      "n_neg": 95,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 0.0
+     },
+     "f_p": {
+      "auc": 0.904,
+      "n_pos": 7,
+      "n_neg": 409,
+      "greedy_like_fa": 0.022,
+      "greedy_like_recall": 0.571
+     },
+     "uh_uw": {
+      "auc": 0.807,
+      "n_pos": 5,
+      "n_neg": 114,
+      "greedy_like_fa": 0.044,
+      "greedy_like_recall": 0.2
+     },
+     "b_p": {
+      "auc": 0.922,
+      "n_pos": 5,
+      "n_neg": 204,
+      "greedy_like_fa": 0.005,
+      "greedy_like_recall": 0.0
+     },
+     "l_r": {
+      "auc": 1.0,
+      "n_pos": 3,
+      "n_neg": 459,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 0.667
+     },
+     "ae_eh": {
+      "auc": 0.708,
+      "n_pos": 2,
+      "n_neg": 530,
+      "greedy_like_fa": 0.149,
+      "greedy_like_recall": 0.0
+     },
+     "d_t": {
+      "auc": 1.0,
+      "n_pos": 2,
+      "n_neg": 126,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 0.5
+     },
+     "s_sh": {
+      "auc": null,
+      "n_pos": 0,
+      "n_neg": 73,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": null
+     },
+     "_all": {
+      "auc": 0.728,
+      "n_pos": 1041,
+      "n_neg": 5941
+     }
+    },
+    "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1a/step_1000": {
+     "dh_d": {
+      "auc": 0.5,
+      "n_pos": 357,
+      "n_neg": 266,
+      "greedy_like_fa": 0.789,
+      "greedy_like_recall": 0.739
+     },
+     "z_s": {
+      "auc": 0.655,
+      "n_pos": 296,
+      "n_neg": 339,
+      "greedy_like_fa": 0.372,
+      "greedy_like_recall": 0.561
+     },
+     "ih_iy": {
+      "auc": 0.798,
+      "n_pos": 90,
+      "n_neg": 657,
+      "greedy_like_fa": 0.149,
+      "greedy_like_recall": 0.522
+     },
+     "ow_ao": {
+      "auc": 0.81,
+      "n_pos": 80,
+      "n_neg": 221,
+      "greedy_like_fa": 0.14,
+      "greedy_like_recall": 0.575
+     },
+     "eh_ae": {
+      "auc": 0.774,
+      "n_pos": 68,
+      "n_neg": 440,
+      "greedy_like_fa": 0.175,
+      "greedy_like_recall": 0.574
+     },
+     "er_ah": {
+      "auc": 0.859,
+      "n_pos": 33,
+      "n_neg": 501,
+      "greedy_like_fa": 0.078,
+      "greedy_like_recall": 0.545
+     },
+     "iy_ih": {
+      "auc": 0.885,
+      "n_pos": 26,
+      "n_neg": 434,
+      "greedy_like_fa": 0.143,
+      "greedy_like_recall": 0.615
+     },
+     "v_b": {
+      "auc": 0.908,
+      "n_pos": 19,
+      "n_neg": 410,
+      "greedy_like_fa": 0.168,
+      "greedy_like_recall": 0.842
+     },
+     "th_s": {
+      "auc": 0.918,
+      "n_pos": 18,
+      "n_neg": 89,
+      "greedy_like_fa": 0.135,
+      "greedy_like_recall": 0.889
+     },
+     "r_l": {
+      "auc": 0.995,
+      "n_pos": 12,
+      "n_neg": 485,
+      "greedy_like_fa": 0.004,
+      "greedy_like_recall": 0.833
+     },
+     "th_t": {
+      "auc": 0.724,
+      "n_pos": 9,
+      "n_neg": 89,
+      "greedy_like_fa": 0.112,
+      "greedy_like_recall": 0.444
+     },
+     "g_k": {
+      "auc": 0.947,
+      "n_pos": 9,
+      "n_neg": 95,
+      "greedy_like_fa": 0.011,
+      "greedy_like_recall": 0.444
+     },
+     "f_p": {
+      "auc": 0.961,
+      "n_pos": 7,
+      "n_neg": 409,
+      "greedy_like_fa": 0.032,
+      "greedy_like_recall": 0.714
+     },
+     "uh_uw": {
+      "auc": 0.847,
+      "n_pos": 5,
+      "n_neg": 114,
+      "greedy_like_fa": 0.14,
+      "greedy_like_recall": 0.8
+     },
+     "b_p": {
+      "auc": 0.984,
+      "n_pos": 5,
+      "n_neg": 204,
+      "greedy_like_fa": 0.02,
+      "greedy_like_recall": 0.8
+     },
+     "l_r": {
+      "auc": 1.0,
+      "n_pos": 3,
+      "n_neg": 459,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 1.0
+     },
+     "ae_eh": {
+      "auc": 0.797,
+      "n_pos": 2,
+      "n_neg": 530,
+      "greedy_like_fa": 0.258,
+      "greedy_like_recall": 0.5
+     },
+     "d_t": {
+      "auc": 0.996,
+      "n_pos": 2,
+      "n_neg": 126,
+      "greedy_like_fa": 0.016,
+      "greedy_like_recall": 1.0
+     },
+     "s_sh": {
+      "auc": null,
+      "n_pos": 0,
+      "n_neg": 73,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": null
+     },
+     "_all": {
+      "auc": 0.822,
+      "n_pos": 1041,
+      "n_neg": 5941
+     }
+    },
+    "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1a/step_3000": {
+     "dh_d": {
+      "auc": 0.493,
+      "n_pos": 357,
+      "n_neg": 266,
+      "greedy_like_fa": 0.805,
+      "greedy_like_recall": 0.748
+     },
+     "z_s": {
+      "auc": 0.655,
+      "n_pos": 296,
+      "n_neg": 339,
+      "greedy_like_fa": 0.336,
+      "greedy_like_recall": 0.551
+     },
+     "ih_iy": {
+      "auc": 0.798,
+      "n_pos": 90,
+      "n_neg": 657,
+      "greedy_like_fa": 0.257,
+      "greedy_like_recall": 0.689
+     },
+     "ow_ao": {
+      "auc": 0.806,
+      "n_pos": 80,
+      "n_neg": 221,
+      "greedy_like_fa": 0.199,
+      "greedy_like_recall": 0.6
+     },
+     "eh_ae": {
+      "auc": 0.765,
+      "n_pos": 68,
+      "n_neg": 440,
+      "greedy_like_fa": 0.273,
+      "greedy_like_recall": 0.662
+     },
+     "er_ah": {
+      "auc": 0.857,
+      "n_pos": 33,
+      "n_neg": 501,
+      "greedy_like_fa": 0.076,
+      "greedy_like_recall": 0.576
+     },
+     "iy_ih": {
+      "auc": 0.832,
+      "n_pos": 26,
+      "n_neg": 434,
+      "greedy_like_fa": 0.198,
+      "greedy_like_recall": 0.615
+     },
+     "v_b": {
+      "auc": 0.909,
+      "n_pos": 19,
+      "n_neg": 410,
+      "greedy_like_fa": 0.171,
+      "greedy_like_recall": 0.789
+     },
+     "th_s": {
+      "auc": 0.915,
+      "n_pos": 18,
+      "n_neg": 89,
+      "greedy_like_fa": 0.101,
+      "greedy_like_recall": 0.889
+     },
+     "r_l": {
+      "auc": 0.994,
+      "n_pos": 12,
+      "n_neg": 485,
+      "greedy_like_fa": 0.006,
+      "greedy_like_recall": 0.917
+     },
+     "th_t": {
+      "auc": 0.705,
+      "n_pos": 9,
+      "n_neg": 89,
+      "greedy_like_fa": 0.09,
+      "greedy_like_recall": 0.333
+     },
+     "g_k": {
+      "auc": 0.953,
+      "n_pos": 9,
+      "n_neg": 95,
+      "greedy_like_fa": 0.011,
+      "greedy_like_recall": 0.444
+     },
+     "f_p": {
+      "auc": 0.958,
+      "n_pos": 7,
+      "n_neg": 409,
+      "greedy_like_fa": 0.037,
+      "greedy_like_recall": 0.714
+     },
+     "uh_uw": {
+      "auc": 0.842,
+      "n_pos": 5,
+      "n_neg": 114,
+      "greedy_like_fa": 0.211,
+      "greedy_like_recall": 0.8
+     },
+     "b_p": {
+      "auc": 0.982,
+      "n_pos": 5,
+      "n_neg": 204,
+      "greedy_like_fa": 0.029,
+      "greedy_like_recall": 0.8
+     },
+     "l_r": {
+      "auc": 1.0,
+      "n_pos": 3,
+      "n_neg": 459,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": 0.667
+     },
+     "ae_eh": {
+      "auc": 0.719,
+      "n_pos": 2,
+      "n_neg": 530,
+      "greedy_like_fa": 0.323,
+      "greedy_like_recall": 0.5
+     },
+     "d_t": {
+      "auc": 0.992,
+      "n_pos": 2,
+      "n_neg": 126,
+      "greedy_like_fa": 0.024,
+      "greedy_like_recall": 1.0
+     },
+     "s_sh": {
+      "auc": null,
+      "n_pos": 0,
+      "n_neg": 73,
+      "greedy_like_fa": 0.0,
+      "greedy_like_recall": null
+     },
+     "_all": {
+      "auc": 0.807,
+      "n_pos": 1041,
+      "n_neg": 5941
+     }
+    }
+   }
+  }
+ },
+ "pseudo037_synthA": {
+  "source": "english/pseudo037_synthA/stats.json",
+  "data": {
+   "model": "/data/speech-ai/corpus/checkpoints/en_ctc_synth_v1a/step_1000",
+   "margin": "/data/speech-ai/out/mdd/english/pair_margins/en_ctc_synth_v1a_step_1000.json",
+   "counts": {
+    "utts": 20000,
+    "cands": 461394,
+    "alt": 46279,
+    "amb": 128,
+    "rule_epenthesis": 12216,
+    "rule_er_ah": 2778,
+    "rule_dh_d": 2039,
+    "rule_ih_iy": 2935,
+    "rule_r_l": 4165,
+    "rule_v_b": 2069,
+    "rule_s_sh": 503,
+    "rule_final_del_d": 813,
+    "rule_iy_ih": 1037,
+    "rule_d_t": 841,
+    "rule_l_r": 3734,
+    "rule_th_s": 623,
+    "rule_th_t": 479,
+    "rule_uh_uw": 359,
+    "rule_z_s": 2112,
+    "rule_ow_ao": 1036,
+    "rule_f_p": 2530,
+    "rule_ae_eh": 1881,
+    "rule_b_p": 1082,
+    "rule_final_del": 836,
+    "rule_eh_ae": 1791,
+    "rule_g_k": 420
+   },
+   "alt_rate": 0.1003,
+   "amb_rate": 0.0003
+  }
+ }
+}

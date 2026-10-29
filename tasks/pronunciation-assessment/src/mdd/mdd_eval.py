@@ -23,7 +23,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import editdistance
-from fairseq import checkpoint_utils
+# fairseq 는 Decoder() 를 만들 때만 import 한다(아래 __init__). 모듈 첫머리에서 불러오면
+# fairseq 가 없는 환경(NPU 서버 py3.12 등)에서 w2v-BERT 경로만 쓰는 앱까지 import 단계에서 죽는다.
 
 CKPT = f"{DATA_ROOT}/mdd_ckpt/checkpoint_best.pt"
 GOLD_SPEC = f"{MDD_OUTPUTS}/gold_eval/gold_eval_spec.jsonl"
@@ -51,6 +52,8 @@ class Decoder:
         # 체크포인트에 박힌 data 경로는 학습 서버 것이라 다른 머신엔 없다.
         # dict.ltr.txt 가 있는 폴더를 MDD_DATA_DIR 로 지정하면 그쪽을 쓴다.
         ov = {"data": os.environ["MDD_DATA_DIR"]} if os.environ.get("MDD_DATA_DIR") else None
+        ensure_fairseq()                                  # import 직전에 다시 맨 앞으로(그림자 방지)
+        from fairseq import checkpoint_utils
         models, cfg, task = checkpoint_utils.load_model_ensemble_and_task([CKPT], arg_overrides=ov)
         m = models[0].eval()
         use_cuda = torch.cuda.is_available() and os.environ.get("MDD_FORCE_CPU") != "1"

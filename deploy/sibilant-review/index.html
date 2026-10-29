@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ㅅ·ㅆ 청취 평가</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#142c35;background:#edf3f5;font-size:17px}*{box-sizing:border-box}body{max-width:760px;margin:32px auto;padding:0 20px}h1{font-size:27px;letter-spacing:-.04em}p{line-height:1.65}.card{background:#fff;border:1px solid #cddde2;border-radius:16px;padding:24px;margin:20px 0}button{font:inherit;border:1px solid #8ca5ad;background:white;border-radius:9px;padding:12px;cursor:pointer}button:focus-visible{outline:3px solid #f1a736;outline-offset:3px}button[aria-pressed=true]{background:#075569;color:white}.choices{display:flex;flex-wrap:wrap;gap:9px}audio{width:100%;margin:8px 0 18px}label{display:block;margin:12px 0}textarea{width:100%;font:inherit;padding:10px;border:1px solid #8ca5ad;border-radius:8px}#save{background:#075569;color:white}#save:disabled{opacity:.5;cursor:default}.navigation{display:flex;gap:12px;align-items:center}.muted{color:#4c6973;font-size:14px}#status{min-height:28px}.progress{height:6px;background:#cddde2;border-radius:6px;overflow:hidden}.progress span{display:block;background:#075569;height:100%}fieldset{border:0;padding:0;margin:20px 0}legend{font-weight:650;margin-bottom:10px}
+</style>
+<h1>소리만 듣고 판단해 주세요</h1>
+<p>짧은 구간의 마찰음이 어떻게 들리는지 선택합니다. 정답을 추측하지 말고 실제 들린 소리를 골라 주세요. 판단이 어려우면 그대로 표시해도 됩니다.</p>
+<label><input type="checkbox" id="native"> 한국어가 모어이며, 직접 듣고 응답합니다.</label>
+<p class="muted">이어폰·헤드폰 사용을 권장합니다. 다른 평가자와 답을 상의하지 마세요. 응답은 제출할 때 저장되며 나중에 이어서 할 수 있습니다.</p>
+<div class="progress"><span id="bar"></span></div>
+<div class="card">
+<strong id="position">불러오는 중…</strong>
+<p>대상 구간</p><audio id="local" controls preload="none"></audio>
+<details><summary>앞뒤 문맥도 듣기</summary><p class="muted">대상 위치가 불분명할 때 사용하세요. 문맥을 들었는지도 함께 기록됩니다.</p><audio id="context" controls preload="none"></audio></details>
+<fieldset><legend>어떻게 들리나요?</legend><div class="choices" id="choices">
+<button type="button" data-value="s">ㅅ</button><button type="button" data-value="ss">ㅆ</button><button type="button" data-value="other">다른 소리</button><button type="button" data-value="uncertain">ㅅ·ㅆ 판단 어려움</button><button type="button" data-value="inaudible">소리를 확인할 수 없음</button>
+</div></fieldset>
+<fieldset><legend>판단에 얼마나 확신하나요?</legend><div class="choices" id="confidence"><button type="button" data-value="1">낮음</button><button type="button" data-value="2">보통</button><button type="button" data-value="3">높음</button></div></fieldset>
+<label for="note">메모 <span class="muted">(선택)</span></label><textarea id="note" rows="2" maxlength="1000"></textarea>
+<p id="status" role="status" aria-live="polite"></p>
+<div class="navigation"><button type="button" id="prev">이전</button><button type="button" id="save">저장하고 다음</button><button type="button" id="next">다음</button></div>
+</div>
+<p class="muted">자연스러운 발음을 몇 ms 이상이어야 한다는 기준으로 판단할 필요는 없습니다. 들은 인상 그대로 응답해 주세요.</p>
+<script>
+'use strict';
+const key=new URLSearchParams(location.search).get('t')||'', $=id=>document.getElementById(id);
+let trials=[],index=0,choice=null,confidence=null,started=0,plays={local:0,context:0},busy=false;
+function message(s){$('status').textContent=s}
+function select(group,value){document.querySelectorAll('#'+group+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===String(value))))}
+function draw(){
+  if(!trials.length)return;const t=trials[index];choice=t.answer?.choice||null;confidence=t.answer?.confidence||null;plays={local:0,context:0};started=performance.now();
+  for(const mode of ['local','context']){$(mode).pause();$(mode).src='audio/'+encodeURIComponent(t.trial)+'/'+mode+'?t='+encodeURIComponent(key)}
+  $('note').value=t.answer?.note||'';select('choices',choice);select('confidence',confidence);
+  const done=trials.filter(x=>x.answer).length;$('position').textContent=(index+1)+' / '+trials.length+' · '+done+'개 제출';$('bar').style.width=(100*done/trials.length)+'%';
+  $('prev').disabled=index===0;$('next').disabled=index===trials.length-1;message(t.answer?'저장된 응답입니다. 수정하려면 다시 듣고 제출하세요.':'');
+}
+for(const mode of ['local','context'])$(mode).addEventListener('play',()=>{plays[mode]++});
+$('choices').addEventListener('click',e=>{const b=e.target.closest('button');if(b){choice=b.dataset.value;select('choices',choice)}});
+$('confidence').addEventListener('click',e=>{const b=e.target.closest('button');if(b){confidence=Number(b.dataset.value);select('confidence',confidence)}});
+$('prev').onclick=()=>{if(!busy&&index>0){index--;draw()}};$('next').onclick=()=>{if(!busy&&index<trials.length-1){index++;draw()}};
+$('save').onclick=async()=>{
+ if(busy)return;if(!$('native').checked){message('한국어 모어 청취자 확인란을 선택해 주세요.');return}
+ if(!choice||!confidence){message('들은 소리와 확신도를 모두 선택해 주세요.');return}
+ if(!plays.local&&!plays.context){message('음성을 먼저 재생해 주세요.');return}
+ busy=true;$('save').disabled=true;
+ const data={trial:trials[index].trial,choice,confidence,native_korean:true,plays,elapsed_seconds:(performance.now()-started)/1000,note:$('note').value};
+ try{const r=await fetch('label',{method:'POST',headers:{'Content-Type':'application/json','x-review-key':key},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw Error(d.detail||'저장 실패');
+ trials[index].answer={choice,confidence,note:data.note};if(index<trials.length-1){index++;draw()}else{draw();message(trials.every(x=>x.answer)?'모든 응답이 저장되었습니다. 감사합니다.':'현재 응답이 저장되었습니다. 미응답 구간을 확인해 주세요.')}
+ }catch(e){message('저장하지 못했습니다: '+e.message)}finally{busy=false;$('save').disabled=false}
+};
+(async()=>{try{const r=await fetch('trials',{headers:{'x-review-key':key}});if(!r.ok)throw Error('평가자 전용 링크를 확인해 주세요.');const d=await r.json();trials=d.trials;const next=trials.findIndex(x=>!x.answer);index=next<0?0:next;draw()}catch(e){message(e.message)}})();
+</script></html>

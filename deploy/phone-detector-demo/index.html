@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>어떤 문장이든 — 발음 진단</title>
+<style>
+  :root { --g:#00734f; --g2:#e3f3ec; --bg:#f1f1f5; --ink:#15161a; --sub:#6b6f7a; --line:#e3e4ea; --red:#d5242c; --amb:#f2a100; --card:#fff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:6px 0 2px; } .lead { color:var(--sub); margin:0 0 16px; }
+  .card { background:var(--card); border-radius:16px; padding:16px; margin-bottom:14px; }
+  label { font-size:12px; color:var(--sub); display:block; margin-bottom:4px; }
+  textarea, select { width:100%; border:1px solid var(--line); border-radius:12px; padding:12px; font:inherit; background:#fff; }
+  textarea { font-size:18px; resize:vertical; min-height:58px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:end; } .row > div { flex:1 1 160px; }
+  button { border:0; border-radius:14px; padding:13px 18px; font:600 15px/1 inherit; cursor:pointer; }
+  .primary { background:var(--g); color:#fff; } .ghost { background:var(--g2); color:var(--g); } .rec { background:var(--red); color:#fff; }
+  button:disabled { opacity:.45; cursor:default; }
+  .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .meter { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-top:10px; } .meter i { display:block; height:100%; width:0; background:var(--g); transition:width .08s; }
+  .samples { display:flex; gap:8px; flex-wrap:wrap; } .chip { background:#f4f5f8; border-radius:999px; padding:7px 12px; font-size:13px; cursor:pointer; border:1px solid transparent; } .chip:hover { border-color:var(--g); }
+  .tiles { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 4px; }
+  .tile { min-width:46px; padding:10px 8px; text-align:center; font-size:26px; font-weight:700; border-radius:12px; cursor:pointer; border:2px solid transparent; background:#eef7f2; color:#0b5a3e; }
+  .tile.warn { background:#fff4dc; color:#8a5a00; } .tile.bad { background:#fde7e8; color:var(--red); border-color:var(--red); } .tile.sel { outline:3px solid #1b1c1f22; }
+  .sum { font-size:13px; color:var(--sub); } .sum b { color:var(--ink); }
+  .ph { border-top:1px solid var(--line); padding:12px 0; } .ph:first-child { border-top:0; }
+  .ph h3 { margin:0 0 6px; font-size:16px; } .tag { font-size:11px; padding:2px 8px; border-radius:999px; background:#eee; color:#555; margin-left:6px; font-weight:500; }
+  .tag.bad { background:#fde7e8; color:var(--red); }
+  .bar { display:flex; align-items:center; gap:8px; font-size:13px; margin:3px 0; } .bar span:first-child { width:34px; text-align:center; font-weight:700; font-size:16px; }
+  .bar .t { flex:1; height:8px; background:var(--line); border-radius:4px; overflow:hidden; } .bar .t i { display:block; height:100%; background:var(--g); } .bar.h .t i { background:var(--red); }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; } @media (max-width:560px) { .cols { grid-template-columns:1fr; } }
+  .tip { background:var(--g2); color:#0b5a3e; border-radius:12px; padding:10px 12px; margin-top:8px; } .tip b { color:#08422d; }
+  .muted { color:var(--sub); font-size:12px; } .err { color:var(--red); }
+  small.k { color:var(--sub); font-weight:500; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>어떤 문장이든, 발음 진단</h1>
+  <p class="lead">문장을 <b>직접 입력</b>하고 읽어 보세요. 학습에 없던 문장도 자모 단위로 진단합니다.</p>
+
+  <div class="card">
+    <label>읽을 문장</label>
+    <textarea id="sent" placeholder="예) 저는 다음 달에 한국 회사 면접을 봐요">저는 다음 달에 한국 회사 면접을 봐요</textarea>
+    <div class="row" style="margin-top:10px">
+      <div><label>모국어</label><select id="l1"></select></div>
+      <div><label>지적 기준</label><select id="mode"><option value="strict">확실한 것만 (오지적 1%)</option><option value="balanced">균형 (F1 최대)</option></select></div>
+    </div>
+    <div class="btns">
+      <button id="rec" class="primary">● 녹음 시작</button>
+      <button id="up" class="ghost">파일 올리기</button><input id="file" type="file" accept="audio/*" hidden>
+      <button id="again" class="ghost" disabled>같은 음성 다시 분석</button>
+    </div>
+    <div class="meter"><i id="lv"></i></div>
+    <div id="msg" class="muted" style="margin-top:8px">마이크를 허용한 뒤 녹음하세요. 다 읽으면 다시 눌러 끝냅니다.</div>
+  </div>
+
+  <div class="card" id="sampleCard" hidden><label>녹음 샘플 (외국인 학습자)</label><div class="samples" id="samples"></div></div>
+
+  <div class="card" id="res" hidden>
+    <div class="sum" id="sum"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="muted">발음대로 적은 글자입니다. 빨간 칸을 누르면 이유를 볼 수 있어요.</div>
+    <audio id="player" controls style="width:100%; margin-top:10px"></audio>
+  </div>
+  <div class="card" id="detail" hidden></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let blob = null, rec = null, chunks = [], ctx = null, raf = 0, last = null, stopAt = 0;
+
+fetch('health').then(r => r.json()).then(h => { $('#l1').innerHTML = h.l1_choices.map(x => `<option value="${x}">${x === '?' ? '선택 안 함' : x}</option>`).join(''); });
+fetch('samples').then(r => r.json()).then(list => {
+  if (!list.length) return; $('#sampleCard').hidden = false;
+  $('#samples').innerHTML = list.map(s => `<span class="chip" data-i="${s.i}">${s.sentence} <small class="k">${s.l1 || ''}</small></span>`).join('');
+  document.querySelectorAll('.chip').forEach(c => c.onclick = async () => {
+    const s = list[+c.dataset.i]; $('#sent').value = s.sentence; if (s.l1) $('#l1').value = s.l1;
+    blob = await (await fetch('sample_audio/' + s.i)).blob(); run();
+  });
+});
+
+$('#rec').onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true, channelCount: 1 } });
+    chunks = []; rec = new MediaRecorder(stream);
+    rec.ondataavailable = e => chunks.push(e.data);
+    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); cancelAnimationFrame(raf); $('#lv').style.width = 0;
+      $('#rec').textContent = '● 녹음 시작'; $('#rec').className = 'primary'; blob = new Blob(chunks, { type: rec.mimeType }); run(); };
+    ctx = ctx || new AudioContext(); const an = ctx.createAnalyser(); an.fftSize = 512; ctx.createMediaStreamSource(stream).connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    const tick = () => { an.getByteTimeDomainData(buf); let m = 0; for (const v of buf) m = Math.max(m, Math.abs(v - 128)); $('#lv').style.width = Math.min(100, m * 1.6) + '%'; raf = requestAnimationFrame(tick); };
+    tick(); rec.start(); $('#rec').textContent = '■ 녹음 끝'; $('#rec').className = 'rec'; $('#msg').textContent = '녹음 중… 문장을 끝까지 읽고 버튼을 누르세요.';
+  } catch (e) { $('#msg').innerHTML = '<span class="err">마이크를 쓸 수 없어요. 파일 올리기를 이용하세요.</span>'; }
+};
+$('#up').onclick = () => $('#file').click();
+$('#file').onchange = e => { if (e.target.files[0]) { blob = e.target.files[0]; run(); } };
+$('#again').onclick = () => run();
+
+async function run() {
+  if (!blob) return;
+  const fd = new FormData(); fd.append('audio', blob, 'a.webm'); fd.append('sentence', $('#sent').value); fd.append('l1', $('#l1').value); fd.append('mode', $('#mode').value);
+  $('#msg').textContent = '분석 중…'; $('#again').disabled = false;
+  const r = await fetch('diagnose', { method: 'POST', body: fd }); const d = await r.json();
+  if (!r.ok) { $('#msg').innerHTML = `<span class="err">${d.detail || '오류'}</span>`; return; }
+  if (d.no_speech) { $('#msg').innerHTML = '<span class="err">소리가 들리지 않았어요. 마이크에 가까이 대고 다시 녹음해 주세요.</span>'; return; }
+  if (!d.align_ok) { $('#msg').innerHTML = `<span class="err">${d.message}</span>`; return; }
+  last = d; $('#player').src = URL.createObjectURL(blob);
+  $('#msg').textContent = `분석 ${d.took_sec}초 · 음성 ${d.duration_sec}초`;
+  $('#res').hidden = false;
+  $('#sum').innerHTML = d.n_flag ? `다시 볼 소리 <b>${d.n_flag}개</b> · 발음대로 적으면 <b>[${d.pron}]</b>` : `지적할 소리가 없어요 👍 · 발음대로 적으면 <b>[${d.pron}]</b>`;
+  $('#tiles').innerHTML = d.syllables.map((s, k) => `<div class="tile ${s.flag ? 'bad' : (s.p_max > 0.25 ? 'warn' : '')}" data-k="${k}">${s.text}</div>`).join('');
+  document.querySelectorAll('.tile').forEach(t => t.onclick = () => show(+t.dataset.k));
+  const first = d.syllables.findIndex(s => s.flag); if (first >= 0) show(first); else $('#detail').hidden = true;
+}
+const bars = (list, cls) => list.map(([j, p]) => `<div class="bar ${cls}"><span>${j}</span><div class="t"><i style="width:${Math.round(p * 100)}%"></i></div><span>${Math.round(p * 100)}%</span></div>`).join('');
+function show(k) {
+  document.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('sel', i === k));
+  const s = last.syllables[k], P = s.idx.map(j => last.phones[j]);
+  $('#detail').hidden = false;
+  $('#detail').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:20px">${s.text}</b>
+      <button class="ghost" id="seg">이 부분 다시 듣기</button></div>` + P.map(p => `
+    <div class="ph"><h3>${p.jamo} <small class="k">${{ onset: '첫소리', V: '가운뎃소리', coda: '받침' }[p.pos]}</small>
+      <span class="tag ${p.flag ? 'bad' : ''}">${p.flag ? '다시 보기' : '좋아요'} · ${Math.round(p.p_err * 100)}%</span></h3>
+      ${p.flag ? `<div class="tip"><b>${p.explain.title}</b><br>${p.explain.tips.join('<br>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</div>
+      <div class="cols" style="margin-top:10px"><div><div class="muted">이렇게 들렸어요 (판별기)</div>${bars(p.heard_top3, 'h')}</div>
+      ${p.heard_top3[0][0] === '∅' ? '<div class="muted">소리가 빠진 자리라 원어민 모델이 들은 소리는 표시하지 않아요.</div>'
+        : `<div><div class="muted">원어민 1,000시간으로 배운 귀에는</div>${bars(p.native_ear, '')}</div>`}</div>` : ''}
+    </div>`).join('');
+  $('#seg').onclick = () => { const a = $('#player'), t0 = Math.max(0, P[0].start - 0.12), t1 = P[P.length - 1].end + 0.12;
+    a.currentTime = t0; a.play(); clearTimeout(stopAt); stopAt = setTimeout(() => a.pause(), (t1 - t0) * 1000); };
+}
+</script>
+</body>
+</html>

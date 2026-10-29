@@ -1,0 +1,681 @@
+{
+ "version": "2026-10-01",
+ "note": "부스 녹음 이벤트용 낭독 문장 5세트 × 10문장. 세트마다 같은 순서로 인사 · 연음 · 비음화 · 경음화 · 격음화 · 구개음화/유음화 · 평경격음 · 모음 · 질문 억양 · 긴 문장을 담았다. focus 는 분석용(화면에 안 보임). pron = 표준 발음(단어별 KoG2P + 교정), guide = 발음 안내(로마자·키릴·가타카나, 발음 기준).",
+ "sets": [
+  {
+   "id": 1,
+   "items": [
+    {
+     "id": 1,
+     "slot": "인사",
+     "text": "안녕하세요, 만나서 반갑습니다.",
+     "en": "Hello, nice to meet you.",
+     "focus": "반갑습니다[반갑씀니다]",
+     "pron": "안녕하세요, 만나서 반갑씀니다.",
+     "guide": {
+      "roman": "an-nyeong-ha-se-yo, man-na-seo ban-gap-sseum-ni-da.",
+      "cyrl": "ан-нён-ха-се-ё, ман-на-со пан-гап-ссым-ни-да.",
+      "kana": "アンニョンハセヨ、　マンナソ　パンガッスムニダ。"
+     }
+    },
+    {
+     "id": 2,
+     "slot": "연음",
+     "text": "음악을 들으면 기분이 좋아져요.",
+     "en": "Listening to music puts me in a good mood.",
+     "focus": "음악을[으마글] · 들으면[드르면] · 좋아져요[조아저요]",
+     "pron": "으마글 드르면 기부니 조아저요.",
+     "guide": {
+      "roman": "eu-ma-geul deu-reu-myeon gi-bu-ni jo-a-jeo-yo.",
+      "cyrl": "ы-ма-гыль ты-ры-мён ки-бу-ни чо-а-джо-ё.",
+      "kana": "ウマグル　トゥルミョン　キブニ　チョアジョヨ。"
+     }
+    },
+    {
+     "id": 3,
+     "slot": "비음화",
+     "text": "작년 겨울에 처음으로 눈을 봤어요.",
+     "en": "Last winter, I saw snow for the first time.",
+     "focus": "작년[장년]",
+     "pron": "장년 겨우레 처으므로 누늘 봐써요.",
+     "guide": {
+      "roman": "jang-nyeon gyeo-u-re cheo-eu-meu-ro nu-neul bwa-sseo-yo.",
+      "cyrl": "чан-нён кё-у-ре чхо-ы-мы-ро ну-ныль пва-ссо-ё.",
+      "kana": "チャンニョン　キョウレ　チョウムロ　ヌヌル　プァッソヨ。"
+     }
+    },
+    {
+     "id": 4,
+     "slot": "경음화",
+     "text": "학교 앞 식당에서 국밥을 먹었어요.",
+     "en": "I had gukbap at a restaurant in front of the school.",
+     "focus": "학교[학꾜] · 식당[식땅] · 국밥[국빱]",
+     "pron": "학꾜 압 식땅에서 국빠블 머거써요.",
+     "guide": {
+      "roman": "hak-kkyo ap sik-ttang-e-seo guk-ppa-beul meo-geo-sseo-yo.",
+      "cyrl": "хак-ккё ап сик-ттан-э-со кук-ппа-быль мо-го-ссо-ё.",
+      "kana": "ハッキョ　アプ　シッタンエソ　クッパブル　モゴッソヨ。"
+     }
+    },
+    {
+     "id": 5,
+     "slot": "격음화",
+     "text": "친구의 생일을 진심으로 축하했어요.",
+     "en": "I sincerely congratulated my friend on their birthday.",
+     "focus": "축하[추카] · 친구의[친구에]",
+     "pron": "친구에 생이를 진시므로 추카해써요.",
+     "guide": {
+      "roman": "chin-gu-e saeng-i-reul jin-si-meu-ro chu-ka-hae-sseo-yo.",
+      "cyrl": "чхин-гу-э сэн-и-рыль чин-си-мы-ро чху-кха-хэ-ссо-ё.",
+      "kana": "チングエ　センイルル　チンシムロ　チュカヘッソヨ。"
+     }
+    },
+    {
+     "id": 6,
+     "slot": "구개음화·유음화",
+     "text": "굳이 연락하지 않아도 괜찮아요.",
+     "en": "You don't have to contact me.",
+     "focus": "굳이[구지] · 연락[열락] · 괜찮아요[괜차나요]",
+     "pron": "구지 열라카지 아나도 괜차나요.",
+     "guide": {
+      "roman": "gu-ji yeol-la-ka-ji a-na-do gwaen-cha-na-yo.",
+      "cyrl": "ку-джи ёл-ла-кха-джи а-на-до квэн-чха-на-ё.",
+      "kana": "クジ　ヨルラカジ　アナド　クェンチャナヨ。"
+     }
+    },
+    {
+     "id": 7,
+     "slot": "평음·경음·격음",
+     "text": "토끼가 풀밭에서 딸기를 먹고 있어요.",
+     "en": "A rabbit is eating strawberries in the grass.",
+     "focus": "토끼(ㅌ·ㄲ) · 풀밭에서[풀바테서] · 딸기(ㄸ) · 먹고[먹꼬]",
+     "pron": "토끼가 풀바테서 딸기를 먹꼬 이써요.",
+     "guide": {
+      "roman": "to-kki-ga pul-ba-te-seo ttal-gi-reul meok-kko i-sseo-yo.",
+      "cyrl": "тхо-кки-га пхуль-ба-тхе-со тталь-ги-рыль мок-кко и-ссо-ё.",
+      "kana": "トッキガ　プルバテソ　タルギルル　モッコ　イッソヨ。"
+     }
+    },
+    {
+     "id": 8,
+     "slot": "모음",
+     "text": "어머니께서 오이와 우유를 사 오셨어요.",
+     "en": "My mother bought cucumbers and milk.",
+     "focus": "ㅓ·ㅗ·ㅜ·ㅠ",
+     "pron": "어머니께서 오이와 우유를 사 오셔써요.",
+     "guide": {
+      "roman": "eo-meo-ni-kke-seo o-i-wa u-yu-reul sa o-syeo-sseo-yo.",
+      "cyrl": "о-мо-ни-кке-со о-и-ва у-ю-рыль са о-сё-ссо-ё.",
+      "kana": "オモニッケソ　オイワ　ウユルル　サ　オショッソヨ。"
+     }
+    },
+    {
+     "id": 9,
+     "slot": "질문 억양",
+     "text": "실례지만 지하철역이 어디에 있어요?",
+     "en": "Excuse me, where is the subway station?",
+     "focus": "실례[실례] · 지하철역이[지하철려기] · 의문 억양",
+     "pron": "실례지만 지하철려기 어디에 이써요?",
+     "guide": {
+      "roman": "sil-lye-ji-man ji-ha-cheol-lyeo-gi eo-di-e i-sseo-yo?",
+      "cyrl": "сил-ле-джи-ман чи-ха-чхол-лё-ги о-ди-э и-ссо-ё?",
+      "kana": "シルリェジマン　チハチョルリョギ　オディエ　イッソヨ？"
+     }
+    },
+    {
+     "id": 10,
+     "slot": "긴 문장",
+     "text": "다음 주 토요일에는 친구들과 한강에서 자전거를 타기로 했어요.",
+     "en": "Next Saturday, I'm going to ride bikes along the Han River with friends.",
+     "focus": "긴 문장 · 리듬",
+     "pron": "다음 주 토요이레는 친구들과 한강에서 자전거를 타기로 해써요.",
+     "guide": {
+      "roman": "da-eum ju to-yo-i-re-neun chin-gu-deul-gwa han-gang-e-seo ja-jeon-geo-reul ta-gi-ro hae-sseo-yo.",
+      "cyrl": "та-ым чу тхо-ё-и-ре-нын чхин-гу-дыль-гва хан-ган-э-со ча-джон-го-рыль тха-ги-ро хэ-ссо-ё.",
+      "kana": "タウム　チュ　トヨイレヌン　チングドゥルグァ　ハンガンエソ　チャジョンゴルル　タギロ　ヘッソヨ。"
+     }
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "items": [
+    {
+     "id": 1,
+     "slot": "인사",
+     "text": "처음 뵙겠습니다. 잘 부탁드립니다.",
+     "en": "Nice to meet you. I look forward to getting to know you.",
+     "focus": "뵙겠습니다[뵙껟씀니다] · 부탁드립니다[부탁뜨림니다]",
+     "pron": "처음 뵙껟씀니다. 잘 부탁뜨림니다.",
+     "guide": {
+      "roman": "cheo-eum boep-kket-sseum-ni-da. jal bu-tak-tteu-rim-ni-da.",
+      "cyrl": "чхо-ым пвэп-ккет-ссым-ни-да. чаль пу-тхак-тты-рим-ни-да.",
+      "kana": "チョウム　プェッケッスムニダ。　チャル　プタットゥリムニダ。"
+     }
+    },
+    {
+     "id": 2,
+     "slot": "연음",
+     "text": "날씨가 좋아서 공원에 산책하러 갔어요.",
+     "en": "The weather was nice, so I went for a walk in the park.",
+     "focus": "좋아서[조아서] · 공원에[공워네] · 산책하러[산채카러]",
+     "pron": "날씨가 조아서 공워네 산채카러 가써요.",
+     "guide": {
+      "roman": "nal-ssi-ga jo-a-seo gong-wo-ne san-chae-ka-reo ga-sseo-yo.",
+      "cyrl": "наль-сси-га чо-а-со кон-во-не сан-чхэ-кха-ро ка-ссо-ё.",
+      "kana": "ナルシガ　チョアソ　コンウォネ　サンチェカロ　カッソヨ。"
+     }
+    },
+    {
+     "id": 3,
+     "slot": "비음화",
+     "text": "박물관 입구에서 오후 세 시에 만나요.",
+     "en": "Let's meet at the museum entrance at 3 p.m.",
+     "focus": "박물관[방물관] · 입구[입꾸]",
+     "pron": "방물관 입꾸에서 오후 세 시에 만나요.",
+     "guide": {
+      "roman": "bang-mul-gwan ip-kku-e-seo o-hu se si-e man-na-yo.",
+      "cyrl": "пан-муль-гван ип-кку-э-со о-ху се си-э ман-на-ё.",
+      "kana": "パンムルグァン　イックエソ　オフ　セ　シエ　マンナヨ。"
+     }
+    },
+    {
+     "id": 4,
+     "slot": "경음화",
+     "text": "책상 위에 연필과 지우개가 있어요.",
+     "en": "There's a pencil and an eraser on the desk.",
+     "focus": "책상[책쌍]",
+     "pron": "책쌍 위에 연필과 지우개가 이써요.",
+     "guide": {
+      "roman": "chaek-ssang wi-e yeon-pil-gwa ji-u-gae-ga i-sseo-yo.",
+      "cyrl": "чхэк-ссан ви-э ён-пхиль-гва чи-у-гэ-га и-ссо-ё.",
+      "kana": "チェッサン　ウィエ　ヨンピルグァ　チウゲガ　イッソヨ。"
+     }
+    },
+    {
+     "id": 5,
+     "slot": "격음화",
+     "text": "입학을 축하합니다. 정말 잘됐네요.",
+     "en": "Congratulations on getting into school. That's wonderful.",
+     "focus": "입학[이팍] · 축하[추카] · 잘됐네요[잘됀네요]",
+     "pron": "이파글 추카함니다. 정말 잘됀네요.",
+     "guide": {
+      "roman": "i-pa-geul chu-ka-ham-ni-da. jeong-mal jal-dwaen-ne-yo.",
+      "cyrl": "и-пха-гыль чху-кха-хам-ни-да. чон-маль чаль-двэн-не-ё.",
+      "kana": "イパグル　チュカハムニダ。　チョンマル　チャルドゥェンネヨ。"
+     }
+    },
+    {
+     "id": 6,
+     "slot": "구개음화·유음화",
+     "text": "해돋이를 보려고 아침 일찍 일어났어요.",
+     "en": "I woke up early to watch the sunrise.",
+     "focus": "해돋이[해도지] · 일어났어요[이러나써요]",
+     "pron": "해도지를 보려고 아침 일찍 이러나써요.",
+     "guide": {
+      "roman": "hae-do-ji-reul bo-ryeo-go a-chim il-jjik i-reo-na-sseo-yo.",
+      "cyrl": "хэ-до-джи-рыль по-рё-го а-чхим иль-ччик и-ро-на-ссо-ё.",
+      "kana": "ヘドジルル　ポリョゴ　アチム　イルチク　イロナッソヨ。"
+     }
+    },
+    {
+     "id": 7,
+     "slot": "평음·경음·격음",
+     "text": "아빠가 빵집에서 따뜻한 빵을 사 오셨어요.",
+     "en": "Dad bought warm bread at the bakery.",
+     "focus": "아빠(ㅃ) · 빵집[빵찝] · 따뜻한[따뜨탄]",
+     "pron": "아빠가 빵지베서 따뜨탄 빵을 사 오셔써요.",
+     "guide": {
+      "roman": "a-ppa-ga ppang-ji-be-seo tta-tteu-tan ppang-eul sa o-syeo-sseo-yo.",
+      "cyrl": "а-ппа-га ппан-джи-бе-со тта-тты-тхан ппан-ыль са о-сё-ссо-ё.",
+      "kana": "アッパガ　パンジベソ　タットゥタン　パンウル　サ　オショッソヨ。"
+     }
+    },
+    {
+     "id": 8,
+     "slot": "모음",
+     "text": "의자 위에 있는 회색 가방은 제 거예요.",
+     "en": "The gray bag on the chair is mine.",
+     "focus": "ㅢ·ㅟ·ㅚ·ㅔ · 있는[인는]",
+     "pron": "의자 위에 인는 회색 가방은 제 거예요.",
+     "guide": {
+      "roman": "ui-ja wi-e in-neun hoe-saek ga-bang-eun je geo-ye-yo.",
+      "cyrl": "ый-джа ви-э ин-нын хвэ-сэк ка-бан-ын че ко-йе-ё.",
+      "kana": "ウイジャ　ウィエ　インヌン　フェセク　カバンウン　チェ　コイェヨ。"
+     }
+    },
+    {
+     "id": 9,
+     "slot": "질문 억양",
+     "text": "이 근처에 편의점이 있어요?",
+     "en": "Is there a convenience store near here?",
+     "focus": "편의점[펴니점] · 의문 억양",
+     "pron": "이 근처에 펴니저미 이써요?",
+     "guide": {
+      "roman": "i geun-cheo-e pyeo-ni-jeo-mi i-sseo-yo?",
+      "cyrl": "и кын-чхо-э пхё-ни-джо-ми и-ссо-ё?",
+      "kana": "イ　クンチョエ　ピョニジョミ　イッソヨ？"
+     }
+    },
+    {
+     "id": 10,
+     "slot": "긴 문장",
+     "text": "한국어를 배운 지 일 년이 됐는데 아직도 받침이 어려워요.",
+     "en": "I've been learning Korean for a year, but final consonants are still hard.",
+     "focus": "일 년이[일려니] · 됐는데[됀는데] · 받침이[받치미]",
+     "pron": "한구거를 배운 지 일려니 됀는데 아직또 받치미 어려워요.",
+     "guide": {
+      "roman": "han-gu-geo-reul bae-un ji il-lyeo-ni dwaen-neun-de a-jik-tto bat-chi-mi eo-ryeo-wo-yo.",
+      "cyrl": "хан-гу-го-рыль пэ-ун чи ил-лё-ни твэн-нын-де а-джик-тто пат-чхи-ми о-рё-во-ё.",
+      "kana": "ハングゴルル　ペウン　チ　イルリョニ　トゥェンヌンデ　アジット　パッチミ　オリョウォヨ。"
+     }
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "items": [
+    {
+     "id": 1,
+     "slot": "인사",
+     "text": "감사합니다. 좋은 하루 보내세요.",
+     "en": "Thank you. Have a nice day.",
+     "focus": "감사합니다[감사함니다] · 좋은[조은]",
+     "pron": "감사함니다. 조은 하루 보내세요.",
+     "guide": {
+      "roman": "gam-sa-ham-ni-da. jo-eun ha-ru bo-nae-se-yo.",
+      "cyrl": "кам-са-хам-ни-да. чо-ын ха-ру по-нэ-се-ё.",
+      "kana": "カムサハムニダ。　チョウン　ハル　ポネセヨ。"
+     }
+    },
+    {
+     "id": 2,
+     "slot": "연음",
+     "text": "오늘 저녁에 한국 음식을 만들어 볼 거예요.",
+     "en": "I'm going to try cooking Korean food this evening.",
+     "focus": "음식을[음시글] · 만들어[만드러] · 볼 거예요[볼 꺼에요]",
+     "pron": "오늘 저녀게 한국 음시글 만드러 볼 꺼예요.",
+     "guide": {
+      "roman": "o-neul jeo-nyeo-ge han-guk eum-si-geul man-deu-reo bol kkeo-ye-yo.",
+      "cyrl": "о-ныль чо-нё-ге хан-гук ым-си-гыль ман-ды-ро поль кко-йе-ё.",
+      "kana": "オヌル　チョニョゲ　ハングク　ウムシグル　マンドゥロ　ポル　コイェヨ。"
+     }
+    },
+    {
+     "id": 3,
+     "slot": "비음화",
+     "text": "옛날에는 이 동네에 큰 시장이 있었대요.",
+     "en": "They say there used to be a big market in this neighborhood.",
+     "focus": "옛날[옌날] · 있었대요[이썯때요]",
+     "pron": "옌나레는 이 동네에 큰 시장이 이썯때요.",
+     "guide": {
+      "roman": "yen-na-re-neun i dong-ne-e keun si-jang-i i-sseot-ttae-yo.",
+      "cyrl": "йен-на-ре-нын и тон-не-э кхын си-джан-и и-ссот-ттэ-ё.",
+      "kana": "イェンナレヌン　イ　トンネエ　クン　シジャンイ　イッソッテヨ。"
+     }
+    },
+    {
+     "id": 4,
+     "slot": "경음화",
+     "text": "길가에 핀 꽃을 사진으로 찍었어요.",
+     "en": "I took a photo of the flowers blooming by the road.",
+     "focus": "길가[길까] · 꽃을[꼬츨]",
+     "pron": "길까에 핀 꼬츨 사지느로 찌거써요.",
+     "guide": {
+      "roman": "gil-kka-e pin kko-cheul sa-ji-neu-ro jji-geo-sseo-yo.",
+      "cyrl": "киль-кка-э пхин кко-чхыль са-джи-ны-ро ччи-го-ссо-ё.",
+      "kana": "キルカエ　ピン　コチュル　サジヌロ　チゴッソヨ。"
+     }
+    },
+    {
+     "id": 5,
+     "slot": "격음화",
+     "text": "창문을 열어 놓고 청소하면 좋겠어요.",
+     "en": "It would be nice to clean with the windows open.",
+     "focus": "놓고[노코] · 좋겠어요[조케써요]",
+     "pron": "창무늘 여러 노코 청소하면 조케써요.",
+     "guide": {
+      "roman": "chang-mu-neul yeo-reo no-ko cheong-so-ha-myeon jo-ke-sseo-yo.",
+      "cyrl": "чхан-му-ныль ё-ро но-кхо чхон-со-ха-мён чо-кхе-ссо-ё.",
+      "kana": "チャンムヌル　ヨロ　ノコ　チョンソハミョン　チョケッソヨ。"
+     }
+    },
+    {
+     "id": 6,
+     "slot": "구개음화·유음화",
+     "text": "신라 시대의 유물을 박물관에서 봤어요.",
+     "en": "I saw relics from the Silla period at a museum.",
+     "focus": "신라[실라] · 박물관[방물관] · 시대의[시대에]",
+     "pron": "실라 시대에 유무를 방물과네서 봐써요.",
+     "guide": {
+      "roman": "sil-la si-dae-e yu-mu-reul bang-mul-gwa-ne-seo bwa-sseo-yo.",
+      "cyrl": "сил-ла си-дэ-э ю-му-рыль пан-муль-гва-не-со пва-ссо-ё.",
+      "kana": "シルラ　シデエ　ユムルル　パンムルグァネソ　プァッソヨ。"
+     }
+    },
+    {
+     "id": 7,
+     "slot": "평음·경음·격음",
+     "text": "동생이 떡볶이를 먹고 배탈이 났어요.",
+     "en": "My younger sibling ate tteokbokki and got a stomachache.",
+     "focus": "떡볶이[떡뽀끼] · 먹고[먹꼬] · 배탈(ㅌ)",
+     "pron": "동생이 떡뽀끼를 먹꼬 배타리 나써요.",
+     "guide": {
+      "roman": "dong-saeng-i tteok-ppo-kki-reul meok-kko bae-ta-ri na-sseo-yo.",
+      "cyrl": "тон-сэн-и тток-ппо-кки-рыль мок-кко пэ-тха-ри на-ссо-ё.",
+      "kana": "トンセンイ　トッポッキルル　モッコ　ペタリ　ナッソヨ。"
+     }
+    },
+    {
+     "id": 8,
+     "slot": "모음",
+     "text": "저는 커피보다 우유를 더 좋아해요.",
+     "en": "I like milk more than coffee.",
+     "focus": "ㅓ·ㅗ·ㅜ·ㅠ",
+     "pron": "저는 커피보다 우유를 더 조아해요.",
+     "guide": {
+      "roman": "jeo-neun keo-pi-bo-da u-yu-reul deo jo-a-hae-yo.",
+      "cyrl": "чо-нын кхо-пхи-бо-да у-ю-рыль то чо-а-хэ-ё.",
+      "kana": "チョヌン　コピボダ　ウユルル　ト　チョアヘヨ。"
+     }
+    },
+    {
+     "id": 9,
+     "slot": "질문 억양",
+     "text": "혹시 이 근처에 맛있는 식당 아세요?",
+     "en": "Do you happen to know a good restaurant nearby?",
+     "focus": "맛있는[마신는] · 식당[식땅] · 의문 억양",
+     "pron": "혹씨 이 근처에 마신는 식땅 아세요?",
+     "guide": {
+      "roman": "hok-ssi i geun-cheo-e ma-sin-neun sik-ttang a-se-yo?",
+      "cyrl": "хок-сси и кын-чхо-э ма-син-нын сик-ттан а-се-ё?",
+      "kana": "ホッシ　イ　クンチョエ　マシンヌン　シッタン　アセヨ？"
+     }
+    },
+    {
+     "id": 10,
+     "slot": "긴 문장",
+     "text": "어제 친구랑 시장에 갔는데 사람이 너무 많아서 금방 돌아왔어요.",
+     "en": "Yesterday I went to the market with a friend, but it was so crowded we came right back.",
+     "focus": "갔는데[간는데] · 많아서[마나서] · 돌아왔어요[도라와써요]",
+     "pron": "어제 친구랑 시장에 간는데 사라미 너무 마나서 금방 도라와써요.",
+     "guide": {
+      "roman": "eo-je chin-gu-rang si-jang-e gan-neun-de sa-ra-mi neo-mu ma-na-seo geum-bang do-ra-wa-sseo-yo.",
+      "cyrl": "о-дже чхин-гу-ран си-джан-э кан-нын-де са-ра-ми но-му ма-на-со кым-бан то-ра-ва-ссо-ё.",
+      "kana": "オジェ　チングラン　シジャンエ　カンヌンデ　サラミ　ノム　マナソ　クムバン　トラワッソヨ。"
+     }
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "items": [
+    {
+     "id": 1,
+     "slot": "인사",
+     "text": "실례합니다. 잠깐만 기다려 주세요.",
+     "en": "Excuse me. Please wait a moment.",
+     "focus": "실례합니다[실례함니다]",
+     "pron": "실례함니다. 잠깐만 기다려 주세요.",
+     "guide": {
+      "roman": "sil-lye-ham-ni-da. jam-kkan-man gi-da-ryeo ju-se-yo.",
+      "cyrl": "сил-ле-хам-ни-да. чам-ккан-ман ки-да-рё чу-се-ё.",
+      "kana": "シルリェハムニダ。　チャムカンマン　キダリョ　チュセヨ。"
+     }
+    },
+    {
+     "id": 2,
+     "slot": "연음",
+     "text": "운동을 열심히 했더니 몸이 가벼워요.",
+     "en": "I worked out hard, and now my body feels light.",
+     "focus": "했더니[핻떠니] · 몸이[모미]",
+     "pron": "운동을 열씸히 핻떠니 모미 가벼워요.",
+     "guide": {
+      "roman": "un-dong-eul yeol-ssim-hi haet-tteo-ni mo-mi ga-byeo-wo-yo.",
+      "cyrl": "ун-дон-ыль ёль-ссим-хи хэт-тто-ни мо-ми ка-бё-во-ё.",
+      "kana": "ウンドンウル　ヨルシムヒ　ヘットニ　モミ　カビョウォヨ。"
+     }
+    },
+    {
+     "id": 3,
+     "slot": "비음화",
+     "text": "집 앞 정류장에서 버스를 놓쳤어요.",
+     "en": "I missed the bus at the stop in front of my house.",
+     "focus": "정류장[정뉴장] · 놓쳤어요[녿처써요]",
+     "pron": "집 압 정뉴장에서 버스를 녿처써요.",
+     "guide": {
+      "roman": "jip ap jeong-nyu-jang-e-seo beo-seu-reul not-cheo-sseo-yo.",
+      "cyrl": "чип ап чон-ню-джан-э-со по-сы-рыль нот-чхо-ссо-ё.",
+      "kana": "チプ　アプ　チョンニュジャンエソ　ポスルル　ノッチョッソヨ。"
+     }
+    },
+    {
+     "id": 4,
+     "slot": "경음화",
+     "text": "물건 값이 생각보다 비싸서 깜짝 놀랐어요.",
+     "en": "Things cost more than I expected, so I was really surprised.",
+     "focus": "물건[물껀] · 값이[갑씨] · 생각보다[생각뽀다]",
+     "pron": "물건 갑씨 생각뽀다 비싸서 깜짱 놀라써요.",
+     "guide": {
+      "roman": "mul-geon gap-ssi saeng-gak-ppo-da bi-ssa-seo kkam-jjang nol-la-sseo-yo.",
+      "cyrl": "муль-гон кап-сси сэн-гак-ппо-да пи-сса-со ккам-ччан нол-ла-ссо-ё.",
+      "kana": "ムルゴン　カッシ　センガッポダ　ピッサソ　カムチャン　ノルラッソヨ。"
+     }
+    },
+    {
+     "id": 5,
+     "slot": "격음화",
+     "text": "밥을 먹고 나서 따뜻한 차를 마셨어요.",
+     "en": "After the meal, I drank some warm tea.",
+     "focus": "따뜻한[따뜨탄] · 먹고[먹꼬]",
+     "pron": "바블 먹꼬 나서 따뜨탄 차를 마셔써요.",
+     "guide": {
+      "roman": "ba-beul meok-kko na-seo tta-tteu-tan cha-reul ma-syeo-sseo-yo.",
+      "cyrl": "па-быль мок-кко на-со тта-тты-тхан чха-рыль ма-сё-ссо-ё.",
+      "kana": "パブル　モッコ　ナソ　タットゥタン　チャルル　マショッソヨ。"
+     }
+    },
+    {
+     "id": 6,
+     "slot": "구개음화·유음화",
+     "text": "한라산에 올라가서 다 같이 사진을 찍었어요.",
+     "en": "We climbed Hallasan and took a photo together.",
+     "focus": "한라산[할라산] · 같이[가치]",
+     "pron": "할라사네 올라가서 다 가치 사지늘 찌거써요.",
+     "guide": {
+      "roman": "hal-la-sa-ne ol-la-ga-seo da ga-chi sa-ji-neul jji-geo-sseo-yo.",
+      "cyrl": "хал-ла-са-не ол-ла-га-со та ка-чхи са-джи-ныль ччи-го-ссо-ё.",
+      "kana": "ハルラサネ　オルラガソ　タ　カチ　サジヌル　チゴッソヨ。"
+     }
+    },
+    {
+     "id": 7,
+     "slot": "평음·경음·격음",
+     "text": "바빠서 아직 짐을 다 못 쌌어요.",
+     "en": "I've been busy, so I haven't finished packing yet.",
+     "focus": "바빠서(ㅃ) · 짐(ㅈ) · 쌌어요(ㅆ)",
+     "pron": "바빠서 아직 지믈 다 몯 싸써요.",
+     "guide": {
+      "roman": "ba-ppa-seo a-jik ji-meul da mot ssa-sseo-yo.",
+      "cyrl": "па-ппа-со а-джик чи-мыль та мот сса-ссо-ё.",
+      "kana": "パッパソ　アジク　チムル　タ　モッ　サッソヨ。"
+     }
+    },
+    {
+     "id": 8,
+     "slot": "모음",
+     "text": "외국인 친구에게 예쁜 엽서를 보냈어요.",
+     "en": "I sent a pretty postcard to a friend from abroad.",
+     "focus": "외국인[외구긴] · ㅚ·ㅖ·ㅕ·ㅔ",
+     "pron": "외구긴 친구에게 예쁜 엽써를 보내써요.",
+     "guide": {
+      "roman": "oe-gu-gin chin-gu-e-ge ye-ppeun yeop-sseo-reul bo-nae-sseo-yo.",
+      "cyrl": "вэ-гу-гин чхин-гу-э-ге йе-ппын ёп-ссо-рыль по-нэ-ссо-ё.",
+      "kana": "ウェグギン　チングエゲ　イェップン　ヨッソルル　ポネッソヨ。"
+     }
+    },
+    {
+     "id": 9,
+     "slot": "질문 억양",
+     "text": "이 옷 다른 색깔도 있어요?",
+     "en": "Does this come in another color?",
+     "focus": "옷 다른[옫따른] · 의문 억양",
+     "pron": "이 옫따른 색깔도 이써요?",
+     "guide": {
+      "roman": "i ot-tta-reun saek-kkal-do i-sseo-yo?",
+      "cyrl": "и от-тта-рын сэк-ккаль-до и-ссо-ё?",
+      "kana": "イ　オッタルン　セッカルド　イッソヨ？"
+     }
+    },
+    {
+     "id": 10,
+     "slot": "긴 문장",
+     "text": "날씨가 따뜻해지면 가족들과 함께 제주도로 여행을 가고 싶어요.",
+     "en": "When it gets warmer, I want to take a trip to Jeju with my family.",
+     "focus": "따뜻해지면[따뜨태지면] · 가족들과[가족뜰과] · 싶어요[시퍼요]",
+     "pron": "날씨가 따뜨태지면 가족뜰과 함께 제주도로 여행을 가고 시퍼요.",
+     "guide": {
+      "roman": "nal-ssi-ga tta-tteu-tae-ji-myeon ga-jok-tteul-gwa ham-kke je-ju-do-ro yeo-haeng-eul ga-go si-peo-yo.",
+      "cyrl": "наль-сси-га тта-тты-тхэ-джи-мён ка-джок-ттыль-гва хам-кке че-джу-до-ро ё-хэн-ыль ка-го си-пхо-ё.",
+      "kana": "ナルシガ　タットゥテジミョン　カジョットゥルグァ　ハムケ　チェジュドロ　ヨヘンウル　カゴ　シポヨ。"
+     }
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "items": [
+    {
+     "id": 1,
+     "slot": "인사",
+     "text": "괜찮아요. 천천히 말씀해 주세요.",
+     "en": "It's okay. Please speak slowly.",
+     "focus": "괜찮아요[괜차나요]",
+     "pron": "괜차나요. 천천히 말씀해 주세요.",
+     "guide": {
+      "roman": "gwaen-cha-na-yo. cheon-cheon-hi mal-sseum-hae ju-se-yo.",
+      "cyrl": "квэн-чха-на-ё. чхон-чхон-хи маль-ссым-хэ чу-се-ё.",
+      "kana": "クェンチャナヨ。　チョンチョンヒ　マルスムヘ　チュセヨ。"
+     }
+    },
+    {
+     "id": 2,
+     "slot": "연음",
+     "text": "할머니께서 맛있는 반찬을 많이 만들어 주셨어요.",
+     "en": "Grandma made lots of delicious side dishes for us.",
+     "focus": "맛있는[마신는] · 반찬을[반차늘] · 많이[마니]",
+     "pron": "할머니께서 마신는 반차늘 마니 만드러 주셔써요.",
+     "guide": {
+      "roman": "hal-meo-ni-kke-seo ma-sin-neun ban-cha-neul ma-ni man-deu-reo ju-syeo-sseo-yo.",
+      "cyrl": "халь-мо-ни-кке-со ма-син-нын пан-чха-ныль ма-ни ман-ды-ро чу-сё-ссо-ё.",
+      "kana": "ハルモニッケソ　マシンヌン　パンチャヌル　マニ　マンドゥロ　チュショッソヨ。"
+     }
+    },
+    {
+     "id": 3,
+     "slot": "비음화",
+     "text": "십 년 만에 고향 친구를 만났어요.",
+     "en": "I met a friend from my hometown for the first time in ten years.",
+     "focus": "십 년[심년]",
+     "pron": "심년 마네 고향 친구를 만나써요.",
+     "guide": {
+      "roman": "sim-nyeon ma-ne go-hyang chin-gu-reul man-na-sseo-yo.",
+      "cyrl": "сим-нён ма-не ко-хян чхин-гу-рыль ман-на-ссо-ё.",
+      "kana": "シムニョン　マネ　コヒャン　チングルル　マンナッソヨ。"
+     }
+    },
+    {
+     "id": 4,
+     "slot": "경음화",
+     "text": "책방에서 산 잡지를 동생에게 줬어요.",
+     "en": "I gave my younger sibling the magazine I bought at the bookstore.",
+     "focus": "책방[책빵] · 잡지[잡찌]",
+     "pron": "책빵에서 산 잡찌를 동생에게 줘써요.",
+     "guide": {
+      "roman": "chaek-ppang-e-seo san jap-jji-reul dong-saeng-e-ge jwo-sseo-yo.",
+      "cyrl": "чхэк-ппан-э-со сан чап-ччи-рыль тон-сэн-э-ге чво-ссо-ё.",
+      "kana": "チェッパンエソ　サン　チャッチルル　トンセンエゲ　チュォッソヨ。"
+     }
+    },
+    {
+     "id": 5,
+     "slot": "격음화",
+     "text": "숙제를 끝내지 못해서 선생님께 혼났어요.",
+     "en": "I couldn't finish my homework, so my teacher scolded me.",
+     "focus": "못해서[모태서] · 끝내지[끈내지] · 숙제[숙쩨]",
+     "pron": "숙쩨를 끈내지 모태서 선생님께 혼나써요.",
+     "guide": {
+      "roman": "suk-jje-reul kkeun-nae-ji mo-tae-seo seon-saeng-nim-kke hon-na-sseo-yo.",
+      "cyrl": "сук-чче-рыль ккын-нэ-джи мо-тхэ-со сон-сэн-ним-кке хон-на-ссо-ё.",
+      "kana": "スッチェルル　クンネジ　モテソ　ソンセンニムケ　ホンナッソヨ。"
+     }
+    },
+    {
+     "id": 6,
+     "slot": "구개음화·유음화",
+     "text": "밭이 너무 넓어서 할아버지 혼자서는 힘드세요.",
+     "en": "The field is too big for grandpa to manage alone.",
+     "focus": "밭이[바치] · 넓어서[널버서]",
+     "pron": "바치 너무 널버서 하라버지 혼자서는 힘드세요.",
+     "guide": {
+      "roman": "ba-chi neo-mu neol-beo-seo ha-ra-beo-ji hon-ja-seo-neun him-deu-se-yo.",
+      "cyrl": "па-чхи но-му ноль-бо-со ха-ра-бо-джи хон-джа-со-нын хим-ды-се-ё.",
+      "kana": "パチ　ノム　ノルボソ　ハラボジ　ホンジャソヌン　ヒムドゥセヨ。"
+     }
+    },
+    {
+     "id": 7,
+     "slot": "평음·경음·격음",
+     "text": "꼬마가 공을 세게 차서 창문이 깨졌어요.",
+     "en": "A little kid kicked the ball hard and broke the window.",
+     "focus": "꼬마(ㄲ) · 공(ㄱ) · 차서(ㅊ) · 깨졌어요(ㄲ)",
+     "pron": "꼬마가 공을 세게 차서 창무니 깨저써요.",
+     "guide": {
+      "roman": "kko-ma-ga gong-eul se-ge cha-seo chang-mu-ni kkae-jeo-sseo-yo.",
+      "cyrl": "кко-ма-га кон-ыль се-ге чха-со чхан-му-ни ккэ-джо-ссо-ё.",
+      "kana": "コマガ　コンウル　セゲ　チャソ　チャンムニ　ケジョッソヨ。"
+     }
+    },
+    {
+     "id": 8,
+     "slot": "모음",
+     "text": "의사 선생님이 물을 자주 마시라고 하셨어요.",
+     "en": "The doctor told me to drink water often.",
+     "focus": "의사(ㅢ) · ㅜ·ㅓ·ㅗ",
+     "pron": "의사 선생니미 무를 자주 마시라고 하셔써요.",
+     "guide": {
+      "roman": "ui-sa seon-saeng-ni-mi mu-reul ja-ju ma-si-ra-go ha-syeo-sseo-yo.",
+      "cyrl": "ый-са сон-сэн-ни-ми му-рыль ча-джу ма-си-ра-го ха-сё-ссо-ё.",
+      "kana": "ウイサ　ソンセンニミ　ムルル　チャジュ　マシラゴ　ハショッソヨ。"
+     }
+    },
+    {
+     "id": 9,
+     "slot": "질문 억양",
+     "text": "여기서 시청까지 걸어서 얼마나 걸려요?",
+     "en": "How long does it take to walk from here to City Hall?",
+     "focus": "걸어서[거러서] · 의문 억양",
+     "pron": "여기서 시청까지 거러서 얼마나 걸려요?",
+     "guide": {
+      "roman": "yeo-gi-seo si-cheong-kka-ji geo-reo-seo eol-ma-na geol-lyeo-yo?",
+      "cyrl": "ё-ги-со си-чхон-кка-джи ко-ро-со оль-ма-на кол-лё-ё?",
+      "kana": "ヨギソ　シチョンカジ　コロソ　オルマナ　コルリョヨ？"
+     }
+    },
+    {
+     "id": 10,
+     "slot": "긴 문장",
+     "text": "주말에 친구 집에 놀러 가서 같이 김치찌개를 만들어 먹었어요.",
+     "en": "On the weekend, I went to a friend's place and we made kimchi stew together.",
+     "focus": "같이[가치] · 김치찌개(ㅉ) · 만들어[만드러]",
+     "pron": "주마레 친구 지베 놀러 가서 가치 김치찌개를 만드러 머거써요.",
+     "guide": {
+      "roman": "ju-ma-re chin-gu ji-be nol-leo ga-seo ga-chi gim-chi-jji-gae-reul man-deu-reo meo-geo-sseo-yo.",
+      "cyrl": "чу-ма-ре чхин-гу чи-бе нол-ло ка-со ка-чхи ким-чхи-ччи-гэ-рыль ман-ды-ро мо-го-ссо-ё.",
+      "kana": "チュマレ　チング　チベ　ノルロ　カソ　カチ　キムチッチゲルル　マンドゥロ　モゴッソヨ。"
+     }
+    }
+   ]
+  }
+ ]
+}

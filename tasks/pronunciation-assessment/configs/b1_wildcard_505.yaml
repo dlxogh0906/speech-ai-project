@@ -1,0 +1,83 @@
+# @package _group_
+#
+# B1 — 505 약지도 적응: 판별기로 거른 라벨 + 와일드카드 CTC (2026-09-21)
+# ─────────────────────────────────────────────────────────────────────
+# 목적: 원어민 Stage 1(음향 기준 모델)을 외국인 목소리·모바일 채널·다양한 문장(4.5만 종)에 적응시키되,
+#       **오발음을 표준발음이라고 가르치지 않는다.** 판별기가 "정상"이라고 확신하는 자리만 표준발음을 정답으로 주고
+#       나머지 자리는 `*`(blank 가 아닌 아무 자모)로 둔다 → criterion wildcard_ctc (plugins/mdd_fairseq_user).
+#   초기화   final_stage1_300m_40k/checkpoint_best.pt (가중치만) — 실행 시 checkpoint.restore_file 로 지정
+#   데이터   manifest_b1_wildcard_505 : 505 읽기 발화(gate_505_wildcard.py 산출) + KsponSpeech 원어민 같은 시간(기준 유지)
+#            TAG(040~043)는 넣지 않는다 — 기준 모델이 외국인 오류 라벨 문항을 한 번도 보지 않는다는 성질을 지킨다
+#   검증     Kspon dev (와일드카드 없음) — 원어민 JER 이 망가지지 않는지 본다. 모델 선택은 TAG valid_unseen 의 판별 성능으로 따로 한다
+#   학습     lr 1e-5 · tri_stage · freeze 0 · 6k 스텝(≈ 혼합 데이터 0.9 epoch) · 2k 마다 저장(전부 보존)
+# 실행: bash tasks/pronunciation-assessment/scripts/train/run_ctc_experiment.sh b1_wildcard_505 b1_wildcard_505 0 \
+#         checkpoint.restore_file=$SPEECH_AI_DATA/checkpoints/final_stage1_300m_40k/checkpoint_best.pt \
+#         common.user_dir=$PWD/tasks/pronunciation-assessment/plugins/mdd_fairseq_user
+
+common:
+  fp16: true
+  log_format: json
+  log_interval: 100
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/b1_wildcard_505/tb
+
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/b1_wildcard_505
+  best_checkpoint_metric: uer
+  maximize_best_checkpoint_metric: false
+  save_interval_updates: 2000
+  keep_interval_updates: -1
+  no_epoch_checkpoints: true
+  reset_optimizer: true
+  reset_lr_scheduler: true
+  reset_meters: true
+  reset_dataloader: true
+
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_b1_wildcard_505
+  normalize: true
+  labels: ltr
+
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+
+criterion:
+  _name: wildcard_ctc
+  zero_infinity: true
+
+optimization:
+  max_update: 6000
+  lr: [0.00001]
+  sentence_avg: true
+  update_freq: [4]
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 0

@@ -1,0 +1,65 @@
+# @package _group_
+#
+# FINAL Stage 1-B — 같은 데이터·같은 lr, 스텝만 10k → 40k (2026-09-16)
+# ─────────────────────────────────────────────────────────────────────
+# 목적: 일반 한국어 음향 → 46자모 대응을 먼저 갖춘다. (E1/E2 에서 외국인 196문항만으로는 안 본 단어를 못 받아씀)
+#   초기화   xlsr2_300m.pt
+#   데이터   manifest_kspon_stage1 : KsponSpeech clean train 531,162발화 / 691.2h (발음 전사 → KoG2P → 46자모, ㅙ·ㅞ 분해)
+#            valid = KsponSpeech dev 2,149발화
+#   스텝     40,000 — 공식 XLS-R finetune 권장(13k~50k) 안. 10k 실험은 검증 JER 이 내려가는 중에 끝났다(7k 11.3% → 10k 10.9%)
+#   선택     valid UER(JER) 최소 = checkpoint_best.pt. 2.5k 마다 검증·저장하고 전부 보존(백본 비교용 20k 지점 포함)
+#   레시피   final_stage1_kspon.yaml 과 max_update·저장주기만 다르다. lr 3e-5 유지 — 한 번에 한 변수만 바꾼다
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage1_300m_40k/tb
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage1_300m_40k
+  best_checkpoint_metric: uer
+  maximize_best_checkpoint_metric: false
+  save_interval_updates: 2500
+  keep_interval_updates: -1
+  no_epoch_checkpoints: true
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_kspon_stage1
+  normalize: true
+  labels: ltr
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2500
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+criterion:
+  _name: ctc
+  zero_infinity: true
+optimization:
+  max_update: 40000
+  lr: [0.00003]
+  sentence_avg: true
+  update_freq: [4]
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 2000

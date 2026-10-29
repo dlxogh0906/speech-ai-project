@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발음 챌린지 데모</title>
+<style>
+:root {
+  --bg: #0f1220; --card: #1a1f33; --line: #2a3150; --ink: #eef1ff; --mute: #9aa3c7;
+  --perfect: #3ddc97; --good: #ffc94a; --miss: #ff5c7a; --accent: #6c8cff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: 20px 16px 40px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+.sub { color: var(--mute); font-size: 13px; margin: 0 0 18px; line-height: 1.5; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+.row { margin-bottom: 14px; }
+.row > label { display: block; font-size: 13px; color: var(--mute); margin-bottom: 6px; }
+.opt { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt button { background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 13px; font-size: 14px; cursor: pointer; }
+.opt button.on { background: var(--accent); border-color: var(--accent); }
+.opt button:disabled { opacity: .35; cursor: not-allowed; }
+textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #11152a; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-size: 14px; }
+.hint { color: var(--mute); font-size: 12px; line-height: 1.6; margin-top: 4px; }
+.big { width: 100%; padding: 14px; font-size: 17px; font-weight: 700; border: 0; border-radius: 12px;
+  background: var(--accent); color: #fff; cursor: pointer; }
+.big.ghost { background: transparent; border: 1px solid var(--line); margin-top: 8px; }
+[hidden] { display: none !important; }
+
+/* 게임 */
+.hud { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; color: var(--mute); }
+.hud b { color: var(--ink); font-size: 20px; }
+.timebar { height: 8px; background: #11152a; border-radius: 99px; overflow: hidden; margin: 8px 0 18px; }
+#timefill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent), var(--perfect)); }
+.stage { text-align: center; padding: 26px 10px 18px; }
+.badge { display: inline-block; font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--mute); }
+.badge.seen { color: var(--perfect); border-color: var(--perfect); }
+.badge.new { color: var(--good); border-color: var(--good); }
+#word { font-size: 56px; font-weight: 800; margin: 14px 0 6px; letter-spacing: 2px; word-break: keep-all; }
+#word.pop { animation: pop .25s ease-out; }
+@keyframes pop { from { transform: scale(.85); opacity: .3; } to { transform: scale(1); opacity: 1; } }
+#combo { height: 22px; font-weight: 800; color: var(--good); }
+.meter { height: 6px; background: #11152a; border-radius: 99px; overflow: hidden; margin: 14px auto 6px; max-width: 280px; }
+#meterfill { height: 100%; width: 0; background: var(--mute); transition: width .05s; }
+#meterfill.hot { background: var(--perfect); }
+#status { font-size: 13px; color: var(--mute); min-height: 18px; }
+#grade { font-size: 40px; font-weight: 900; min-height: 52px; margin-top: 10px; letter-spacing: 1px; }
+#grade.perfect { color: var(--perfect); } #grade.good { color: var(--good); } #grade.miss { color: var(--miss); }
+#grade.show { animation: pop .2s ease-out; }
+#gradeSub { color: var(--mute); font-size: 13px; min-height: 18px; }
+.diff { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 12px 0 6px; min-height: 46px; }
+.j { display: inline-flex; flex-direction: column; align-items: center; min-width: 26px; padding: 3px 4px;
+  border-radius: 6px; background: #11152a; font-size: 16px; }
+.j i { font-style: normal; font-size: 13px; color: var(--mute); min-height: 16px; }
+.j.bad { background: rgba(255, 92, 122, .18); } .j.bad i { color: var(--miss); font-weight: 700; }
+.heard { font-size: 14px; color: var(--mute); min-height: 20px; }
+.heard b { color: var(--ink); }
+.lat { font-size: 12px; color: var(--mute); margin-top: 10px; min-height: 34px; line-height: 1.5; }
+.lat b { color: var(--ink); font-size: 14px; }
+
+/* 결과 */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.stats div { background: #11152a; border-radius: 10px; padding: 10px 4px; }
+.stats b { display: block; font-size: 22px; }
+.stats span { font-size: 12px; color: var(--mute); }
+h2 { font-size: 15px; margin: 4px 0 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+th { color: var(--mute); font-weight: 500; }
+td.perfect { color: var(--perfect); font-weight: 700; } td.good { color: var(--good); font-weight: 700; } td.miss { color: var(--miss); font-weight: 700; }
+.tablewrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>발음 챌린지 · CTC 데모</h1>
+  <p class="sub">발음평가 API 와 같은 모델(w2v-BERT CTC)로 단어 하나씩 판정합니다. 녹음은 저장하지 않습니다.<br>
+    단어가 뜨면 읽으세요 — 말을 멈추면 바로 판정합니다.</p>
+
+  <section id="setup">
+    <div class="card">
+      <div class="row">
+        <label>단어 세트</label>
+        <div class="opt" data-key="set">
+          <button data-v="seen" class="on">학습 단어</button>
+          <button data-v="new">처음 보는 단어</button>
+          <button data-v="mix">반반 섞기</button>
+          <button data-v="custom">직접 입력</button>
+        </div>
+        <textarea id="custom" hidden placeholder="쉼표나 줄바꿈으로 구분 — 예: 사과, 고양이, 감사합니다"></textarea>
+        <div class="hint">학습 단어 = 모델이 학습 때 본 단어 읽기 문항. 처음 보는 단어에서는 맞게 읽어도 MISS 가 훨씬 자주 뜹니다(사전 측정: 2% → 22%).</div>
+      </div>
+      <div class="row">
+        <label>장치</label>
+        <div class="opt" data-key="device">
+          <button data-v="cuda" class="on">GPU</button>
+          <button data-v="cpu">CPU</button>
+          <button data-v="npu">NPU</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>판정</label>
+        <div class="opt" data-key="strict">
+          <button data-v="0" class="on">보통 — 자모 1개 차이는 GOOD</button>
+          <button data-v="1">엄격 — 1개라도 다르면 MISS</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>말끝 감지 (멈춘 뒤 이만큼 조용하면 판정)</label>
+        <div class="opt" data-key="endMs">
+          <button data-v="300">0.3초</button>
+          <button data-v="400" class="on">0.4초</button>
+          <button data-v="600">0.6초</button>
+        </div>
+      </div>
+      <button class="big" id="startBtn">시작 (30초)</button>
+      <div class="hint" id="setupMsg"></div>
+    </div>
+  </section>
+
+  <section id="game" hidden>
+    <div class="card">
+      <div class="hud"><span>점수 <b id="score">0</b></span><span><b id="timeleft">30.0</b>초</span></div>
+      <div class="timebar"><div id="timefill"></div></div>
+      <div class="stage">
+        <span class="badge" id="badge"></span>
+        <div id="word"></div>
+        <div id="combo"></div>
+        <div class="meter"><div id="meterfill"></div></div>
+        <div id="status"></div>
+        <div id="grade"></div>
+        <div id="gradeSub"></div>
+        <div class="diff" id="diff"></div>
+        <div class="heard" id="heard"></div>
+        <div class="lat" id="lat"></div>
+      </div>
+      <button class="big ghost" id="stopBtn">그만하기</button>
+    </div>
+  </section>
+
+  <section id="summary" hidden>
+    <div class="card">
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="card">
+      <h2>단어 종류별</h2>
+      <div class="tablewrap"><table id="byTag"></table></div>
+      <div class="hint">MISS% 는 시간 초과를 뺀, 모델이 실제로 판정한 것 중 비율입니다.</div>
+    </div>
+    <div class="card">
+      <h2>속도 (중앙값)</h2>
+      <div class="tablewrap"><table id="latTable"></table></div>
+      <div class="hint">말 끝 → 판정 = 말끝 감지 대기 + 업로드·서버 처리·응답. 서버 처리 안에 모델 계산이 들어 있습니다.</div>
+    </div>
+    <div class="card">
+      <h2>단어별</h2>
+      <div class="tablewrap"><table id="logTable"></table></div>
+    </div>
+    <button class="big" id="againBtn">다시 하기</button>
+    <button class="big ghost" id="setupBtn">설정으로</button>
+  </section>
+</main>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+let base = location.pathname;
+if (!base.endsWith('/')) base = /\.[a-z0-9]+$/i.test(base) ? base.replace(/[^/]*$/, '') : base + '/';
+const BASE = base;                                   // 프록시 하위 경로(/xxx/)에 걸려도 상대 경로로 부른다
+const TAGNAME = {seen: '학습 단어', partial: '학습 문항 일부', new: '처음 보는 단어'};
+const CFG = {set: 'seen', device: 'cuda', strict: false, endMs: 400, roundSec: 30, wordTimeoutMs: 5000};
+let SETS = {seen: [], new: []};
+
+// ───────── 설정 화면 ─────────
+document.querySelectorAll('.opt').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b || b.disabled) return;
+  g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  const k = g.dataset.key; let v = b.dataset.v;
+  if (k === 'endMs') v = +v;
+  if (k === 'strict') v = v === '1';
+  CFG[k] = v;
+  if (k === 'set') $('#custom').hidden = v !== 'custom';
+}));
+
+async function init() {
+  try {
+    const c = await (await fetch(BASE + 'config')).json();
+    SETS = c.sets;
+    CFG.device = c.default_device;
+    document.querySelectorAll('[data-key=device] button').forEach(b => {
+      b.disabled = !c.devices.includes(b.dataset.v);
+      b.classList.toggle('on', b.dataset.v === CFG.device);
+    });
+    $('#setupMsg').textContent = '학습 단어 ' + SETS.seen.length + '개 · 처음 보는 단어 ' + SETS.new.length + '개';
+  } catch (e) {
+    $('#setupMsg').textContent = '서버에 연결하지 못했습니다: ' + e.message;
+  }
+}
+
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+async function buildList() {
+  const S = shuffle(SETS.seen).map(w => ({word: w, tag: 'seen'}));
+  const N = shuffle(SETS.new).map(w => ({word: w, tag: 'new'}));
+  if (CFG.set === 'seen') return S;
+  if (CFG.set === 'new') return N;
+  if (CFG.set === 'mix') { const out = []; for (let i = 0; i < Math.max(S.length, N.length); i++) { if (S[i]) out.push(S[i]); if (N[i]) out.push(N[i]); } return out; }
+  const words = $('#custom').value.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+  if (!words.length) return [];
+  const r = await (await fetch(BASE + 'tags?w=' + encodeURIComponent(words.join(',')))).json();
+  const bad = r.filter(x => !x.ok).map(x => x.word);
+  if (bad.length) $('#setupMsg').textContent = '판정할 수 없어 뺀 단어: ' + bad.join(', ');
+  return shuffle(r.filter(x => x.ok).map(x => ({word: x.word, tag: x.tag})));
+}
+
+// ───────── 마이크 → 16 kHz → 30ms 프레임 → 말끝 감지 ─────────
+let ctx = null, stream = null;
+const FR = 480;                                      // 30ms @ 16 kHz
+const RS = {acc: 0, n: 0, pos: 0};                   // 구간 평균 다운샘플러 상태
+let fbuf = new Float32Array(FR), fpos = 0;
+const V = {state: 'off', floor: 0.004, pre: [], seg: [], startRun: 0, loud: 0, silent: 0};
+
+// iOS Safari 는 오디오를 '누른 그 순간'(await 전)에 만들고 깨워야 한다 — 늦으면 소리 없이 멈춰 있다
+function wakeAudio() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+}
+['touchend', 'click'].forEach(ev => document.addEventListener(ev, () => { if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); }));
+
+async function openMic() {
+  if (stream) { if (ctx.state !== 'running') await ctx.resume(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('이 주소에서는 마이크를 쓸 수 없습니다(HTTPS 필요)');
+  stream = await navigator.mediaDevices.getUserMedia({audio: {channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+  if (ctx.state !== 'running') await ctx.resume();
+  const src = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(2048, 1, 1);
+  proc.onaudioprocess = e => onAudio(e.inputBuffer.getChannelData(0));
+  src.connect(proc); proc.connect(ctx.destination);   // 출력은 0 으로 둔다(되울림 없음)
+}
+
+function onAudio(x) {
+  const step = ctx.sampleRate / 16000;
+  for (let i = 0; i < x.length; i++) {
+    RS.acc += x[i]; RS.n++; RS.pos += 1;
+    if (RS.pos >= step) {
+      fbuf[fpos++] = RS.acc / RS.n; RS.acc = 0; RS.n = 0; RS.pos -= step;
+      if (fpos === FR) { onFrame(fbuf); fbuf = new Float32Array(FR); fpos = 0; }
+    }
+  }
+}
+
+function rms(f) { let s = 0; for (let i = 0; i < f.length; i++) s += f[i] * f[i]; return Math.sqrt(s / f.length); }
+
+function onFrame(f) {
+  const r = rms(f);
+  const startTh = Math.max(0.015, V.floor * 4), endTh = Math.max(0.008, V.floor * 2.5);
+  const m = $('#meterfill');
+  m.style.width = Math.min(100, r * 600) + '%';
+  m.classList.toggle('hot', r > startTh);
+  if (V.state !== 'speech') {                          // 잡음 바닥: 내려갈 땐 빨리, 올라갈 땐 아주 천천히
+    V.floor = r < V.floor ? V.floor * 0.8 + r * 0.2 : Math.min(0.02, V.floor * 0.998 + r * 0.002);
+  }
+  if (V.state === 'listen') {
+    V.pre.push(f); if (V.pre.length > 10) V.pre.shift();   // 말 시작 앞 0.3초를 남긴다
+    V.startRun = r > startTh ? V.startRun + 1 : 0;
+    if (V.startRun >= 2) {
+      V.state = 'speech'; V.seg = V.pre.slice(); V.pre = []; V.loud = 2; V.silent = 0;
+      setStatus('듣는 중…');
+    }
+    return;
+  }
+  if (V.state !== 'speech') return;
+  V.seg.push(f);
+  if (r > endTh) { V.silent = 0; if (r > startTh) V.loud++; } else V.silent++;
+  const capped = V.seg.length * 30 >= 3500;            // 3.5초에서 강제로 끊는다
+  if (V.silent * 30 >= CFG.endMs || capped) {
+    if (V.loud < 4) { listen(false); return; }         // 0.12초 미만 — 잡음으로 보고 버린다
+    const keep = V.seg.length - Math.max(0, V.silent - 5);   // 끝 무음은 0.15초만 남긴다
+    sendSegment(V.seg.slice(0, keep), V.silent * 30);
+  }
+}
+
+function wav16(f32) {
+  const n = f32.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 16000, true); v.setUint32(28, 32000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const s = Math.max(-1, Math.min(1, f32[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
+  return buf;
+}
+
+async function sendSegment(frames, waitMs) {
+  V.state = 'busy';
+  setStatus('판정 중…');
+  const t0 = performance.now();
+  const pcm = new Float32Array(frames.length * FR);
+  frames.forEach((f, i) => pcm.set(f, i * FR));
+  const fd = new FormData();
+  fd.append('audio', new Blob([wav16(pcm)], {type: 'audio/wav'}), 'a.wav');
+  fd.append('word', G.cur.word);
+  fd.append('device', CFG.device);
+  const rid = G.rid;
+  let res;
+  try {
+    const r = await fetch(BASE + 'judge', {method: 'POST', body: fd});
+    res = await r.json();
+    if (!r.ok) res = {result: 'ERROR', error: res.error || ('HTTP ' + r.status)};
+  } catch (e) {
+    res = {result: 'ERROR', error: e.message};
+  }
+  if (rid !== G.rid || G.finished) return;           // 그만두거나 새 판을 시작한 뒤 도착한 응답
+  onResult(res, waitMs, performance.now() - t0);
+}
+
+// ───────── 게임 ─────────
+const G = {};
+
+function setStatus(s) { $('#status').textContent = s; }
+function show(id) { ['setup', 'game', 'summary'].forEach(x => $('#' + x).hidden = x !== id); }
+
+async function start() {
+  wakeAudio();
+  $('#setupMsg').textContent = '';
+  const list = await buildList();
+  if (!list.length) { $('#setupMsg').textContent = '단어가 없습니다.'; return; }
+  try { await openMic(); } catch (e) { $('#setupMsg').textContent = '마이크를 열 수 없습니다: ' + e.message; return; }
+  Object.assign(G, {rid: (G.rid || 0) + 1, list, idx: 0, cur: null, score: 0, combo: 0, maxCombo: 0, log: [], running: true, finished: false,
+                    end: performance.now() + CFG.roundSec * 1000, wordTimer: null});
+  $('#score').textContent = '0'; $('#combo').textContent = '';
+  ['#grade', '#gradeSub', '#diff', '#heard', '#lat'].forEach(s => $(s).textContent = '');
+  show('game');
+  tick();
+  nextWord();
+}
+
+function tick() {
+  if (G.finished) return;
+  const left = Math.max(0, G.end - performance.now());
+  $('#timefill').style.width = (left / (CFG.roundSec * 1000) * 100) + '%';
+  $('#timeleft').textContent = (left / 1000).toFixed(1);
+  if (left <= 0 && G.running) {
+    G.running = false;                                 // 말하는 중·판정 중이면 그 결과까지 받고 끝낸다
+    if (V.state === 'listen' || V.state === 'off') finish();
+  }
+  requestAnimationFrame(tick);
+}
+
+function nextWord() {
+  clearTimeout(G.wordTimer);
+  if (!G.running) { finish(); return; }
+  G.cur = G.list[G.idx % G.list.length]; G.idx++;
+  const w = $('#word');
+  w.textContent = G.cur.word;
+  w.classList.remove('pop'); void w.offsetWidth; w.classList.add('pop');
+  const b = $('#badge');
+  b.textContent = TAGNAME[G.cur.tag] || ''; b.className = 'badge ' + G.cur.tag;
+  listen(true);
+}
+
+function listen(resetTimer) {
+  V.state = 'listen'; V.pre = []; V.seg = []; V.startRun = 0;
+  setStatus('말해 주세요');
+  if (resetTimer) {
+    clearTimeout(G.wordTimer);
+    G.wordTimer = setTimeout(() => {
+      if (V.state === 'listen') { V.state = 'busy'; onResult({result: 'MISS', timeout: true}, null, null); }
+    }, CFG.wordTimeoutMs);
+  }
+}
+
+const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', JUNG = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+const JONG = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+// 자모열 → 음절(보여주기용). 표준발음 자모열에는 첫소리 ㅇ 이 없어서 ㅇ 은 늘 받침으로 본다.
+function compose(js) {
+  const a = [];
+  for (let i = 0; i < js.length; i++) {
+    const two = js[i] + (js[i + 1] || '');
+    if (two === 'ㅗㅐ' || two === 'ㅜㅔ') { a.push(two === 'ㅗㅐ' ? 'ㅙ' : 'ㅞ'); i++; } else a.push(js[i]);
+  }
+  const isV = c => c !== undefined && JUNG.includes(c);
+  let out = '', i = 0;
+  while (i < a.length) {
+    let on = 11, vi;                                   // 11 = ㅇ(첫소리 없음)
+    if (CHO.includes(a[i]) && a[i] !== 'ㅇ' && isV(a[i + 1])) { on = CHO.indexOf(a[i]); vi = i + 1; }
+    else if (isV(a[i])) vi = i;
+    else { out += a[i]; i++; continue; }
+    let k = vi + 1, t = 0;
+    const c = a[k];
+    if (c !== undefined && JONG.indexOf(c) > 0 && (c === 'ㅇ' || !isV(a[k + 1]))) { t = JONG.indexOf(c); k++; }
+    out += String.fromCharCode(0xAC00 + (on * 21 + JUNG.indexOf(a[vi])) * 28 + t);
+    i = k;
+  }
+  return out;
+}
+
+function flash(grade, sub) {
+  const g = $('#grade');
+  g.textContent = grade; g.className = grade.toLowerCase();
+  void g.offsetWidth; g.classList.add('show');
+  $('#gradeSub').textContent = sub || '';
+}
+
+function onResult(res, waitMs, rtt) {
+  clearTimeout(G.wordTimer);
+  const rid = G.rid, next = ms => setTimeout(() => { if (rid === G.rid) nextWord(); }, ms);
+  if (res.result === 'NO_SPEECH') {
+    if (!G.running) { finish(); return; }
+    listen(true);
+    setStatus('소리가 작아요 — 한 번 더 말해 주세요');
+    return;
+  }
+  if (res.result === 'ERROR') {
+    flash('ERROR', res.error);
+    next(1500);
+    return;
+  }
+  let grade = res.result;
+  if (CFG.strict && grade === 'GOOD') grade = 'MISS';
+  if (grade === 'PERFECT') { G.combo++; G.score += 100 + 10 * (G.combo - 1); }
+  else if (grade === 'GOOD') { G.combo++; G.score += 50; }
+  else G.combo = 0;
+  G.maxCombo = Math.max(G.maxCombo, G.combo);
+  $('#score').textContent = G.score;
+  $('#combo').textContent = G.combo >= 2 ? G.combo + ' COMBO' : '';
+  const canon = res.canon || [], pred = res.pred || [];
+  G.log.push({word: G.cur.word, tag: G.cur.tag, grade, timeout: !!res.timeout, edit: res.edit,
+              canon: compose(canon), pred: res.timeout ? '' : compose(pred),
+              total: waitMs == null ? null : waitMs + rtt, wait: waitMs, rtt, server: res.server_ms,
+              fwd: res.ms ? res.ms.forward : null, device: res.device});
+  flash(grade, res.timeout ? '시간 초과' : (res.edit ? '자모 ' + res.edit + '개 차이' : ''));
+  const d = $('#diff'); d.innerHTML = '';
+  (res.sites || []).forEach(s => {
+    const el = document.createElement('span');
+    el.className = 'j' + (s.verdict === '일치' ? '' : ' bad');
+    el.innerHTML = '<b></b><i></i>';
+    el.firstChild.textContent = s.canon;
+    el.lastChild.textContent = s.verdict === '일치' ? '' : (s.pred || '∅');
+    d.appendChild(el);
+  });
+  $('#heard').innerHTML = res.timeout ? '' : '표준발음 <b></b> · 들린 소리 <b></b>';
+  if (!res.timeout) { const bs = $('#heard').querySelectorAll('b'); bs[0].textContent = compose(canon); bs[1].textContent = compose(pred) || '(없음)'; }
+  $('#lat').innerHTML = waitMs == null ? '' :
+    '말 끝 → 판정 <b>' + Math.round(waitMs + rtt) + 'ms</b><br>말끝 대기 ' + waitMs + ' + 전송·처리 ' + Math.round(rtt) +
+    ' (서버 ' + res.server_ms + ' · 모델 ' + res.ms.forward + 'ms · ' + ({cuda: 'GPU', cpu: 'CPU', npu: 'NPU'}[res.device] || res.device) + ')';
+  setStatus('');
+  next(grade === 'MISS' ? 1100 : 700);
+}
+
+function median(a) {
+  a = a.filter(x => x != null).sort((x, y) => x - y);
+  if (!a.length) return null;
+  const m = a.length >> 1;
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+function finish() {
+  if (G.finished) return;
+  G.finished = true; G.running = false; V.state = 'off';
+  clearTimeout(G.wordTimer);
+  const L = G.log, cnt = g => L.filter(x => x.grade === g).length;
+  $('#stats').innerHTML = '';
+  [['점수', G.score], ['최대 콤보', G.maxCombo], ['단어', L.length],
+   ['PERFECT', cnt('PERFECT')], ['GOOD', cnt('GOOD')], ['MISS', cnt('MISS')]].forEach(([k, v]) => {
+    const d = document.createElement('div'); d.innerHTML = '<b></b><span></span>';
+    d.firstChild.textContent = v; d.lastChild.textContent = k; $('#stats').appendChild(d);
+  });
+  let h = '<tr><th>종류</th><th>단어</th><th>PERFECT</th><th>GOOD</th><th>MISS</th><th>시간초과</th><th>MISS%</th></tr>';
+  ['seen', 'partial', 'new'].forEach(t => {
+    const R = L.filter(x => x.tag === t); if (!R.length) return;
+    const judged = R.filter(x => !x.timeout), miss = judged.filter(x => x.grade === 'MISS').length;
+    h += '<tr><td>' + TAGNAME[t] + '</td><td>' + R.length + '</td><td>' + R.filter(x => x.grade === 'PERFECT').length +
+         '</td><td>' + R.filter(x => x.grade === 'GOOD').length + '</td><td>' + miss + '</td><td>' +
+         R.filter(x => x.timeout).length + '</td><td>' + (judged.length ? Math.round(100 * miss / judged.length) + '%' : '-') + '</td></tr>';
+  });
+  $('#byTag').innerHTML = h;
+  const J = L.filter(x => !x.timeout), f = v => v == null ? '-' : Math.round(v) + 'ms';
+  $('#latTable').innerHTML = '<tr><th>말 끝 → 판정</th><th>말끝 대기</th><th>전송·처리</th><th>서버</th><th>모델</th></tr><tr><td><b>' +
+    f(median(J.map(x => x.total))) + '</b></td><td>' + f(median(J.map(x => x.wait))) + '</td><td>' + f(median(J.map(x => x.rtt))) +
+    '</td><td>' + f(median(J.map(x => x.server))) + '</td><td>' + f(median(J.map(x => x.fwd))) + '</td></tr>';
+  const lt = $('#logTable');
+  lt.innerHTML = '<tr><th>단어</th><th>판정</th><th>표준발음</th><th>들린 소리</th><th>지연</th></tr>';
+  L.forEach(x => {
+    const tr = document.createElement('tr');
+    [x.word, x.timeout ? 'MISS(시간)' : x.grade, x.canon, x.pred, x.total == null ? '-' : Math.round(x.total) + 'ms'].forEach((v, i) => {
+      const td = document.createElement('td'); td.textContent = v;
+      if (i === 1) td.className = x.grade.toLowerCase();
+      tr.appendChild(td);
+    });
+    lt.appendChild(tr);
+  });
+  show('summary');
+}
+
+$('#startBtn').onclick = start;
+$('#againBtn').onclick = start;
+$('#setupBtn').onclick = () => show('setup');
+$('#stopBtn').onclick = () => { G.running = false; finish(); };
+init();
+</script>
+</body>
+</html>

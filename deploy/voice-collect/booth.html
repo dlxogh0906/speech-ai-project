@@ -1,0 +1,742 @@
+<title>비버톡 녹음 부스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#F1F1F5; --card:#FFFFFF; --primary:#007A55; --primary-press:#006B4B; --mint:#00C88A; --mint-soft:#E4F6EE;
+  --chip:#E8E8EA; --chip-press:#DCDCE1; --line:#E1E2E4; --text:#111111; --text-2:#4D4D4D; --text-3:#85858D;
+  --orange:#FF9200; --orange-soft:#FFF2DF; --red:#FF4242; --red-soft:#FFECEC;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font-family:Pretendard,"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(241,241,245,.94);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px)}
+.top-in{max-width:440px;margin:0 auto;padding-inline:16px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:baseline;gap:6px}
+.brand-ko{font-weight:800;font-size:20px;color:var(--primary);letter-spacing:-.02em}
+.brand-en{font-weight:600;font-size:12px;color:var(--text-3);letter-spacing:.04em}
+.lang{display:flex;background:var(--chip);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;height:30px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--text-2)}
+.lang button[aria-pressed="true"]{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(17,17,17,.08)}
+
+.wrap{max-width:440px;margin:0 auto;padding-inline:16px;padding-block:8px 40px;display:flex;flex-direction:column;gap:16px}
+.banner{background:var(--orange-soft);color:#8A4B00;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps li{font-size:12px;font-weight:600;color:var(--text-3);display:flex;flex-direction:column;gap:6px}
+.steps li::before{content:"";height:4px;border-radius:4px;background:var(--chip)}
+.steps li.on{color:var(--primary)}
+.steps li.on::before{background:var(--primary)}
+.steps li.done::before{background:var(--mint)}
+
+.screen{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--card);border-radius:20px;padding:20px}
+h1{font-size:24px;line-height:1.35;margin:0;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:18px;margin:0;font-weight:800;letter-spacing:-.01em}
+.eyebrow{margin:0;font-size:13px;font-weight:700;color:var(--primary)}
+.muted{color:var(--text-2);margin:0}
+.small{font-size:12.5px;color:var(--text-3);margin:0}
+
+.btn{border:0;border-radius:14px;height:56px;width:100%;font-weight:700;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .05s}
+.btn:active{transform:scale(.99)}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.primary:hover{background:var(--primary-press)}
+.btn.primary:disabled{background:#BFD9CF;color:#fff;cursor:not-allowed}
+.btn.secondary{background:var(--chip);color:var(--text)}
+.btn.secondary:hover{background:var(--chip-press)}
+.btn.ghost{background:var(--chip);color:var(--text);height:48px;font-size:15px}
+.btn.ghost:disabled{opacity:.45;cursor:not-allowed}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* welcome */
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:28px 22px}
+.avatar{width:96px;height:96px;border-radius:50%;display:block;background:var(--chip)}
+.event-pill{display:inline-flex;align-items:center;gap:6px;background:var(--orange-soft);color:#A65A00;font-weight:700;font-size:12.5px;border-radius:999px;padding:5px 12px}
+.event-pill svg{width:16px;height:16px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.fact{background:var(--bg);border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--text-2);text-align:center}
+.fact strong{font-size:17px;color:var(--text);font-weight:800}
+
+/* consent */
+.bullets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.bullets li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.bullets li svg{flex:none;width:20px;height:20px;margin-top:2px;color:var(--primary)}
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--text-2);list-style:none;display:flex;align-items:center;justify-content:space-between}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:18px;color:var(--text-3)}
+details[open] summary::after{content:"–"}
+.terms{margin:12px 0 0;display:grid;grid-template-columns:1fr;gap:10px;font-size:13.5px}
+.terms dt{font-weight:700;color:var(--text)}
+.terms dd{margin:2px 0 0;color:var(--text-2)}
+.check{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--bg);cursor:pointer;font-size:14.5px;font-weight:600}
+.check input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;border-radius:7px;border:2px solid #C4C4CC;background:#fff;margin:1px 0 0;display:grid;place-content:center;transition:background .12s,border-color .12s}
+.check input:checked{background:var(--primary);border-color:var(--primary)}
+.check input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.checks{display:flex;flex-direction:column;gap:8px}
+
+/* profile */
+.field{display:flex;flex-direction:column;gap:8px}
+.field label,.field .lab{font-weight:700;font-size:14px}
+.field .opt{font-weight:500;color:var(--text-3);font-size:12.5px;margin-left:4px}
+.field input{height:52px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 14px;font-size:16px;outline:none}
+.field input:focus{border-color:var(--primary)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid transparent;background:var(--chip);border-radius:999px;height:40px;padding:0 14px;font-size:14px;font-weight:600;color:var(--text-2)}
+.chip[aria-pressed="true"]{background:var(--mint-soft);border-color:var(--primary);color:var(--primary)}
+.chip small{font-weight:500;opacity:.75;margin-left:4px}
+.form{display:flex;flex-direction:column;gap:22px}
+.err{color:var(--red);font-size:13.5px;font-weight:600;margin:0}
+
+/* record */
+.prog{display:flex;flex-direction:column;gap:8px}
+.prog-row{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.prog-row .count{font-size:15px}
+.prog-row .count b{color:var(--primary);font-size:18px}
+.set-tag{font-size:12px;color:var(--text-3);font-weight:600}
+.bar{height:8px;border-radius:8px;background:var(--chip);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,var(--mint),var(--primary));transition:width .35s ease}
+.sentence-card{display:flex;flex-direction:column;gap:12px;padding:24px 20px}
+.ko-sentence{margin:0;font-size:25px;line-height:1.5;font-weight:700;letter-spacing:-.01em;word-break:keep-all}
+.meaning{margin:0;font-size:13.5px;color:var(--text-3)}
+.rec-area{display:flex;flex-direction:column;align-items:center;gap:10px;padding-block:6px}
+.rec-btn{position:relative;width:88px;height:88px;border-radius:50%;border:0;background:var(--primary);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,122,85,.28);transition:background .15s,transform .08s}
+.rec-btn:active{transform:scale(.97)}
+.rec-btn svg{width:34px;height:34px}
+.rec-btn .ic-stop{display:none}
+.rec-btn.rec{background:var(--red);box-shadow:0 10px 24px rgba(255,66,66,.3)}
+.rec-btn.rec .ic-mic{display:none}
+.rec-btn.rec .ic-stop{display:block}
+.rec-btn.rec::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:3px solid rgba(255,66,66,.35);animation:pulse 1.2s ease-out infinite}
+.rec-btn:disabled{opacity:.5;cursor:wait}
+@keyframes pulse{from{transform:scale(.92);opacity:1}to{transform:scale(1.18);opacity:0}}
+.rec-caption{font-weight:700;font-size:14.5px;color:var(--text-2)}
+.meter{width:160px;height:6px;border-radius:6px;background:var(--chip);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--mint);transition:width .08s linear}
+.meter.play i{background:var(--primary)}
+.btn.ghost.on{background:var(--mint-soft);color:var(--primary)}
+.timer{font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-3);font-weight:600}
+.notice{border-radius:12px;padding:12px 14px;font-size:14px;font-weight:600}
+.notice.warn{background:var(--orange-soft);color:#8A4B00}
+.notice.error{background:var(--red-soft);color:#B42323}
+.after{display:flex;flex-direction:column;gap:10px}
+.after-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.save-state{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:700;min-height:22px}
+.save-state.saving{color:var(--text-3)}
+.save-state.saved{color:var(--primary)}
+.save-state.failed{color:var(--red)}
+.save-state svg{width:16px;height:16px}
+.save-state button{border:0;background:var(--red-soft);color:#B42323;font-weight:700;border-radius:999px;padding:4px 12px;font-size:13px}
+.tip{margin:0;text-align:center;font-size:12.5px;color:var(--text-3)}
+
+/* done */
+.done-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:28px 24px}
+.avatar-wrap{position:relative}
+.check-badge{position:absolute;right:-4px;bottom:-2px;width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;border:3px solid #fff}
+.check-badge svg{width:16px;height:16px}
+.code-box{width:100%;background:var(--mint-soft);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.code-label{font-size:12.5px;font-weight:700;color:var(--primary)}
+.code-box strong{font-size:34px;letter-spacing:.08em;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text)}
+.verify{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;justify-content:center}
+.verify.ok{color:var(--primary)}
+.verify.bad{color:var(--red)}
+.verify svg{width:18px;height:18px}
+.treat{display:flex;align-items:center;gap:10px;background:var(--orange-soft);color:#7A4200;border-radius:14px;padding:12px 14px;font-weight:700;font-size:14.5px;text-align:left;width:100%}
+.treat svg{flex:none;width:30px;height:30px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="brand-ko">비버톡</span><span class="brand-en">BeaverTalk</span></div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" id="lang-ko" data-lang="ko" aria-pressed="false">한국어</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="preview-banner" hidden data-i18n="preview"></div>
+  <ol class="steps" id="steps" hidden>
+    <li data-step="consent" data-i18n="step_consent"></li>
+    <li data-step="profile" data-i18n="step_profile"></li>
+    <li data-step="record" data-i18n="step_record"></li>
+  </ol>
+
+  <section class="screen" id="s-welcome">
+    <div class="card hero">
+      <img class="avatar" src="__AVATAR__" alt="BeaverTalk beaver">
+      <span class="event-pill"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFB547" d="M24 13a11 11 0 1 1 0 22 11 11 0 0 1 0-22Z"/><path fill="currentColor" d="M33.4 18.3 43 12l-1 13-8.6-1.1a11 11 0 0 0 0-5.6Zm-18.8 11.4L5 36l1-13 8.6 1.1a11 11 0 0 0 0 5.6Z"/></svg><span data-i18n="event"></span></span>
+      <h1 data-i18n="welcome_title"></h1>
+      <p class="muted" data-i18n="welcome_sub"></p>
+      <div class="facts">
+        <div class="fact"><strong>3</strong><span data-i18n="fact_min"></span></div>
+        <div class="fact"><strong>10</strong><span data-i18n="fact_sent"></span></div>
+        <div class="fact"><strong>1</strong><span data-i18n="fact_treat"></span></div>
+      </div>
+    </div>
+    <button type="button" class="btn primary" id="start-btn" data-i18n="start"></button>
+  </section>
+
+  <section class="screen" id="s-consent" hidden>
+    <div class="card" style="display:flex;flex-direction:column;gap:16px">
+      <h2 data-i18n="consent_title"></h2>
+      <ul class="bullets">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-2.1a7 7 0 0 0 6-6.9h-2Z"/></svg><span data-i18n="c1"></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Zm-1.2 13.6-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3Z"/></svg><span data-i18n="c2"></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5ZM3.3 2.3l18.4 18.4-1.4 1.4L1.9 3.7l1.4-1.4Z"/></svg><span data-i18n="c3"></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 10.4 3.3 3.3-1.4 1.4L11 13.2V6h2v6.4Z"/></svg><span data-i18n="c4"></span></li>
+      </ul>
+      <details>
+        <summary data-i18n="details"></summary>
+        <dl class="terms">
+          <div><dt data-i18n="t_purpose_h"></dt><dd data-i18n="t_purpose"></dd></div>
+          <div><dt data-i18n="t_items_h"></dt><dd data-i18n="t_items"></dd></div>
+          <div><dt data-i18n="t_keep_h"></dt><dd data-i18n="t_keep"></dd></div>
+          <div><dt data-i18n="t_share_h"></dt><dd data-i18n="t_share"></dd></div>
+          <div><dt data-i18n="t_withdraw_h"></dt><dd data-i18n="t_withdraw"></dd></div>
+          <div><dt data-i18n="t_refuse_h"></dt><dd data-i18n="t_refuse"></dd></div>
+        </dl>
+      </details>
+    </div>
+    <div class="checks">
+      <label class="check" for="agree"><input type="checkbox" id="agree"><span data-i18n="agree"></span></label>
+      <label class="check" for="age14"><input type="checkbox" id="age14"><span data-i18n="age14"></span></label>
+    </div>
+    <button type="button" class="btn primary" id="consent-btn" disabled data-i18n="agree_btn"></button>
+  </section>
+
+  <section class="screen" id="s-profile" hidden>
+    <div class="card form">
+      <h2 data-i18n="profile_title"></h2>
+      <div class="field">
+        <label for="nationality" data-i18n="nationality"></label>
+        <input id="nationality" list="country-list" autocomplete="off" autocapitalize="words">
+        <datalist id="country-list"></datalist>
+      </div>
+      <div class="field">
+        <label for="language" data-i18n="language"></label>
+        <input id="language" list="language-list" autocomplete="off" autocapitalize="words">
+        <datalist id="language-list"></datalist>
+      </div>
+      <div class="field">
+        <span class="lab" data-i18n="level"></span>
+        <div class="chips" data-group="korean_level" id="g-level"></div>
+      </div>
+      <div class="field">
+        <span class="lab"><span data-i18n="gender"></span><span class="opt" data-i18n="optional"></span></span>
+        <div class="chips" data-group="gender" id="g-gender"></div>
+      </div>
+      <div class="field">
+        <span class="lab"><span data-i18n="age"></span><span class="opt" data-i18n="optional"></span></span>
+        <div class="chips" data-group="age_group" id="g-age"></div>
+      </div>
+      <p class="err" id="profile-err" hidden></p>
+    </div>
+    <button type="button" class="btn primary" id="profile-btn" data-i18n="next"></button>
+  </section>
+
+  <section class="screen" id="s-record" hidden>
+    <div class="prog">
+      <div class="prog-row"><span class="count" id="prog-label"></span><span class="set-tag" id="set-tag"></span></div>
+      <div class="bar"><i id="prog-fill"></i></div>
+    </div>
+    <article class="card sentence-card">
+      <p class="eyebrow" data-i18n="read_this"></p>
+      <p class="ko-sentence" id="sentence" lang="ko"></p>
+      <p class="meaning" id="meaning"></p>
+    </article>
+    <div class="rec-area">
+      <button type="button" class="rec-btn" id="rec-btn" aria-label="Record">
+        <svg class="ic-mic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-2.1a7 7 0 0 0 6-6.9h-2Z"/></svg>
+        <svg class="ic-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg>
+      </button>
+      <div class="rec-caption" id="rec-caption"></div>
+      <div class="meter" id="meter" aria-hidden="true"><i id="meter-fill"></i></div>
+      <div class="timer" id="timer">0:00</div>
+    </div>
+    <div class="notice" id="notice" hidden></div>
+    <div class="after" id="after" hidden>
+      <div class="after-row">
+        <button type="button" class="btn ghost" id="play-btn"><svg id="play-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5Z"/></svg><svg id="stop-ic" viewBox="0 0 24 24" aria-hidden="true" hidden><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg><span id="play-label"></span></button>
+        <button type="button" class="btn ghost" id="again-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7Z"/></svg><span data-i18n="again"></span></button>
+      </div>
+      <div class="save-state" id="save-state"></div>
+      <button type="button" class="btn primary" id="next-btn" disabled></button>
+    </div>
+    <p class="tip" data-i18n="tip"></p>
+  </section>
+
+  <section class="screen" id="s-done" hidden>
+    <div class="card done-card">
+      <div class="avatar-wrap">
+        <img class="avatar" src="__AVATAR__" alt="">
+        <span class="check-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7 9.5 16.2Z"/></svg></span>
+      </div>
+      <h1 data-i18n="done_title"></h1>
+      <p class="muted" data-i18n="done_show"></p>
+      <div class="code-box"><span class="code-label" data-i18n="code_label"></span><strong id="code">BT-0000</strong></div>
+      <div class="verify" id="verify"></div>
+      <div class="treat">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFB547" d="M24 13a11 11 0 1 1 0 22 11 11 0 0 1 0-22Z"/><path fill="#FF9200" d="M33.4 18.3 43 12l-1 13-8.6-1.1a11 11 0 0 0 0-5.6Zm-18.8 11.4L5 36l1-13 8.6 1.1a11 11 0 0 0 0 5.6Z"/><path fill="#FFF" opacity=".55" d="M19.5 18.5c2.5-2.4 6.6-2.5 9.2-.3-2.9-.4-6.1.6-8.3 3l-.9-2.7Z"/></svg>
+        <span data-i18n="treat"></span>
+      </div>
+      <p class="small" data-i18n="delete_note"></p>
+    </div>
+    <button type="button" class="btn secondary" id="restart-btn" data-i18n="restart"></button>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var DATA = /*__SETS_JSON__*/null;
+  var CONSENT_VERSION = '2026-10-01';
+  var MAX_MS = 15000, MIN_MS = 800, QUIET = 0.03;
+
+  var T = {
+    en: {
+      preview: 'Preview — recording works only on the booth link.',
+      event: 'Booth event', step_consent: 'Consent', step_profile: 'About you', step_record: 'Record',
+      welcome_title: 'Read 10 Korean sentences, get a sweet treat',
+      welcome_sub: "Your voice helps BeaverTalk's AI understand Korean learners from every country.",
+      fact_min: 'minutes', fact_sent: 'short sentences', fact_treat: 'sweet treat',
+      start: 'Start',
+      consent_title: 'Before you start',
+      c1: 'We record you reading 10 Korean sentences.',
+      c2: "Recordings are used only to build and test BeaverTalk's pronunciation and accent AI.",
+      c3: "We don't ask for your name, phone number, or email.",
+      c4: 'Kept for up to 3 years, then deleted. Tell us your code anytime to delete it sooner.',
+      details: 'Full consent details',
+      t_purpose_h: 'Purpose', t_purpose: "Research, development and evaluation of BeaverTalk's AI pronunciation feedback and accent (first-language) recognition.",
+      t_items_h: 'What we collect', t_items: 'Recordings of 10 read sentences; nationality; first language; Korean level; optional gender and age group; device type.',
+      t_keep_h: 'How long we keep it', t_keep: 'Up to 3 years from collection, deleted promptly once no longer needed.',
+      t_share_h: 'Sharing', t_share: 'Not shared with third parties. Raw recordings are never published.',
+      t_withdraw_h: 'Changing your mind', t_withdraw: 'Give our staff your participation code and we will delete your data.',
+      t_refuse_h: 'Your choice', t_refuse: "You can say no. You just won't be able to take part in the recording.",
+      agree: 'I agree to the collection and use of my voice and the information above.',
+      age14: 'I am 14 or older.',
+      agree_btn: 'Agree and continue',
+      profile_title: 'Tell us a little about you',
+      nationality: 'Nationality', language: 'First language', level: 'Korean level', gender: 'Gender', age: 'Age', optional: 'optional',
+      ph_nationality: 'e.g. Vietnam', ph_language: 'e.g. Vietnamese',
+      lv_beg: 'Beginner', lv_int: 'Intermediate', lv_adv: 'Advanced', lv_nat: 'Native speaker',
+      g_f: 'Female', g_m: 'Male', g_o: 'Other', g_n: 'Prefer not to say',
+      a_teen: '14–19', a_20: '20s', a_30: '30s', a_40: '40s', a_50: '50+',
+      next: 'Next',
+      profile_err: 'Please enter your nationality and first language, and choose your Korean level.',
+      start_err: "Couldn't start. Check the connection and try again.",
+      count: 'Sentence <b>{i}</b> of 10', set: 'Set {s}',
+      read_this: 'Read this sentence out loud', meaning: 'Meaning',
+      tap_record: 'Tap to record', recording: 'Recording… tap to stop', processing: 'One moment…', tap_rerecord: 'Tap to record again',
+      listen: 'Listen', again: 'Record again', next_sentence: 'Next sentence', finish: 'Finish',
+      saving: 'Saving…', saved: 'Saved', failed: "Couldn't save.", retry: 'Retry',
+      warn_short: 'That was very short. Please read the whole sentence.',
+      warn_quiet: "It's a bit quiet. Hold the microphone closer and record again if you can.",
+      mic_denied: 'Microphone access is blocked. Allow it in your browser settings, then reload this page.',
+      mic_unsupported: "This browser can't record audio. Please open the link in Chrome or Safari.",
+      tip: 'Find a quiet spot and keep the microphone about 20 cm from your mouth.',
+      done_title: 'All 10 done — thank you!',
+      done_show: 'Show this screen to our staff to get your treat.',
+      code_label: 'Your participation code',
+      verified: '{n}/10 recordings received', missing: 'Only {n}/10 recordings arrived. Please ask our staff for help.', unverified: "Couldn't confirm the upload. Please ask our staff.",
+      treat: 'Pick a treat at the booth!',
+      delete_note: 'Want your recordings deleted later? Just tell us this code.',
+      restart: 'Next participant',
+      preview_saved: 'Saved (preview)',
+      stop_play: 'Stop', playing: 'Playing your recording…', play_fail: "Couldn't play the recording. Check your volume and try again."
+    },
+    ko: {
+      preview: '미리보기 — 녹음은 부스 주소에서만 돼요.',
+      event: '부스 이벤트', step_consent: '동의', step_profile: '내 정보', step_record: '녹음',
+      welcome_title: '한국어 문장 10개 읽고 간식 받아 가세요',
+      welcome_sub: '여러분의 목소리로 비버톡 AI가 모든 나라 학습자의 한국어를 더 잘 알아듣게 돼요.',
+      fact_min: '분이면 끝', fact_sent: '개의 짧은 문장', fact_treat: '개의 간식',
+      start: '시작하기',
+      consent_title: '시작하기 전에',
+      c1: '한국어 문장 10개를 읽는 목소리를 녹음해요.',
+      c2: '녹음은 비버톡 발음·억양 AI를 만들고 평가하는 데만 써요.',
+      c3: '이름·전화번호·이메일은 받지 않아요.',
+      c4: '최대 3년 보관 후 삭제해요. 참여 코드를 알려 주시면 언제든 바로 지워 드려요.',
+      details: '동의 내용 자세히 보기',
+      t_purpose_h: '수집 목적', t_purpose: '비버톡 AI 발음 진단·억양(모국어) 인식 모델의 연구·개발 및 성능 평가',
+      t_items_h: '수집 항목', t_items: '문장 10개 낭독 음성, 국적, 모국어, 한국어 수준, (선택) 성별·연령대, 기기 종류',
+      t_keep_h: '보유 기간', t_keep: '수집일로부터 최대 3년, 목적 달성 시 지체 없이 파기',
+      t_share_h: '제3자 제공', t_share: '제공하지 않아요. 원본 음성은 공개하지 않아요.',
+      t_withdraw_h: '동의 철회', t_withdraw: '참여 코드를 스태프에게 알려 주시면 삭제해 드려요.',
+      t_refuse_h: '동의 거부', t_refuse: '동의하지 않으셔도 돼요. 이 경우 녹음에는 참여할 수 없어요.',
+      agree: '위 내용에 따라 목소리와 정보를 수집·이용하는 데 동의합니다.',
+      age14: '만 14세 이상입니다.',
+      agree_btn: '동의하고 계속',
+      profile_title: '나에 대해 알려 주세요',
+      nationality: '국적', language: '모국어', level: '한국어 수준', gender: '성별', age: '연령대', optional: '선택',
+      ph_nationality: '예: Vietnam', ph_language: '예: Vietnamese',
+      lv_beg: '초급', lv_int: '중급', lv_adv: '고급', lv_nat: '한국어 원어민',
+      g_f: '여성', g_m: '남성', g_o: '기타', g_n: '응답 안 함',
+      a_teen: '14–19세', a_20: '20대', a_30: '30대', a_40: '40대', a_50: '50대 이상',
+      next: '다음',
+      profile_err: '국적과 모국어를 입력하고 한국어 수준을 골라 주세요.',
+      start_err: '시작하지 못했어요. 연결을 확인하고 다시 눌러 주세요.',
+      count: '<b>{i}</b> / 10 문장', set: '{s}세트',
+      read_this: '이 문장을 소리 내어 읽어 주세요', meaning: '뜻',
+      tap_record: '눌러서 녹음', recording: '녹음 중… 눌러서 멈추기', processing: '잠시만요…', tap_rerecord: '눌러서 다시 녹음',
+      listen: '들어 보기', again: '다시 녹음', next_sentence: '다음 문장', finish: '완료',
+      saving: '저장 중…', saved: '저장됐어요', failed: '저장하지 못했어요.', retry: '다시 시도',
+      warn_short: '너무 짧아요. 문장을 끝까지 읽어 주세요.',
+      warn_quiet: '소리가 작아요. 마이크를 조금 더 가까이 하고 다시 녹음해 보세요.',
+      mic_denied: '마이크 권한이 막혀 있어요. 브라우저 설정에서 허용한 뒤 새로고침해 주세요.',
+      mic_unsupported: '이 브라우저는 녹음을 지원하지 않아요. Chrome이나 Safari로 열어 주세요.',
+      tip: '조용한 곳에서 마이크를 입에서 20cm쯤 떨어뜨려 주세요.',
+      done_title: '10문장 완료! 고마워요',
+      done_show: '이 화면을 스태프에게 보여 주고 간식을 받아 가세요.',
+      code_label: '참여 코드',
+      verified: '녹음 {n}/10개 받았어요', missing: '녹음이 {n}/10개만 도착했어요. 스태프에게 알려 주세요.', unverified: '전송을 확인하지 못했어요. 스태프에게 알려 주세요.',
+      treat: '부스에서 간식을 골라 가세요!',
+      delete_note: '나중에 녹음 삭제를 원하시면 이 코드를 알려 주세요.',
+      restart: '다음 참가자',
+      preview_saved: '저장됐어요 (미리보기)',
+      stop_play: '멈추기', playing: '내 녹음 듣는 중…', play_fail: '재생하지 못했어요. 볼륨을 확인하고 다시 눌러 주세요.'
+    }
+  };
+
+  var COUNTRIES = ['Afghanistan','Algeria','Argentina','Armenia','Australia','Austria','Azerbaijan','Bangladesh','Belarus','Belgium','Bhutan','Bolivia','Brazil','Brunei','Bulgaria','Cambodia','Cameroon','Canada','Chile','China','Colombia','Croatia','Cuba','Czech Republic','Denmark','Dominican Republic','Ecuador','Egypt','Estonia','Ethiopia','Fiji','Finland','France','Georgia','Germany','Ghana','Greece','Guatemala','Hong Kong','Hungary','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Japan','Jordan','Kazakhstan','Kenya','Korea','Kyrgyzstan','Laos','Latvia','Lebanon','Lithuania','Macau','Malaysia','Maldives','Mexico','Moldova','Mongolia','Morocco','Myanmar','Nepal','Netherlands','New Zealand','Nigeria','Norway','Pakistan','Paraguay','Peru','Philippines','Poland','Portugal','Romania','Russia','Rwanda','Saudi Arabia','Serbia','Singapore','Slovakia','South Africa','Spain','Sri Lanka','Sudan','Sweden','Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Tunisia','Turkey','Turkmenistan','Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'];
+  var LANGUAGES = ['Amharic','Arabic','Armenian','Azerbaijani','Bengali','Burmese','Cantonese','Czech','Dutch','English','Filipino (Tagalog)','French','Georgian','German','Greek','Hindi','Hungarian','Indonesian','Italian','Japanese','Javanese','Kazakh','Khmer','Kinyarwanda','Korean','Kyrgyz','Lao','Malay','Mandarin Chinese','Mongolian','Nepali','Persian','Polish','Portuguese','Punjabi','Romanian','Russian','Sinhala','Spanish','Swahili','Tajik','Tamil','Telugu','Thai','Turkish','Turkmen','Ukrainian','Urdu','Uzbek','Vietnamese'];
+  var GROUPS = {
+    korean_level: [['beginner','lv_beg','TOPIK 1–2'],['intermediate','lv_int','TOPIK 3–4'],['advanced','lv_adv','TOPIK 5–6'],['native','lv_nat','']],
+    gender: [['female','g_f'],['male','g_m'],['other','g_o'],['no_answer','g_n']],
+    age_group: [['14-19','a_teen'],['20s','a_20'],['30s','a_30'],['40s','a_40'],['50+','a_50']]
+  };
+
+  var KEY = 'bt_booth_v1';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  var S = load() || {};
+  if (!S.lang) S.lang = (navigator.language || '').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+  if (!S.step) S.step = 'welcome';
+  if (!S.saved) S.saved = {};
+  if (!S.profile) S.profile = {};
+
+  var API = (function () {                 // /collect/booth 로 열든 수집 서버 첫 화면(/collect, /collect/)으로 열든 같은 API
+    var p = location.pathname.replace(/\/+$/, '');
+    return /\/booth$/.test(p) ? p + '/api/' : p + '/booth/api/';
+  })();
+  var PREVIEW = true;
+
+  function $(id) { return document.getElementById(id); }
+  function t(k, v) { var s = (T[S.lang] && T[S.lang][k]) || T.en[k] || k; if (v) for (var x in v) s = s.split('{' + x + '}').join(v[x]); return s; }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function setText(el, html) { el.innerHTML = html; }
+
+  function applyLang() {
+    document.documentElement.lang = S.lang;
+    var els = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < els.length; i++) els[i].textContent = t(els[i].getAttribute('data-i18n'));
+    $('lang-en').setAttribute('aria-pressed', S.lang === 'en'); $('lang-ko').setAttribute('aria-pressed', S.lang === 'ko');
+    $('nationality').placeholder = t('ph_nationality'); $('language').placeholder = t('ph_language');
+    buildChips();
+    $('play-label').textContent = playing ? t('stop_play') : t('listen');
+    if (S.step === 'record') renderItem(true);
+    if (S.step === 'done') renderVerify();
+  }
+
+  function buildChips() {
+    Object.keys(GROUPS).forEach(function (g) {
+      var box = document.querySelector('[data-group="' + g + '"]'); box.innerHTML = '';
+      GROUPS[g].forEach(function (o) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('data-value', o[0]);
+        b.setAttribute('aria-pressed', S.profile[g] === o[0] ? 'true' : 'false');
+        b.textContent = t(o[1]);
+        if (o[2]) { var sm = document.createElement('small'); sm.textContent = o[2]; b.appendChild(sm); }
+        b.addEventListener('click', function () { S.profile[g] = (S.profile[g] === o[0] && g !== 'korean_level') ? '' : o[0]; save(); buildChips(); });
+        box.appendChild(b);
+      });
+    });
+  }
+
+  function fillLists() {
+    $('country-list').innerHTML = COUNTRIES.map(function (c) { return '<option value="' + c + '"></option>'; }).join('');
+    $('language-list').innerHTML = LANGUAGES.map(function (c) { return '<option value="' + c + '"></option>'; }).join('');
+  }
+
+  var ORDER = ['welcome', 'consent', 'profile', 'record', 'done'];
+  function show(step) {
+    S.step = step; save();
+    ORDER.forEach(function (s) { $('s-' + s).hidden = s !== step; });
+    var steps = $('steps'); steps.hidden = step === 'welcome' || step === 'done';
+    var cur = ORDER.indexOf(step);
+    Array.prototype.forEach.call(steps.children, function (li) {
+      var k = ORDER.indexOf(li.getAttribute('data-step'));
+      li.className = k === cur ? 'on' : (k < cur ? 'done' : '');
+    });
+    window.scrollTo(0, 0);
+    if (step === 'record') { renderItem(); keepAwake(); }
+    if (step === 'done') renderDone();
+  }
+
+  /* consent */
+  function syncConsent() { $('consent-btn').disabled = !($('agree').checked && $('age14').checked); }
+
+  /* profile → start */
+  function deviceInfo() { return navigator.userAgent.slice(0, 200); }
+  async function begin() {
+    var nat = $('nationality').value.trim(), l1 = $('language').value.trim();
+    S.profile.nationality = nat; S.profile.native_language = l1; save();
+    if (!nat || !l1 || !S.profile.korean_level) { $('profile-err').textContent = t('profile_err'); $('profile-err').hidden = false; return; }
+    $('profile-err').hidden = true; $('profile-btn').disabled = true;
+    try {
+      if (PREVIEW) { S.code = 'BT-DEMO'; S.set = 1 + Math.floor(Math.random() * 5); }
+      else {
+        var r = await fetch(API + 'start', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lang: S.lang, consent: { version: CONSENT_VERSION, agree: true, age14: true }, profile: S.profile, device: deviceInfo() }) });
+        if (!r.ok) throw new Error('start ' + r.status);
+        var j = await r.json(); S.code = j.code; S.set = j.set_id;
+      }
+      S.idx = 0; S.saved = {}; save(); show('record');
+    } catch (e) { $('profile-err').textContent = t('start_err'); $('profile-err').hidden = false; }
+    finally { $('profile-btn').disabled = false; }
+  }
+
+  /* record */
+  var media = null, actx = null, an = null, mr = null, chunks = [], raf = 0, t0 = 0, peak = 0, autoStop = 0;
+  var recState = 'idle', lastBlob = null, lastUrl = null, lastDur = 0, simTimer = 0, player = null;
+
+  function currentSet() { if (!DATA) return null; for (var i = 0; i < DATA.sets.length; i++) if (DATA.sets[i].id === S.set) return DATA.sets[i]; return DATA.sets[0]; }
+  function renderItem(keepUi) {
+    var set = currentSet(); if (!set) return;
+    var it = set.items[S.idx];
+    setText($('prog-label'), t('count', { i: S.idx + 1 }));
+    $('set-tag').textContent = t('set', { s: S.set });
+    $('prog-fill').style.width = ((S.idx + (S.saved[S.idx + 1] ? 1 : 0)) * 10) + '%';
+    $('sentence').textContent = it.text;
+    $('meaning').textContent = t('meaning') + ' · ' + it.en;
+    $('next-btn').textContent = S.idx >= 9 ? t('finish') : t('next_sentence');
+    if (!keepUi) {
+      lastBlob = null; lastDur = 0; $('notice').hidden = true; $('after').hidden = !S.saved[S.idx + 1];
+      setSave(S.saved[S.idx + 1] ? 'saved' : ''); $('next-btn').disabled = !S.saved[S.idx + 1];
+      $('play-btn').disabled = true; recState = 'idle';
+    }
+    setRecUi();
+  }
+  function setRecUi() {
+    var b = $('rec-btn'); b.classList.toggle('rec', recState === 'rec'); b.disabled = recState === 'busy';
+    $('rec-caption').textContent = recState === 'rec' ? t('recording') : recState === 'busy' ? t('processing') : (S.saved[S.idx + 1] || lastBlob ? t('tap_rerecord') : t('tap_record'));
+    b.setAttribute('aria-label', $('rec-caption').textContent);
+    if (recState !== 'rec') $('meter-fill').style.width = '0%';
+  }
+  function timerUi(ms) { var s = Math.floor(ms / 1000); $('timer').textContent = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+  function notice(msg, kind) { var n = $('notice'); n.textContent = msg; n.className = 'notice ' + kind; n.hidden = false; }
+  function setSave(state) {
+    var el = $('save-state'); el.className = 'save-state ' + state;
+    if (state === 'saving') el.textContent = t('saving');
+    else if (state === 'saved') el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7 9.5 16.2Z"/></svg>' + (PREVIEW ? t('preview_saved') : t('saved'));
+    else if (state === 'failed') { el.textContent = t('failed') + ' '; var rb = document.createElement('button'); rb.type = 'button'; rb.textContent = t('retry'); rb.addEventListener('click', upload); el.appendChild(rb); }
+    else el.textContent = '';
+  }
+  function pickMime() {
+    var c = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac'];
+    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+    for (var i = 0; i < c.length; i++) if (MediaRecorder.isTypeSupported(c[i])) return c[i];
+    return '';
+  }
+  var micSrc = null;
+  function ensureCtx() { if (!actx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); } return actx; }
+  async function ensureMic() {
+    if (media && media.getAudioTracks().some(function (tr) { return tr.readyState === 'live'; })) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) throw new Error('unsupported');
+    media = await navigator.mediaDevices.getUserMedia({ audio: true });
+    ensureCtx(); micSrc = actx.createMediaStreamSource(media); an = actx.createAnalyser(); an.fftSize = 1024; micSrc.connect(an);
+  }
+  function releaseMic() {      // 녹음이 끝나면 마이크를 끈다 — iPhone 은 마이크가 켜져 있으면 '들어 보기'가 수화기 쪽으로 작게 나온다
+    if (micSrc) { try { micSrc.disconnect(); } catch (e) {} micSrc = null; }
+    if (media) { media.getTracks().forEach(function (tr) { tr.stop(); }); media = null; }
+  }
+  async function startRec() {
+    if (playing) stopPlay();
+    $('notice').hidden = true;
+    if (PREVIEW) return simStart();
+    try { await ensureMic(); }
+    catch (e) { notice(e && e.message === 'unsupported' ? t('mic_unsupported') : t('mic_denied'), 'error'); return; }
+    if (actx.state === 'suspended') { try { await actx.resume(); } catch (e) {} }
+    var mime = pickMime(); chunks = [];
+    try { mr = mime ? new MediaRecorder(media, { mimeType: mime }) : new MediaRecorder(media); }
+    catch (e) { notice(t('mic_unsupported'), 'error'); return; }
+    mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = onStopped;
+    mr.start(); t0 = performance.now(); peak = 0; recState = 'rec'; setRecUi(); tick();
+    autoStop = setTimeout(stopRec, MAX_MS);
+  }
+  function tick() {
+    if (recState !== 'rec') return;
+    var buf = new Float32Array(an.fftSize); an.getFloatTimeDomainData(buf);
+    var m = 0; for (var i = 0; i < buf.length; i++) { var v = Math.abs(buf[i]); if (v > m) m = v; }
+    if (m > peak) peak = m;
+    $('meter-fill').style.width = Math.min(100, Math.round(Math.sqrt(m) * 140)) + '%';
+    timerUi(performance.now() - t0);
+    raf = requestAnimationFrame(tick);
+  }
+  function stopRec() {
+    if (recState !== 'rec') return;
+    clearTimeout(autoStop); cancelAnimationFrame(raf);
+    lastDur = performance.now() - t0; recState = 'busy'; setRecUi();
+    if (PREVIEW) { clearInterval(simTimer); return finishRecording(); }
+    try { mr.stop(); } catch (e) { recState = 'idle'; setRecUi(); }
+  }
+  function onStopped() {
+    var type = (mr && mr.mimeType) || (chunks[0] && chunks[0].type) || 'audio/webm';
+    lastBlob = new Blob(chunks, { type: type });
+    if (lastUrl) URL.revokeObjectURL(lastUrl);
+    lastUrl = URL.createObjectURL(lastBlob);
+    releaseMic();
+    finishRecording();
+  }
+  function finishRecording() {
+    recState = 'idle';
+    if (lastDur < MIN_MS) { lastBlob = null; setRecUi(); notice(t('warn_short'), 'warn'); return; }
+    if (peak < QUIET) notice(t('warn_quiet'), 'warn');
+    $('after').hidden = false; $('play-btn').disabled = !PREVIEW && !lastUrl;
+    setRecUi(); upload();
+  }
+  async function upload() {
+    var item = S.idx + 1;
+    $('next-btn').disabled = true; setSave('saving');
+    if (PREVIEW) { await sleep(450); return markSaved(item); }
+    if (!lastBlob) return setSave('failed');
+    var ext = /mp4|aac|m4a/.test(lastBlob.type) ? 'm4a' : 'webm';
+    var fd = new FormData();
+    fd.append('code', S.code); fd.append('item', String(item)); fd.append('duration_ms', String(Math.round(lastDur)));
+    fd.append('peak', peak.toFixed(4)); fd.append('mime', lastBlob.type || ''); fd.append('audio', lastBlob, 'item' + item + '.' + ext);
+    try {
+      var r = await fetch(API + 'upload', { method: 'POST', body: fd });
+      if (!r.ok) throw new Error('upload ' + r.status);
+      markSaved(item);
+    } catch (e) { setSave('failed'); }
+  }
+  function markSaved(item) {
+    S.saved[item] = true; save(); setSave('saved');
+    $('next-btn').disabled = false; $('prog-fill').style.width = (S.idx + 1) * 10 + '%'; setRecUi();
+  }
+  function simStart() {
+    t0 = performance.now(); peak = 0.3; recState = 'rec'; setRecUi();
+    simTimer = setInterval(function () { $('meter-fill').style.width = (25 + Math.random() * 60) + '%'; timerUi(performance.now() - t0); }, 120);
+    autoStop = setTimeout(stopRec, MAX_MS);
+  }
+  function next() {
+    if (!S.saved[S.idx + 1]) return;
+    if (playing) stopPlay();
+    player = null;
+    if (S.idx >= 9) return show('done');
+    S.idx += 1; save(); renderItem(); window.scrollTo(0, 0);
+  }
+  var playing = false, playRaf = 0, playAn = null, playT0 = 0;
+  function fmt(ms) { var s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+  function setPlayUi(on) {
+    playing = on;
+    $('play-btn').classList.toggle('on', on); $('play-label').textContent = on ? t('stop_play') : t('listen');
+    if (on) { $('play-ic').setAttribute('hidden', ''); $('stop-ic').removeAttribute('hidden'); }   // SVG 는 .hidden 속성이 없다
+    else { $('stop-ic').setAttribute('hidden', ''); $('play-ic').removeAttribute('hidden'); }
+    $('again-btn').disabled = on; $('rec-btn').disabled = on || recState === 'busy';
+    $('meter').classList.toggle('play', on);
+    if (on) $('rec-caption').textContent = t('playing');
+    else { $('meter-fill').style.width = '0%'; $('timer').textContent = fmt(lastDur); setRecUi(); }
+  }
+  function play() {
+    if (playing) return stopPlay();
+    if (PREVIEW) { playT0 = performance.now(); setPlayUi(true); return tickPlay(); }
+    if (!lastUrl) return;
+    if (player) { try { player.pause(); } catch (e) {} }
+    player = new Audio(); player.src = lastUrl; playAn = null;
+    try {                                   // 재생 소리를 분석기에 통과시켜 막대를 움직인다
+      if (ensureCtx()) { var src = actx.createMediaElementSource(player); playAn = actx.createAnalyser(); playAn.fftSize = 1024; src.connect(playAn); playAn.connect(actx.destination); }
+    } catch (e) { playAn = null; }
+    player.onended = function () { stopPlay(); };
+    player.onerror = function () { stopPlay(); notice(t('play_fail'), 'warn'); };
+    var go = function () {
+      player.play().then(function () { playT0 = performance.now(); setPlayUi(true); tickPlay(); })
+        .catch(function () { notice(t('play_fail'), 'warn'); });
+    };
+    if (actx && actx.state === 'suspended') actx.resume().then(go, go); else go();
+  }
+  function tickPlay() {
+    if (!playing) return;
+    var lvl, cur;
+    if (PREVIEW || !player) { cur = performance.now() - playT0; lvl = 0.12 + Math.random() * 0.3; if (cur >= lastDur) return stopPlay(); }
+    else {
+      cur = player.currentTime * 1000;
+      if (playAn) { var buf = new Float32Array(playAn.fftSize); playAn.getFloatTimeDomainData(buf); lvl = 0; for (var i = 0; i < buf.length; i++) { var v = Math.abs(buf[i]); if (v > lvl) lvl = v; } }
+      else lvl = 0.15 + 0.1 * Math.abs(Math.sin(cur / 90));
+    }
+    $('meter-fill').style.width = Math.min(100, Math.round(Math.sqrt(lvl) * 140)) + '%';
+    $('timer').textContent = fmt(Math.min(cur, lastDur)) + ' / ' + fmt(lastDur);
+    playRaf = requestAnimationFrame(tickPlay);
+  }
+  function stopPlay() {
+    cancelAnimationFrame(playRaf);
+    if (player) { try { player.pause(); } catch (e) {} }
+    setPlayUi(false);
+  }
+  var wake = null;
+  function keepAwake() { try { if (navigator.wakeLock && !wake) navigator.wakeLock.request('screen').then(function (w) { wake = w; w.addEventListener('release', function () { wake = null; }); }).catch(function () {}); } catch (e) {} }
+
+  /* done */
+  var verifyN = null;
+  async function renderDone() {
+    $('code').textContent = S.code || 'BT-0000';
+    if (PREVIEW) { verifyN = 10; return renderVerify(); }
+    verifyN = undefined; renderVerify();
+    try { var r = await fetch(API + 'check?code=' + encodeURIComponent(S.code), { cache: 'no-store' }); var j = await r.json(); verifyN = j.n; }
+    catch (e) { verifyN = null; }
+    renderVerify();
+  }
+  function renderVerify() {
+    var el = $('verify');
+    if (verifyN === undefined) { el.className = 'verify'; el.textContent = t('saving'); return; }
+    if (verifyN === null) { el.className = 'verify bad'; el.textContent = t('unverified'); return; }
+    if (verifyN >= 10) { el.className = 'verify ok'; el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7 9.5 16.2Z"/></svg>' + t('verified', { n: verifyN }); }
+    else { el.className = 'verify bad'; el.textContent = t('missing', { n: verifyN }); }
+  }
+  function restart() {
+    if (playing) stopPlay();
+    releaseMic();
+    if (actx) { try { actx.close(); } catch (e) {} actx = null; }
+    var lang = S.lang; S = { lang: lang, step: 'welcome', saved: {}, profile: {} }; save();
+    $('agree').checked = false; $('age14').checked = false; syncConsent();
+    $('nationality').value = ''; $('language').value = '';
+    buildChips(); show('welcome');
+  }
+
+  /* wiring */
+  $('lang-en').addEventListener('click', function () { S.lang = 'en'; save(); applyLang(); });
+  $('lang-ko').addEventListener('click', function () { S.lang = 'ko'; save(); applyLang(); });
+  $('start-btn').addEventListener('click', function () { show('consent'); });
+  $('agree').addEventListener('change', syncConsent); $('age14').addEventListener('change', syncConsent);
+  $('consent-btn').addEventListener('click', function () { if (!$('consent-btn').disabled) show('profile'); });
+  $('profile-btn').addEventListener('click', begin);
+  $('rec-btn').addEventListener('click', function () { if (recState === 'rec') stopRec(); else if (recState === 'idle') startRec(); });
+  $('again-btn').addEventListener('click', function () { if (recState === 'idle') startRec(); });
+  $('play-btn').addEventListener('click', play);
+  $('next-btn').addEventListener('click', next);
+  $('restart-btn').addEventListener('click', restart);
+
+  async function init() {
+    fillLists();
+    if (S.profile.nationality) $('nationality').value = S.profile.nationality;
+    if (S.profile.native_language) $('language').value = S.profile.native_language;
+    if (API) { try { var r = await fetch(API + 'ping', { cache: 'no-store' }); PREVIEW = !r.ok; } catch (e) { PREVIEW = true; } }
+    $('preview-banner').hidden = !PREVIEW;
+    if (!DATA) { S.step = 'welcome'; }
+    if ((S.step === 'record' || S.step === 'done') && !S.code) S.step = 'welcome';
+    if (S.step === 'consent' || S.step === 'profile') S.step = 'welcome';
+    applyLang(); show(S.step);
+  }
+  init();
+})();
+</script>

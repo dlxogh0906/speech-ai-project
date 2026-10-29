@@ -1,0 +1,70 @@
+# @package _group_
+#
+# FINAL v2 Stage 2 — 전체 TAG · 오발음 40% · 원어민 10% replay · 40k (2026-09-17)
+# ─────────────────────────────────────────────────────────────────────
+# 목표: 외국인의 실제 발음을 표준으로 교정하지 않고 46자모로 그대로 전사. 구조·사전 변경 없음.
+#   초기화   final_stage1_300m_40k/checkpoint_best.pt (가중치만, 옵티마이저·LR·스텝 새로 시작)
+#            실행 시 지정: checkpoint.restore_file=$SPEECH_AI_DATA/checkpoints/final_stage1_300m_40k/checkpoint_best.pt
+#   데이터   manifest_full_tag_replay10 — train 화자 전 문항 TAG 148만 발화(정상 108만 + 오발음 40만을 72만으로 복제)
+#            + KsponSpeech 20만 발화(전체의 10%, 문장 중복 없음). LAR(표준발음 라벨) 없음. target 은 전부 실제 발음 자모
+#   검증     valid = 같은 문항 · 안 본 화자 1만 발화 (선택 PRIMARY)
+#   학습     lr 1e-5 · tri_stage · freeze 0 · 40k · 2k 마다 저장(전부 보존)
+#   선택     2k~40k 체크포인트를 valid 에서 greedy 디코드 → 정상 자리 오류 → JER → 보존(↑) → 되돌림 순
+common:
+  fp16: true
+  log_format: json
+  log_interval: 100
+  seed: 42
+  tensorboard_logdir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage2_full_tag/tb
+checkpoint:
+  save_dir: ${env:SPEECH_AI_DATA}/checkpoints/final_stage2_full_tag
+  best_checkpoint_metric: uer
+  maximize_best_checkpoint_metric: false
+  save_interval_updates: 2000
+  keep_interval_updates: -1
+  no_epoch_checkpoints: true
+  reset_optimizer: true
+  reset_lr_scheduler: true
+  reset_meters: true
+  reset_dataloader: true
+task:
+  _name: audio_finetuning
+  data: ${env:MDD_OUTPUTS}/manifest_full_tag_replay10
+  normalize: true
+  labels: ltr
+dataset:
+  num_workers: 6
+  max_tokens: 1600000
+  skip_invalid_size_inputs_valid_test: true
+  valid_subset: valid
+  validate_interval_updates: 2000
+distributed_training:
+  distributed_world_size: 1
+  ddp_backend: legacy_ddp
+criterion:
+  _name: ctc
+  zero_infinity: true
+optimization:
+  max_update: 40000
+  lr: [0.00001]
+  sentence_avg: true
+  update_freq: [4]
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+model:
+  _name: wav2vec_ctc
+  w2v_path: ${env:SPEECH_AI_MODELS}/xlsr2_300m.pt
+  apply_mask: true
+  mask_prob: 0.5
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 0

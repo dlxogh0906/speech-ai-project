@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>발음 평가 비교</title>
+<style>
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --ink: #1d2330; --sub: #5c6575; --line: #e3e6eb;
+  --accent: #2f6fde; --bad: #d4382c; --bad-bg: #fdecea; --unc: #b7791f; --unc-bg: #fdf5e6; --ok: #2f8a4f;
+  --chip: #eef1f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --card: #1b2029; --ink: #e8ebf0; --sub: #9aa3b2; --line: #2b313c;
+    --accent: #6c9bff; --bad: #ff7a6e; --bad-bg: #3a1f1d; --unc: #e3b05c; --unc-bg: #352b1a; --ok: #6cc98b;
+    --chip: #252b36;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --card: #1b2029; --ink: #e8ebf0; --sub: #9aa3b2; --line: #2b313c;
+  --accent: #6c9bff; --bad: #ff7a6e; --bad-bg: #3a1f1d; --unc: #e3b05c; --unc-bg: #352b1a; --ok: #6cc98b;
+  --chip: #252b36;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: 22px; margin: 4px 0 6px; }
+.sub { color: var(--sub); margin: 0 0 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tabs button, .sents button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: 13px; }
+.tabs button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.sents { display: flex; flex-direction: column; gap: 6px; }
+.sents button { text-align: left; border-radius: 8px; padding: 8px 10px; font-size: 14px; }
+.sents button.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.hint { color: var(--unc); font-size: 13px; margin-left: 4px; }
+textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: inherit; background: var(--card); color: var(--ink); }
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.rec { background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 22px; font-size: 15px; cursor: pointer; }
+.rec.on { background: var(--bad); }
+.rec:disabled { opacity: .5; }
+.meter { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; flex: 1; min-width: 120px; }
+.meter i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .08s; }
+.status { color: var(--sub); font-size: 13px; margin-top: 8px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+.side h2 { font-size: 16px; margin: 0 0 2px; }
+.side .what { color: var(--sub); font-size: 12px; margin-bottom: 10px; }
+.big { font-size: 15px; margin: 6px 0 10px; }
+.big b { font-size: 20px; }
+.big .bad { color: var(--bad); }
+.scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.sent { font-size: 22px; letter-spacing: 1px; margin: 4px 0 8px; word-break: keep-all; }
+.sent .e { color: var(--bad); text-decoration: underline; text-underline-offset: 4px; }
+.sent .u { color: var(--unc); text-decoration: underline dotted; text-underline-offset: 4px; }
+.pron { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: baseline; margin: 2px 0 10px; }
+.pron .k { color: var(--sub); font-size: 12px; white-space: nowrap; }
+.pron .v { font-size: 19px; letter-spacing: 1px; word-break: keep-all; }
+.pron .v .e { color: var(--bad); font-weight: 700; background: var(--bad-bg); border-radius: 3px; }
+.pron .v .u { color: var(--unc); font-weight: 700; background: var(--unc-bg); border-radius: 3px; }
+.pron.sym .v { font: 13px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0; }
+.errs { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.errs li { font-size: 13px; }
+.errs .tag { display: inline-block; min-width: 2.2em; font-weight: 700; }
+.scores div { background: var(--chip); border-radius: 8px; padding: 6px; text-align: center; font-size: 12px; color: var(--sub); }
+.scores b { display: block; font-size: 18px; color: var(--ink); }
+.canon { font-size: 13px; color: var(--sub); margin-bottom: 8px; word-break: keep-all; }
+.canon span { color: var(--ink); font-size: 15px; letter-spacing: .5px; }
+.words { display: flex; flex-direction: column; gap: 6px; }
+.w { border-top: 1px solid var(--line); padding-top: 6px; }
+.w .t { font-weight: 600; }
+.w .pr { color: var(--sub); font-size: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.chip { font-size: 12px; border-radius: 6px; padding: 2px 7px; }
+.chip.e { background: var(--bad-bg); color: var(--bad); }
+.chip.u { background: var(--unc-bg); color: var(--unc); }
+.diff { font-size: 13px; }
+.diff table { border-collapse: collapse; width: 100%; }
+.diff td { padding: 4px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.diff td:first-child { color: var(--sub); width: 120px; }
+.small { color: var(--sub); font-size: 12px; }
+.rej { background: var(--unc-bg); color: var(--ink); border-radius: 8px; padding: 10px 12px; margin-top: 6px; font-size: 14px; }
+.rej b { color: var(--unc); display: block; margin-bottom: 2px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
+.badge.now { background: var(--chip); color: var(--sub); }
+.badge.new { background: var(--accent); color: #fff; }
+.small ol { margin: 4px 0 4px 18px; padding: 0; }
+details summary { cursor: pointer; color: var(--sub); font-size: 13px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>한국어 발음 평가 — 이전 운영 vs 지금 운영(10-21)</h1>
+  <p class="sub">같은 녹음을 두 방식으로 채점해 나란히 보여 줍니다. 빨간 표시가 사용자 화면에 "틀림"으로 뜨는 자리입니다.
+    <b>이전 운영</b> = 10-18 ~ 10-21 NPU 설정. <b>지금 운영</b> = 10-21 01:58 부터 NPU 에서 도는 설정(2차 학습 모델 100% + 화면 규칙 2개) + 앱 처리 뒤 켤 이상한 입력 거르기 3개.</p>
+
+  <div class="card">
+    <div class="tabs" id="tabs"></div>
+    <div class="sents" id="sents"></div>
+    <textarea id="custom" rows="2" placeholder="읽을 한국어 문장을 입력하세요" hidden></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="rec" id="recBtn">● 녹음 시작</button>
+      <div class="meter"><i id="lvl"></i></div>
+      <button id="playBtn" class="tabs" style="border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px" hidden>▶ 내 녹음</button>
+    </div>
+    <div class="status" id="status">문장을 고르고 녹음 버튼을 누른 뒤 읽고, 다 읽으면 다시 누르세요.</div>
+  </div>
+
+  <div class="grid" id="out" hidden>
+    <div class="card side" id="sideA"></div>
+    <div class="card side" id="sideB"></div>
+  </div>
+
+  <div class="card diff" id="diff" hidden></div>
+
+  <details class="card" open><summary>무엇이 다른가 · 실측</summary>
+    <div class="small">
+      <b>두 쪽이 같은 것</b> — 표준발음 보정(10-17 운영 반영) · 짧은 문장 말소리 기준(10-18) · 예사소리를 된소리·거센소리로 확실히 들으면 점수가 높아도 지적(10-18) · 문장 점수 계산.<br>
+      <b>10-21 운영에서 바뀐 것</b>
+      <ol>
+        <li>모델: 지금 모델과 2차 학습 모델을 반반 섞은 것 → 2차 학습 모델 100%</li>
+        <li>빠진 소리는 소리 흔적이 거의 없을 때(강제정렬 점수 50 미만)만 "틀림" — 흔적이 있으면 "애매"</li>
+        <li>ㄴ↔ㄹ 을 확실히(확률 60% 이상) 바꿔 들으면 점수가 높아도 지적</li>
+        <li>잡음·음악만 녹음(기준 소리 90% 넘게 다르게 들림) → 채점 안 함 <code>no_match</code></li>
+        <li>말한 부분이 20초 넘음 → 채점 안 함 <code>too_long</code> · 기준 문장에 한글 없음 → <code>no_korean</code> (③·④는 앱이 새 오류 코드를 처리한 뒤 켤 예정)</li>
+      </ol>
+      <b>같은 시험으로 잰 값 (이전 운영 → 지금 운영)</b><br>
+      · 원어민 헛지적(100음절당): 낭독 7.8 → 5.1 · 대화 8.0 → 5.7 — 지적이 하나라도 뜬 문장 낭독 85% → 73%<br>
+      · 학습자 실제 녹음 3,472개: 헛지적 발화 15.4% → 15.5%(같음) · 진짜 오류 지적 34.6% → 35.3% · 지적이 맞을 확률 46.1% → 50.9%<br>
+      · 오류 종류별: 첫소리 세기(ㄱ→ㅋ 등) 30.7% → 37.0% · 받침 35.3% → 49.9% · ㄴ↔ㄹ 47.2% → 65.0% · 모음 14.9% → 12.7%<br>
+      · <b>나빠지는 것</b>: 학습자가 진짜로 빼먹은 소리 지적 455곳 중 217 → 110 · 맞게 읽은 첫소리를 틀렸다고 함 1,000자리당 4.5 → 6.3<br>
+      · 일부러 틀린 합성 녹음: 2차 학습에 넣은 5단어(진구·싸과·한쿡·콩부·뚜부) 100개 중 41 → 63 · 나머지 10단어 200개 중 159 → 164<br>
+      · 잡음·음악만 녹음: 45~62점 줌 → 거절 · 점수: 사람 점수와의 상관 그대로(종합 −0.1점)<br>
+      · 그대로인 것: 모음 오류와 은근한 ㅅ/ㅆ 실수는 두 쪽이 비슷합니다.
+    </div>
+  </details>
+
+  <details class="card"><summary>읽는 법 · 주의</summary>
+    <p class="small">
+      · <b>틀림</b>(빨강) = 받아쓴 소리가 표준발음과 다르고 점수도 낮아 화면에 지적되는 자리. <b>애매</b>(노랑 점선) = 다르게 들렸지만 점수가 높아 지적하지 않은 자리. 아래 목록은 "기대 소리 → 들린 소리"입니다.<br>
+      · 이해도 점수는 여러 문장을 모아야 나와서 한 문장 비교에서는 뺐습니다.<br>
+      · <b>들린 그대로</b> = 모델이 받아쓴 소리를 글자에 맞춰 쓴 것(발음 표기). 색이 있는 글자가 표준 발음과 다르게 들린 곳이다 — 노랑은 다르게 들렸지만 점수 기준(60점 미만) 때문에 사용자 화면에 "틀림"으로 안 뜨는 자리.<br>
+      · <b>모델 확률</b> = 그 글자 구간에서 모델이 각 소리에 준 확률(녹음을 표준발음에 맞춰 정렬한 뒤 구간 평균). <b>점수</b>는 이 확률로 따로 계산한 발음 점수라 확률과 다르다.<br>
+      · <b>채점 안 함</b>(노랑 상자) = 그 쪽 API 가 400 오류로 돌려보내는 녹음. 앱에는 상자 안 문구 같은 안내가 갑니다.<br>
+      · 이 페이지는 이 GPU 서버에서 같은 설정으로 흉내 낸 것이라 NPU 응답과 점수가 아주 조금 다를 수 있습니다.<br>
+      · 녹음은 저장하지 않습니다.
+    </p>
+  </details>
+</main>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const SETS = {
+  '일부러 틀려 보기': [
+    ['저는 한국어를 배워요.', '"한쿡어"로 읽어 보세요'], ['친구를 만나요.', '"진구"로 읽어 보세요'],
+    ['가방을 샀어요.', '"카방"으로 읽어 보세요'], ['이 사과 맛있어요.', '"싸과"로 읽어 보세요'],
+    ['바지를 입어요.', '"빠지"로 읽어 보세요'], ['커피 주세요.', '"거피"로 읽어 보세요'],
+    ['노래를 불러요.', '"로래"로 읽어 보세요 (ㄴ↔ㄹ)'], ['라면 주세요.', '"나면"으로 읽어 보세요 (ㄹ↔ㄴ)']],
+  '맞게 읽어 보기': [
+    ['주말에 별일 없으면 우리 집에 와서 밥 같이 먹어요.', ''], ['오늘 날씨가 참 따뜻하지요?', ''],
+    ['사람이 이렇게 많을 줄 몰랐는데 정말 대단하네요.', ''], ['여기 비빔밥 한 그릇 갖다주세요.', ''],
+    ['밥을 먹을 수 있어요.', ''], ['이 사건은 중요해요.', ''], ['그렇게 힘든 일을 누가 하겠어요?', ''],
+    ['희망이 있어요.', ''], ['필요하면 말씀하세요.', ''], ['살이 빠졌네요.', '']],
+  '이상한 입력': [
+    ['오늘 날씨가 참 따뜻하지요?', '말하지 말고 음악·박수·키보드 소리만 녹음해 보세요'],
+    ['주말에 별일 없으면 우리 집에 와서 밥 같이 먹어요.', '"우리 집에"를 빼고 읽어 보세요 — 통째로 빠진 건 그대로 지적'],
+    ['저는 작년 봄에 한국에 처음 왔어요. 처음에는 한국어를 잘 못해서 많이 힘들었지만 친구들이 많이 도와줘서 지금은 많이 편해졌어요. 요즘은 주말마다 시장에 가서 음식을 사고 집에서 한국 음식을 만들어 먹어요.',
+     '천천히 끝까지 읽으면 20초가 넘어요'],
+    ['Nice to meet you.', '한글 없는 기준 문장 — 아무 말이나 녹음해 보세요']],
+  '직접 입력': []
+};
+const NAMES = {A: '이전 운영<span class="badge now">10-18 ~ 10-21</span>', B: '지금 운영<span class="badge new">10-21 ~</span>'};
+const WHAT = {A: '섞은 모델(50%) + 표준발음 보정 + 짧은 문장 기준 + 센소리 예외',
+              B: '2차 학습 모델 100% + 같은 보정·기준·예외 + 빠진 소리(점수 50 미만만)·ㄴ↔ㄹ 규칙 + 이상한 입력 거르기(운영에는 앱 처리 뒤 켬)'};
+const REJ = {low_speech: '말소리 부족 (low_speech)', no_match: '말소리를 못 알아들음 (no_match)', too_long: '너무 긴 녹음 (too_long)',
+             no_korean: '한글 없는 기준 문장 (no_korean)', assess_failed: '채점 실패'};
+let tab = Object.keys(SETS)[0], pick = 0;
+function drawTabs() {
+  $('#tabs').innerHTML = '';
+  Object.keys(SETS).forEach(k => {
+    const b = document.createElement('button'); b.textContent = k; if (k === tab) b.className = 'on';
+    b.onclick = () => { tab = k; pick = 0; drawTabs(); }; $('#tabs').appendChild(b);
+  });
+  $('#sents').innerHTML = '';
+  $('#custom').hidden = tab !== '직접 입력';
+  SETS[tab].forEach(([t, h], i) => {
+    const b = document.createElement('button'); if (i === pick) b.className = 'on';
+    b.innerHTML = esc(t) + (h ? '<span class="hint">' + esc(h) + '</span>' : '');
+    b.onclick = () => { pick = i; drawTabs(); }; $('#sents').appendChild(b);
+  });
+}
+function sentence() { return tab === '직접 입력' ? $('#custom').value.trim() : (SETS[tab][pick] || [''])[0]; }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])); }
+drawTabs();
+
+// ───────── 녹음 (WebAudio 표본화율 보존 WAV) ─────────
+let ctx = null, proc = null, chunks = [], recording = false, busy = false, micP = null, capTimer = null, lastBlob = null;
+function wakeAudio() { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); }
+function openMic() {
+  if (micP) return micP;
+  micP = (async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('이 주소에서는 마이크를 쓸 수 없습니다(localhost 나 HTTPS 필요)');
+    const s = await navigator.mediaDevices.getUserMedia({audio: {channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+    if (ctx.state !== 'running') await ctx.resume();
+    const src = ctx.createMediaStreamSource(s);
+    proc = ctx.createScriptProcessor(2048, 1, 1);
+    proc.onaudioprocess = e => { if (recording) onAudio(e.inputBuffer.getChannelData(0)); };
+    src.connect(proc); proc.connect(ctx.destination);
+  })().catch(e => { micP = null; throw e; });
+  return micP;
+}
+function onAudio(x) {
+  // WebAudio 버퍼는 재사용되므로 녹음 시점의 PCM을 복사한다.
+  chunks.push(new Float32Array(x));
+  let peak = 0;
+  for (let i = 0; i < x.length; i++) peak = Math.max(peak, Math.abs(x[i]));
+  $('#lvl').style.width = Math.min(100, peak * 160) + '%';
+}
+function wavPcm(f32, sr) {
+  const n = f32.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const s = Math.max(-1, Math.min(1, f32[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
+  return buf;
+}
+async function stopAndSend() {
+  clearTimeout(capTimer); recording = false;
+  $('#recBtn').textContent = '● 녹음 시작'; $('#recBtn').classList.remove('on'); $('#lvl').style.width = '0';
+  const n = chunks.reduce((a, c) => a + c.length, 0), pcm = new Float32Array(n);
+  let o = 0; chunks.forEach(c => { pcm.set(c, o); o += c.length; });
+  lastBlob = new Blob([wavPcm(pcm, ctx.sampleRate)], {type: 'audio/wav'}); $('#playBtn').hidden = false;
+  busy = true; $('#recBtn').disabled = true;
+  try { await send(lastBlob); } finally { busy = false; $('#recBtn').disabled = false; }
+}
+$('#recBtn').onclick = async () => {
+  wakeAudio();
+  if (busy) return;
+  if (!recording) {
+    if (!sentence()) { $('#status').textContent = '읽을 문장을 먼저 입력하세요.'; return; }
+    busy = true;
+    try { await openMic(); } catch (e) { $('#status').textContent = e.message; busy = false; return; }
+    busy = false;
+    chunks = []; recording = true;
+    $('#recBtn').textContent = '■ 다 읽었어요'; $('#recBtn').classList.add('on');
+    $('#status').textContent = '읽어 주세요… (최대 40초)';
+    capTimer = setTimeout(() => { if (recording) stopAndSend(); }, 40000);
+    return;
+  }
+  await stopAndSend();
+};
+$('#playBtn').onclick = () => { if (lastBlob) new Audio(URL.createObjectURL(lastBlob)).play(); };
+
+let base = location.pathname; if (!base.endsWith('/')) base = base.replace(/[^/]*$/, '');
+async function send(blob) {
+  $('#status').textContent = '채점 중…';
+  const fd = new FormData(); fd.append('audio', blob, 'rec.wav'); fd.append('refText', sentence());
+  let r, d;
+  try { r = await fetch(base + 'compare', {method: 'POST', body: fd}); d = await r.json(); }
+  catch (e) { $('#status').textContent = '요청 실패: ' + e.message; return; }
+  if (!r.ok) {
+    $('#status').textContent = {too_short: '녹음이 너무 짧아요(0.3초 미만). 다시 녹음해 주세요.',
+      decode_failed: '녹음을 읽지 못했어요. 다시 녹음해 주세요.', no_reftext: '읽을 문장이 없어요.'}[d.code] || ('오류 ' + r.status);
+    return;
+  }
+  const ms = v => v == null ? '채점 안 함' : v + 'ms';
+  $('#status').textContent = '녹음 ' + d.sec + '초 · 처리 ' + d.ms.total + 'ms (이전 운영 ' + ms(d.ms.A) + ' · 지금 운영 ' + ms(d.ms.B) + ')';
+  draw('#sideA', 'A', d.A, d.text);
+  draw('#sideB', 'B', d.B, d.text);
+  drawDiff(d);
+  $('#out').hidden = false;
+}
+function draw(sel, side, s, text) {
+  let h = '<h2>' + NAMES[side] + '</h2><div class="what">' + WHAT[side] + '</div>';
+  if (s.rejected) {
+    h += '<div class="rej"><b>채점 안 함 — ' + esc(REJ[s.rejected.code] || s.rejected.code) + '</b>' + esc(s.rejected.msg || '') + '</div>';
+    $(sel).innerHTML = h;
+    return;
+  }
+  const sc = s.scores, f = v => v == null ? '–' : v;
+  h += '<div class="big">틀림 <b class="' + (s.n_err ? 'bad' : '') + '">' + s.n_err + '</b>개 · 애매 ' + s.n_unc + '개</div>';
+  h += '<div class="scores"><div><b>' + f(sc.overall) + '</b>종합</div><div><b>' + f(sc.pronunciation) + '</b>발음</div><div><b>' +
+       f(sc.fluency) + '</b>유창성</div></div>';
+  // 문장: 원문 띄어쓰기를 살려 글자마다 색칠(틀림 빨강 · 애매 노랑)
+  const letters = s.words; let k = 0, line = '';
+  for (const ch of text) {
+    if (/[가-힣]/.test(ch) && k < letters.length) {
+      const w = letters[k++], e = w.ph.some(p => p.e), u = !e && w.ph.some(p => p.u);
+      line += '<span class="' + (e ? 'e' : (u ? 'u' : '')) + '">' + esc(ch) + '</span>';
+    } else line += esc(ch);
+  }
+  h += '<div class="sent">' + line + '</div>';
+  // 표준 발음 / 들린 그대로 — 어절 단위(연음이 보이게). 다르게 들린 어절: 틀림 빨강 · 지적 안 한 것 노랑
+  const ej = s.eojeol || [];
+  const expL = ej.map(x => esc(x.canon)).join(' ');
+  const hearL = ej.map(x => { const d = x.heard !== x.canon, c = d ? (x.e ? 'e' : (x.u ? 'u' : '')) : '';
+    return '<span class="' + c + '">' + (x.heard ? esc(x.heard) : '∅') + '</span>'; }).join(' ');
+  h += '<div class="pron"><span class="k">표준 발음</span><span class="v">' + expL + '</span>' +
+       '<span class="k">들린 그대로</span><span class="v">' + hearL + '</span></div>';
+  // KoG2P 발음 기호(API 의 alpha · actual) — 어절마다, 다른 기호는 색칠
+  const symE = ej.map(x => x.sym.map(t => esc(t[0] || '?')).join(' ')).join(' | ');
+  const symH = ej.map(x => x.sym.map(t => { const d = t[1] !== t[0], c = d ? (t[2] ? 'e' : (t[3] ? 'u' : '')) : '';
+    return '<span class="' + c + '">' + esc(t[1] || '∅') + '</span>'; }).join(' ')).join(' | ');
+  h += '<details style="margin:0 0 8px"><summary>발음 기호로 보기 (KoG2P · API 의 alpha / actual)</summary><div class="pron sym">' +
+       '<span class="k">표준</span><span class="v">' + symE + '</span><span class="k">들림</span><span class="v">' + symH + '</span></div></details>';
+  const items = [];
+  letters.forEach(w => w.ph.forEach(p => {
+    if (p.e || p.u) items.push('<li><span class="tag" style="color:var(--' + (p.e ? 'bad' : 'unc') + ')">' + esc(w.word) + '</span> ' +
+      esc(p.c) + (p.ca ? '(' + esc(p.ca) + ')' : '') + ' → ' + esc(p.h || '(빠짐)') + (p.ha ? '(' + esc(p.ha) + ')' : '') + ' <span class="small">' + (p.e ? esc(p.e) : '애매 · 지적 안 함') + (p.s != null ? ' · 점수 ' + p.s : '') +
+      (p.top ? ' · 모델 확률 ' + p.top.map(t => esc(t[0]) + ' ' + t[1] + '%').join(' · ') : '') + '</span></li>');
+  }));
+  h += items.length ? '<ul class="errs">' + items.join('') + '</ul>' : '<div class="small">지적 없음</div>';
+  // 세기 쌍 자리(ㄱㄲㅋ·ㄷㄸㅌ·ㅂㅃㅍ·ㅈㅉㅊ·ㅅㅆ) 확률 — 지적이 없어도 펼쳐 볼 수 있게
+  const fam = 'ㄱㄲㅋㄷㄸㅌㅂㅃㅍㅈㅉㅊㅅㅆ', rows = [];
+  letters.forEach(w => w.ph.forEach(p => { if (fam.includes(p.c) && p.top) rows.push('<li><span class="tag">' + esc(w.word) + '</span> 기대 ' + esc(p.c) +
+    ' · 들림 ' + esc(p.h || '(빠짐)') + ' <span class="small">· ' + p.top.map(t => esc(t[0]) + ' ' + t[1] + '%').join(' · ') + (p.s != null ? ' · 점수 ' + p.s : '') + '</span></li>'); }));
+  if (rows.length) h += '<details style="margin-top:8px"><summary>세기 소리(ㄱ·ㅋ·ㄲ 등) 자리별 모델 확률</summary><ul class="errs">' + rows.join('') + '</ul></details>';
+  h += '<div class="canon" style="margin-top:10px">기준 표준발음 <span>[' + esc(s.canon) + ']</span></div>';
+  $(sel).innerHTML = h;
+}
+function drawDiff(d) {
+  const vs = s => (!s || s.rejected) ? '<span class="small">채점 안 함</span>' :
+    (s.variants && s.variants.length ? s.variants.map(v => esc(v.kind) + ': [' + esc(v.from) + '] → [' + esc(v.to) + ']').join('<br>') : '<span class="small">없음</span>');
+  const mm = s => (!s || s.rejected || s.mismatch == null) ? '' : ' <span class="small">· 다르게 들린 소리 ' + Math.round(s.mismatch * 100) + '%</span>';
+  let h = '<b>표준발음(정답)</b> <span class="small">— 두 쪽 다 보정한 표준발음을 쓰고, 두 발음이 다 맞는 곳은 각자 녹음에 더 가까운 쪽을 고릅니다</span><table>';
+  h += '<tr><td>KoG2P 그대로</td><td>[' + esc(d.api_canon) + '] <span class="small">(보정 전 · 10-17 전 운영)</span></td></tr>';
+  h += '<tr><td>보정한 표준발음</td><td>[' + esc(d.fixed_canon) + ']' + (d.fixed_canon === d.api_canon ? ' <span class="small">(같음)</span>' : '') + '</td></tr>';
+  h += '<tr><td>고른 곳 · 이전 운영</td><td>' + vs(d.A) + mm(d.A) + '</td></tr>';
+  h += '<tr><td>고른 곳 · 지금 운영</td><td>' + vs(d.B) + mm(d.B) + '</td></tr>';
+  $('#diff').innerHTML = h + '</table>'; $('#diff').hidden = false;
+}
+</script>
+</body>
+</html>

@@ -26,7 +26,7 @@ from shared.fairseq_guard import ensure_fairseq
 ensure_fairseq()
 from shared.paths import DATA_ROOT, MDD_CKPT, MDD_OUTPUTS
 
-import sys, os, json, time, argparse, itertools
+import sys, os, glob, json, time, argparse, itertools
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -48,6 +48,8 @@ def _parse_args(argv=None):
     ap.add_argument("--split", default="test", choices=["train", "valid", "test"])
     ap.add_argument("--n", type=int, default=200000)
     ap.add_argument("--ckpt", default=str(MDD_CKPT))
+    ap.add_argument("--hf-ckpt", dest="hf_ckpt", default=None,
+                    help="w2v-BERT 폴더(jamo_vocab.json 포함). 주면 --ckpt 대신 이걸 쓴다")
     ap.add_argument("--manifest", default=f"{MDD_OUTPUTS}/manifest_tag_all")
     ap.add_argument("--out", default=None)
     return ap.parse_args(argv)
@@ -62,11 +64,49 @@ LAB_DIRS = [f"{EE}/TL_pronunciation_lab",
             f"{AA}/Validation/02.라벨링데이터/VL_pronunciation_lab",
             f"{DATA_ROOT}/aihub/040_labels/extracted/lab",
             f"{DATA_ROOT}/aihub/042_labels/extracted/lab"]
+# AIHub 원본 배치(040~043/01-1.정식개방데이터/…/{TL,VL}_pronunciation_lab)도 함께 본다 —
+# 위 목록은 옛 학습서버 배치라 새로 받은 머신에서는 lab 인덱스가 0건이 된다.
+LAB_DIRS += sorted(glob.glob(f"{DATA_ROOT}/aihub/*/01-1.정식개방데이터/*/02.라벨링데이터/*pronunciation_lab*"))
 
 ERR_TYPES = ["경음화", "격음화", "비음화", "유음화", "모음오류", "음운탈락", "음운첨가", "초성", "종성"]
 # 강제정렬된 음소 구간 사이의 빈틈이 이 값 이상이면 '쉼'으로 본다.
 # 0.15s는 CTC 정렬의 정상적인 음소 간격(프레임 20ms × 수 프레임)까지 쉼으로 세어버려 과대계상됐다 → 0.25s.
 PAUSE_SEC = 0.25
+
+
+class _JamoDict:
+    """fairseq Dictionary 중 이 파일이 쓰는 부분만 흉내낸다(index/unk/[])."""
+
+    UNK = 3
+
+    def __init__(self, vocab):
+        self.t2i = dict(vocab); self.i2t = {i: t for t, i in vocab.items()}
+
+    def index(self, t): return self.t2i.get(t, self.UNK)
+    def unk(self): return self.UNK
+    def __len__(self): return max(self.t2i.values()) + 1
+    def __getitem__(self, i): return self.i2t.get(int(i), "<unk>")
+
+
+class HFDecoder:
+    """w2v-BERT 2.0 (train_w2vbert_ctc.py 산출물) 을 Decoder 와 같은 인터페이스로 감싼다.
+
+    자모 사전 순서와 blank(0) 가 fairseq 쪽과 같고 프레임 간격도 20ms 라,
+    lprobs 아래 계산(강제정렬·GOP·쉼)은 그대로 쓸 수 있다.
+    """
+
+    kind = "hf"
+
+    def __init__(self, mdir):
+        from transformers import SeamlessM4TFeatureExtractor, Wav2Vec2BertForCTC
+        v = json.load(open(os.path.join(mdir, "jamo_vocab.json"), encoding="utf-8"))
+        use_cuda = torch.cuda.is_available() and os.environ.get("MDD_FORCE_CPU") != "1"
+        m = Wav2Vec2BertForCTC.from_pretrained(mdir).eval()
+        self.model = m.cuda().half() if use_cuda else m.float()
+        self.fe = SeamlessM4TFeatureExtractor.from_pretrained(mdir)
+        self.device = "cuda" if use_cuda else "cpu"
+        self.d = _JamoDict(v["vocab"]); self.blank = v["blank"]; self.normalize = False
+        print(f"[model] hf {mdir} | blank_idx={self.blank} vocab={len(self.d)}", flush=True)
 
 
 @torch.inference_mode()
@@ -77,8 +117,16 @@ def forward_lprobs(dec, wavs):
     모델 파라미터에서 읽어 CPU 도 태운다 — CPU 에서 fp16 은 느리거나 미지원이라
     dtype 도 모델을 따른다. **GPU 경로의 수치는 그대로다**(모델이 half().cuda() 면
     이전과 완전히 동일한 연산).
+    NPU 디코더(`mdd.npu_w2vbert.RBLNDecoder`, kind="rbln")는 모델 파라미터가 없어 자기 lprobs() 를 쓴다.
     """
+    if getattr(dec, "kind", "fairseq") == "rbln":
+        return dec.lprobs(wavs)
     p = next(dec.model.parameters())
+    if getattr(dec, "kind", "fairseq") == "hf":
+        enc = dec.fe(wavs, sampling_rate=16000, return_tensors="pt", padding=True)
+        lg = dec.model(input_features=enc["input_features"].to(p.device, p.dtype),
+                       attention_mask=enc["attention_mask"].to(p.device)).logits.float()
+        return F.log_softmax(lg, dim=-1).cpu(), enc["attention_mask"].sum(-1).tolist()
     dev, dt = p.device, p.dtype
     lens = [len(w) for w in wavs]; mx = max(lens)
     src = torch.zeros(len(wavs), mx); pm = torch.zeros(len(wavs), mx, dtype=torch.bool)
@@ -171,6 +219,113 @@ def align_feats(canon, pred):
     return f
 
 
+def pred_probs(dec, l):
+    """`utt_features` 의 pred(그리디 자모열)와 같은 순서로, 자모마다 그 자모가 1위인 프레임들 중 최대 확률(0~1).
+
+    화면 지적에서 '들은 소리를 얼마나 확신하나'를 볼 때 쓴다(`mdd.speechsuper` STRONG_MIN_PROB, 2026-10-18).
+    """
+    g = l.argmax(-1)
+    out, t = [], 0
+    for v, grp in itertools.groupby(g):
+        n = len(list(grp))
+        v = int(v)
+        if v != dec.blank:
+            tok = dec.d[v]
+            if tok in MD.JAMO and len(tok) == 1 and 0x3131 <= ord(tok) <= 0x3163:
+                out.append(float(np.exp(l[t:t + n, v].max())))
+        t += n
+    return out
+
+
+def attach_pred_probs(dec, l, sites, jamo):
+    """align 결과(sites)에 들은 자모의 확률(prob)을 붙인다. 그리디 결과와 jamo 길이가 다르면 붙이지 않는다."""
+    probs = pred_probs(dec, l)
+    if len(probs) != len(jamo):
+        return sites
+    for s in sites:
+        if s.get("j") is not None and s["j"] < len(probs):
+            s["prob"] = round(probs[s["j"]], 3)
+    return sites
+
+
+def utt_features(dec, l, y, y_toks, dur):
+    """발화 하나 → 점수 특징 41종 + 부산물(예측 자모열 · 음소별 GOP 두 종).
+
+    l: 프레임×어휘 로그확률(numpy) · y: 표준발음 인덱스열 · y_toks: 같은 것의 자모 표기 · dur: 초.
+    배치 추출기(`main`)와 세션 데모가 같은 계산을 쓰도록 분리했다.
+    """
+    d = dec.d
+    frame_sec = dur / max(1, l.shape[0])
+
+    g = l.argmax(-1)
+    pred_idx = [int(v) for v, _ in itertools.groupby(g) if v != dec.blank]
+    pred = [d[v] for v in pred_idx]
+    pred = [p for p in pred if p in MD.JAMO]
+    per = editdistance.eval(pred_idx, y) / max(1, len(y))
+
+    # ── 음소별 강제정렬 (GOP + 쉼 계산의 공통 기반) ──
+    segs = viterbi_align(l, y, blank=dec.blank)
+    # gop(maxnorm) = 목표 − 1등. 목표가 1등이면 0 이라 96.7% 가 0 으로 뭉친다(05_GOP_진단).
+    # gop_m(margin) = 목표 − '목표를 뺀' 1등. 1등으로 맞혀도 2등과의 여유가 남아 음소별 점수에 쓸 수 있다.
+    if segs is None:
+        gops = [-10.0] * len(y); gops_m = [-10.0] * len(y)
+    else:
+        gops, gops_m = [], []
+        for si, fs in enumerate(segs):
+            if not fs:
+                gops.append(-10.0); gops_m.append(-10.0); continue
+            fa = np.asarray(fs)
+            tgt = l[fa, y[si]]
+            gops.append(float((tgt - l[fa].max(-1)).mean()))
+            other = l[fa].copy(); other[:, y[si]] = -1e30
+            gops_m.append(float((tgt - other.max(-1)).mean()))
+    ga = np.asarray(gops)
+
+    # ── 유창성 ──
+    # 주의: CTC blank는 침묵이 아니라 음소 사이의 정상 출력이다.
+    # blank run을 그대로 쉼으로 세면 조음속도가 수십 음소/초로 터진다.
+    # → 강제정렬된 음소 구간 사이의 '빈틈'만 쉼으로 본다.
+    blanks = (g == dec.blank)
+    spans = [(fs[0] * frame_sec, (fs[-1] + 1) * frame_sec) for fs in (segs or []) if fs]
+    if len(spans) >= 2:
+        lead_sil = spans[0][0]
+        trail_sil = max(0.0, dur - spans[-1][1])
+        speech_span = max(0.1, spans[-1][1] - spans[0][0])
+        gaps = [b0 - e0 for (_, e0), (b0, _) in zip(spans, spans[1:])]
+        pauses = [gp for gp in gaps if gp >= PAUSE_SEC]
+    else:
+        lead_sil = trail_sil = 0.0
+        speech_span = max(0.1, dur); pauses = []
+    pause_tot = float(sum(pauses))
+    speak = max(0.1, speech_span - pause_tot)      # 실제 조음 시간
+
+    tl = torch.from_numpy(l).unsqueeze(1)
+    nll = float(F.ctc_loss(tl, torch.tensor([y]), torch.tensor([l.shape[0]]),
+                           torch.tensor([len(y)]), blank=dec.blank,
+                           reduction="sum", zero_infinity=True)) / max(1, len(y))
+
+    feat = {
+        "gop": float(ga.mean()), "gop_p10": float(np.percentile(ga, 10)),
+        "gop_p25": float(np.percentile(ga, 25)), "gop_med": float(np.median(ga)),
+        "gop_min": float(ga.min()), "gop_std": float(ga.std()),
+        "gop_bad": float((ga < -2.0).mean()),
+        "neg_nll": -nll, "neg_per": -per,
+        "dur": dur, "n_canon": len(y),
+        "rate": len(y) / max(0.1, dur),              # 전체 길이 기준 속도
+        "speech_rate": len(y) / speech_span,          # 발화 구간 기준 속도
+        "artic_rate": len(y) / speak,                 # 쉼 제외 조음 속도
+        "blank_frac": float(blanks.mean()),
+        "lead_sil": lead_sil, "trail_sil": trail_sil, "speech_span": speech_span,
+        "n_pause": len(pauses), "pause_tot": pause_tot,
+        "pause_mean": float(np.mean(pauses)) if pauses else 0.0,
+        "max_pause": float(max(pauses)) if pauses else 0.0,
+        "pause_rate": len(pauses) / speech_span,
+        "pause_frac": pause_tot / speech_span,
+    }
+    feat.update(align_feats(y_toks, pred))
+    return feat, {"pred": pred, "gops": gops, "gops_m": gops_m, "segs": segs, "frame_sec": frame_sec}
+
+
 def main(argv=None):
     A = _parse_args(argv)
     OUT = A.out or f"{MDD_OUTPUTS}/gop_feats_v2_{A.split}.jsonl"
@@ -192,7 +347,8 @@ def main(argv=None):
     import random; random.seed(0); random.shuffle(items); items = items[: A.n]
     print(f"[표본] {A.split} {len(items):,}", flush=True)
 
-    dec = Decoder(); d = dec.d; tok2idx = {}
+    dec = HFDecoder(A.hf_ckpt) if A.hf_ckpt else Decoder()
+    d = dec.d; tok2idx = {}
     fout = open(OUT, "w", encoding="utf-8")
     t0 = time.time(); done = 0; skipped = 0
     for idxs in batched(items):
@@ -207,68 +363,9 @@ def main(argv=None):
             if d.unk() in y:
                 skipped += 1; continue
             l = lp[k, :Ls[k]].numpy()
-            dur = fr / 16000.0; frame_sec = dur / max(1, l.shape[0])
-
-            g = l.argmax(-1)
-            pred_idx = [int(v) for v, _ in itertools.groupby(g) if v != dec.blank]
-            pred = [d[v] for v in pred_idx]
-            pred = [p for p in pred if p in MD.JAMO]
-            per = editdistance.eval(pred_idx, y) / max(1, len(y))
-
-            # ── 음소별 강제정렬 (GOP + 쉼 계산의 공통 기반) ──
-            segs = viterbi_align(l, y, blank=dec.blank)
-            if segs is None:
-                gops = [-10.0] * len(y)
-            else:
-                gops = []
-                for si, fs in enumerate(segs):
-                    if not fs: gops.append(-10.0); continue
-                    fa = np.asarray(fs)
-                    gops.append(float((l[fa, y[si]] - l[fa].max(-1)).mean()))
-            ga = np.asarray(gops)
-
-            # ── 유창성 ──
-            # 주의: CTC blank는 침묵이 아니라 음소 사이의 정상 출력이다.
-            # blank run을 그대로 쉼으로 세면 조음속도가 수십 음소/초로 터진다.
-            # → 강제정렬된 음소 구간 사이의 '빈틈'만 쉼으로 본다.
-            blanks = (g == dec.blank)
-            spans = [(fs[0] * frame_sec, (fs[-1] + 1) * frame_sec) for fs in (segs or []) if fs]
-            if len(spans) >= 2:
-                lead_sil = spans[0][0]
-                trail_sil = max(0.0, dur - spans[-1][1])
-                speech_span = max(0.1, spans[-1][1] - spans[0][0])
-                gaps = [b0 - e0 for (_, e0), (b0, _) in zip(spans, spans[1:])]
-                pauses = [gp for gp in gaps if gp >= PAUSE_SEC]
-            else:
-                lead_sil = trail_sil = 0.0
-                speech_span = max(0.1, dur); pauses = []
-            pause_tot = float(sum(pauses))
-            speak = max(0.1, speech_span - pause_tot)      # 실제 조음 시간
-
-            tl = torch.from_numpy(l).unsqueeze(1)
-            nll = float(F.ctc_loss(tl, torch.tensor([y]), torch.tensor([l.shape[0]]),
-                                   torch.tensor([len(y)]), blank=dec.blank,
-                                   reduction="sum", zero_infinity=True)) / max(1, len(y))
-
-            feat = {
-                "gop": float(ga.mean()), "gop_p10": float(np.percentile(ga, 10)),
-                "gop_p25": float(np.percentile(ga, 25)), "gop_med": float(np.median(ga)),
-                "gop_min": float(ga.min()), "gop_std": float(ga.std()),
-                "gop_bad": float((ga < -2.0).mean()),
-                "neg_nll": -nll, "neg_per": -per,
-                "dur": dur, "n_canon": len(y),
-                "rate": len(y) / max(0.1, dur),              # 전체 길이 기준 속도
-                "speech_rate": len(y) / speech_span,          # 발화 구간 기준 속도
-                "artic_rate": len(y) / speak,                 # 쉼 제외 조음 속도
-                "blank_frac": float(blanks.mean()),
-                "lead_sil": lead_sil, "trail_sil": trail_sil, "speech_span": speech_span,
-                "n_pause": len(pauses), "pause_tot": pause_tot,
-                "pause_mean": float(np.mean(pauses)) if pauses else 0.0,
-                "max_pause": float(max(pauses)) if pauses else 0.0,
-                "pause_rate": len(pauses) / speech_span,
-                "pause_frac": pause_tot / speech_span,
-            }
-            feat.update(align_feats(y_toks, pred))
+            dur = fr / 16000.0
+            feat, extra = utt_features(dec, l, y, y_toks, dur)
+            pred, gops, gops_m = extra["pred"], extra["gops"], extra["gops_m"]
 
             try:
                 ev = json.load(open(labidx[stem], encoding="utf-8")).get("EvaluationMetadata", {})
@@ -277,7 +374,8 @@ def main(argv=None):
             rec = {"stem": stem, **{k: round(v, 5) for k, v in feat.items()},
                    "pron": ev.get("PronunProfEval", 0), "comp": ev.get("ComprehendEval", 0),
                    "flu": ev.get("FluencyEval", 0),
-                   "pred": "".join(pred), "gops": [round(x, 2) for x in gops]}
+                   "pred": "".join(pred), "gops": [round(x, 2) for x in gops],
+                   "gops_m": [round(x, 2) for x in gops_m], "canon": "".join(y_toks)}
             fout.write(json.dumps(rec, ensure_ascii=False) + "\n")
         done += len(idxs)
         if done % 8000 < len(idxs):
