@@ -26,6 +26,12 @@
     · --pros_tracks <폴더>: 프레임별 음높이 · 유성 · 세기 궤적(prosody_tracks.py)을 작은 1D 합성곱으로 읽어 평균 · 표준편차 128차원을 붙인다.
     · --aux_feats <csv> --aux_w λ: 풀링 특징(평균 부분)에서 발화 운율 특징 22개(prosody_feats.py, 학습 행 기준 표준화)를 맞히는
       보조 회귀를 더한다(값이 없는 행 · 칸은 뺀다).
+  - mel 융합 실험(2026-10-29, results/45). --init_ckpt 가 있어야 하고, 운율 실험과 같이 쓰지 않는다. 새 칸은 0 에서 시작.
+    · --mel_fuse xlsr: 같은 파형에서 로그 mel 80 을 GPU 에서 만들어(발화별 정규화 · 학습 중 SpecAugment) 2D 합성곱 줄기로
+      20 ms 프레임(XLS-R 과 같은 간격)으로 줄인다. XLS-R 층 출력 프레임과 한 시퀀스로 이어 자기 어텐션 --mel_layers 층을
+      태운다(두 입력이 서로 본다, 시간 위치 공유 + 입력 종류 임베딩). 유효 토큰 평균 --mel_dim 차원을 헤드 입력에 붙인다.
+    · --mel_fuse mel: mel 프레임만 같은 어텐션에 태운다 — 두 입력을 섞는 몫과 mel 정보만 더한 몫을 가르는 대조.
+    · 학습 중 발화마다 --mel_drop 확률로 mel 줄기를 끈다(mel 에만 기대지 않게).
 
     $PY scripts/train/finetune_full_encoder.py --backbone 300m --out_dir $W/full_300m --lr 1e-5
     $PY scripts/train/finetune_full_encoder.py --backbone 2b   --out_dir $W/full_2b   --lr 5e-6
@@ -181,6 +187,93 @@ def make_xhead(dim, pool, pros):
             return torch.cat(parts, 1)
 
     return XHead()
+
+
+def make_melfuse(dim, mode, d=256, layers=2, heads=4, drop=0.2):
+    """mel 융합 모듈 (--mel_fuse xlsr|mel). 출력 = [원래 평균 풀링(정규화) dim, 융합 특징 d]."""
+    import torch
+    import torch.nn.functional as F
+    import torchaudio
+
+    def sinusoid(n, k):
+        pos = torch.arange(n, dtype=torch.float32).unsqueeze(1)
+        div = torch.exp(torch.arange(0, k, 2, dtype=torch.float32) * (-math.log(10000.0) / k))
+        pe = torch.zeros(n, k)
+        pe[:, 0::2] = torch.sin(pos * div); pe[:, 1::2] = torch.cos(pos * div)
+        return pe
+
+    class MelFuse(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.mode, self.drop = mode, drop
+            self.mel = torchaudio.transforms.MelSpectrogram(16000, n_fft=400, win_length=400, hop_length=160, f_min=20.0,
+                                                            f_max=7600.0, n_mels=80, center=False, power=2.0)
+            self.stem = torch.nn.ModuleList([torch.nn.Conv2d(1, 32, 3, stride=(2, 2), padding=1),
+                                             torch.nn.Conv2d(32, 32, 3, stride=(1, 2), padding=1)])
+            self.proj_m = torch.nn.Linear(32 * 20, d)
+            if mode == "xlsr":
+                self.ln_x = torch.nn.LayerNorm(dim)
+                self.proj_x = torch.nn.Linear(dim, d)
+            self.kind = torch.nn.Parameter(torch.randn(2, d) * 0.02)       # 입력 종류 임베딩 (0 = XLS-R · 1 = mel)
+            lay = torch.nn.TransformerEncoderLayer(d, heads, 4 * d, dropout=0.1, activation="gelu", batch_first=True,
+                                                   norm_first=True)
+            self.tf = torch.nn.TransformerEncoder(lay, layers, enable_nested_tensor=False)
+            self.norm = torch.nn.LayerNorm(d)
+            self.register_buffer("pe", sinusoid(4096, d), persistent=False)
+
+        def out_extra(self):
+            return self.proj_m.out_features
+
+        def logmel(self, wav, pmask):
+            """→ 발화별 평균 · 분산 정규화한 로그 mel (B,F,80) · 유효 프레임 수 (B,)"""
+            with torch.autocast(device_type=wav.device.type, enabled=False):
+                m = torch.log(self.mel(wav.float()) + 1e-6).transpose(1, 2)
+                ns = (torch.full((wav.shape[0],), wav.shape[1], device=wav.device) if pmask is None
+                      else (~pmask).sum(1))
+                nf = ((ns - 400) // 160 + 1).clamp(1, m.shape[1])
+                w = (torch.arange(m.shape[1], device=m.device)[None] < nf[:, None]).float().unsqueeze(-1)
+                n = w.sum(1, keepdim=True)
+                mu = (m * w).sum(1, keepdim=True) / n
+                sd = (((m - mu) ** 2) * w).sum(1, keepdim=True).div(n).clamp_min(1e-5).sqrt()
+                m = (m - mu) / sd * w
+                if self.training:                            # SpecAugment — 주파수 띠 2개(≤10) · 시간 구간 2개(≤40프레임)
+                    for i in range(m.shape[0]):
+                        L = int(nf[i])
+                        for _ in range(2):
+                            f = random.randint(0, 10); f0 = random.randint(0, 80 - f); m[i, :, f0:f0 + f] = 0
+                            t = random.randint(0, min(40, L // 10)); t0 = random.randint(0, max(0, L - t)); m[i, t0:t0 + t] = 0
+            return m, nf
+
+        def forward(self, x, fp, mu, sd, wav, pmask):
+            x = torch.nan_to_num(x.float())
+            B, T = x.shape[:2]
+            vx = torch.ones(B, T, dtype=torch.bool, device=x.device) if fp is None else ~fp
+            w = vx.float().unsqueeze(-1)
+            base = (((x * w).sum(1) / w.sum(1).clamp_min(1.0)).clamp(-50, 50) - mu) / sd
+            m, nf = self.logmel(wav, pmask)
+            h = F.gelu(self.stem[0](m.unsqueeze(1)))                      # (B, 32, T', 40) — 20 ms 프레임
+            Tm = h.shape[2]
+            vm = torch.arange(Tm, device=x.device)[None] < ((nf + 1) // 2)[:, None]
+            h = h * vm[:, None, :, None].to(h.dtype)                      # 채운 칸의 bias 가 둘째 합성곱으로 새지 않게
+            h = F.gelu(self.stem[1](h)).permute(0, 2, 1, 3).flatten(2)   # (B, T', 32·20)
+            h = self.proj_m(h)
+            h = h + self.pe[:Tm] + self.kind[1]
+            keep = torch.ones(B, dtype=torch.bool, device=x.device)
+            if self.training and self.drop > 0:
+                keep = torch.rand(B, device=x.device) >= self.drop
+            if self.mode == "xlsr":
+                hx = self.proj_x(self.ln_x(x.clamp(-50, 50))) + self.pe[:T] + self.kind[0]
+                tok, valid = torch.cat([hx, h], 1), torch.cat([vx, vm & keep[:, None]], 1)
+            else:
+                tok, valid = h, vm
+            o = self.tf(tok, src_key_padding_mask=~valid)
+            wv = valid.float().unsqueeze(-1)
+            f = self.norm(torch.nan_to_num((o * wv).sum(1) / wv.sum(1).clamp_min(1.0)))
+            if self.mode == "mel":
+                f = f * keep[:, None].float()
+            return torch.cat([base, f], 1)
+
+    return MelFuse()
 
 
 class Tracks:
@@ -353,6 +446,13 @@ def main():
     ap.add_argument("--pros_tracks", default="", help="프레임 운율 궤적 폴더(prosody_tracks.py) — 주면 운율 1D 합성곱 특징을 붙인다")
     ap.add_argument("--aux_feats", default="", help="발화 운율 특징 csv(prosody_feats.py) — 주면 보조 회귀를 더한다")
     ap.add_argument("--aux_w", type=float, default=0.3, help="--aux_feats 보조 회귀 손실 가중치")
+    ap.add_argument("--mel_fuse", choices=("", "xlsr", "mel"), default="",
+                    help="mel 융합 — xlsr: XLS-R 프레임 + mel 프레임 자기 어텐션 · mel: mel 프레임만 (2026-10-29)")
+    ap.add_argument("--mel_dim", type=int, default=256)
+    ap.add_argument("--mel_layers", type=int, default=2)
+    ap.add_argument("--mel_drop", type=float, default=0.2, help="학습 중 발화마다 mel 줄기를 끌 확률")
+    ap.add_argument("--gpu_mem_frac", type=float, default=0.0,
+                    help="이 프로세스의 GPU 메모리 상한(전체 대비 비율, 0 = 제한 없음) — 다른 작업과 GPU 를 나눠 쓸 때")
     ap.add_argument("--workers", type=int, default=10)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--limit", type=int, default=0, help="학습 행 무작위 표본 수 (0 = 전부)")
@@ -377,14 +477,17 @@ def main():
     dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     amp = dict(device_type=dev.type, dtype=torch.bfloat16, enabled=dev.type == "cuda")
     amp_eval = dict(amp, enabled=amp["enabled"] and not A.eval_fp32)
+    if A.gpu_mem_frac > 0 and dev.type == "cuda":
+        torch.cuda.set_per_process_memory_fraction(A.gpu_mem_frac)
     if A.eval_fp32:
         torch.backends.cuda.matmul.allow_tf32 = False
         torch.backends.cudnn.allow_tf32 = False
 
     def run_rows(enc, head, mu, sd, layer, rows, tmp_dir, tag, max_sec, batch_sec, n_cls, pooled_only=False, xh=None, xs=None,
-                 std_only=False):
+                 std_only=False, mf=None):
         """rows → (logits 또는 pooled, seen). 학습 모드는 바꾸지 않는다 — 호출하는 쪽에서 eval().
         xh(운율 실험 모듈)가 있으면 프레임 출력에서 xh 로 특징을 만든다. xs = (mu2, sd2, tracks).
+        mf(mel 융합 모듈)가 있으면 프레임 출력과 파형으로 mf 가 특징을 만든다.
         std_only 면 고른 가중치 표준편차 풀링(정규화 전)을 돌려준다 — mu2/sd2 추정용."""
         tmp = write_loader_csv(rows, os.path.join(tmp_dir, f"_{tag}_loader.csv"))
         ds = AudioCountryDataset(tmp, 16000, min_duration_sec=0.25, max_duration_sec=max_sec)
@@ -396,17 +499,19 @@ def main():
                 if bt is None:
                     continue
                 idx = np.array([int(s) for s in bt["speaker_ids"]])
-                if xh is None and not std_only:
+                wav_d, pm_d = bt["waveforms"].to(dev), bt["padding_mask"].to(dev)
+                if xh is None and mf is None and not std_only:
                     with torch.autocast(**amp_eval):
-                        pooled = forward_pooled(enc, bt["waveforms"].to(dev), bt["padding_mask"].to(dev), layer)
+                        pooled = forward_pooled(enc, wav_d, pm_d, layer)
                     v = pooled if pooled_only else head((pooled - mu) / sd)
                 else:
                     with torch.autocast(**amp_eval):
-                        res = enc.extract_features(source=bt["waveforms"].to(dev), padding_mask=bt["padding_mask"].to(dev),
-                                                   mask=False, layer=layer)
+                        res = enc.extract_features(source=wav_d, padding_mask=pm_d, mask=False, layer=layer)
                     x = torch.nan_to_num(res["layer_results"][layer][0].transpose(0, 1).float())
                     fp = res.get("padding_mask")
-                    if std_only:
+                    if mf is not None:
+                        v = head(mf(x, fp, mu, sd, wav_d, pm_d))
+                    elif std_only:
                         w = (torch.ones(x.shape[:2], device=x.device) if fp is None else (~fp).float()).unsqueeze(-1)
                         m = (x * w).sum(1) / w.sum(1).clamp_min(1.0)
                         v = ((((x - m.unsqueeze(1)) ** 2) * w).sum(1) / w.sum(1).clamp_min(1.0)).clamp_min(1e-6).sqrt().clamp(0, 50)
@@ -437,10 +542,15 @@ def main():
             trk = Tracks(A.pros_tracks or c["pros_tracks"]) if c["pros"] else None
             xs = (torch.as_tensor(ck["mu2"]).to(dev) if ck.get("mu2") is not None else None,
                   torch.as_tensor(ck["sd2"]).to(dev) if ck.get("sd2") is not None else None, trk)
+        mf = None
+        if ck.get("mf_cfg"):                                 # mel 융합 체크포인트
+            c = ck["mf_cfg"]
+            mf = make_melfuse(mu.numel(), c["mode"], c["d"], c["layers"]).to(dev); mf.load_state_dict(ck["mf"]); mf.eval()
         enc.eval(); head.eval()
         rows = read_rows(A.test)
         os.makedirs(A.out, exist_ok=True)
-        L, seen = run_rows(enc, head, mu, sd, ck["layer"], rows, A.out, "test", 12.0, A.eval_batch_sec, len(labels), xh=xh, xs=xs)
+        L, seen = run_rows(enc, head, mu, sd, ck["layer"], rows, A.out, "test", 12.0, A.eval_batch_sec, len(labels), xh=xh, xs=xs,
+                           mf=mf)
         np.savez(os.path.join(A.out, "logits.npz"), ok=seen, L=L, labels=np.array(labels))
         r = score_all(rows, L, seen, c2i)
         json.dump({"ckpt": A.ckpt, "test": A.test, "n": len(rows), "decoded": int(seen.sum()),
@@ -576,6 +686,19 @@ def main():
         if A.pros_tracks:
             print(f"[pros] 궤적 {len(xs[2].ix):,}개 · 학습 행 중 있는 것 {sum(r['audio_path'] in xs[2].ix for r in rows_tr):,}/{len(rows_tr):,}", flush=True)
         print(f"[xhead] 헤드 입력 {dim} → {head.in_features} (늘어난 칸은 0 에서 시작)", flush=True)
+    mf = None
+    if A.mel_fuse:                                       # mel 융합 — 새 가중치 · 늘어난 헤드 칸은 0 에서 시작(첫 순간은 원래 모델)
+        if not A.init_ckpt or resume or xh is not None or A.aux_feats:
+            raise SystemExit("--mel_fuse 는 --init_ckpt 에서 새로 시작할 때만, 운율 실험(--pool · --pros_tracks · --aux_feats) 없이 쓴다")
+        dim = head.in_features
+        mf = make_melfuse(dim, A.mel_fuse, A.mel_dim, A.mel_layers, drop=A.mel_drop).to(dev)
+        new = torch.nn.Linear(dim + mf.out_extra(), len(labels)).to(dev)
+        with torch.no_grad():
+            new.weight.zero_(); new.weight[:, :dim] = head.weight; new.bias.copy_(head.bias)
+        head = new
+        print(f"[mel] {A.mel_fuse} · mel 80 → 20 ms 프레임 · 자기 어텐션 {A.mel_layers}층 d{A.mel_dim} · "
+              f"{sum(p.numel() for p in mf.parameters()) / 1e6:.2f}M · 학습 중 끄기 {A.mel_drop} · "
+              f"헤드 입력 {dim} → {head.in_features} (늘어난 칸은 0 에서 시작)", flush=True)
     if A.aux_feats:                                      # 운율 보조 회귀 — 학습 행 순서로 정답 · 마스크
         import pandas as pd
         fa = pd.read_csv(A.aux_feats).drop_duplicates("audio_path").set_index("audio_path")
@@ -588,7 +711,8 @@ def main():
         AUXY = torch.tensor(Z.values, dtype=torch.float32, device=dev)
         aux_head = torch.nn.Linear(head.weight.shape[1] if xh is None else mu.numel(), len(AUX_KEYS)).to(dev)
         print(f"[aux] 운율 특징 {len(AUX_KEYS)}개 · 정답 있는 학습 행 {int((~torch.isnan(AUXY)).any(1).sum()):,}/{len(rows_tr):,} · λ {A.aux_w}", flush=True)
-    xparams = (list(xh.parameters()) if xh is not None else []) + (list(aux_head.parameters()) if aux_head is not None else [])
+    xparams = ((list(xh.parameters()) if xh is not None else []) + (list(mf.parameters()) if mf is not None else [])
+               + (list(aux_head.parameters()) if aux_head is not None else []))
     groups = [{"params": enc_params, "lr": A.lr}, {"params": list(head.parameters()) + xparams, "lr": A.head_lr}]
     base_lrs = [A.lr, A.head_lr]
     spk_head = None
@@ -637,6 +761,8 @@ def main():
                     "cfg": vars(A), **xextra(), **extra}, path)
 
     def xextra():
+        if mf is not None:
+            return {"mf": mf.state_dict(), "mf_cfg": {"mode": A.mel_fuse, "d": A.mel_dim, "layers": A.mel_layers}}
         if xh is None:
             return {}
         return {"xh": xh.state_dict(), "xh_cfg": {"pool": A.pool, "pros": bool(A.pros_tracks), "pros_tracks": A.pros_tracks},
@@ -673,10 +799,11 @@ def main():
 
     def evaluate(tag):
         ema_swap(); enc.eval(); head.eval()
-        if xh is not None:
-            xh.eval()
+        for m_ in (xh, mf):
+            if m_ is not None:
+                m_.eval()
         L, seen = run_rows(enc, head, mu, sd, layer, rows_va, A.out_dir, "valid", 12.0, A.eval_batch_sec, len(labels),
-                           xh=xh, xs=xs)
+                           xh=xh, xs=xs, mf=mf)
         r = score_all(rows_va, L, seen, c2i)
         crit = r["web"]["top5"] + r["web"]["macro5"] if "web" in r else -1.0
         print(f"    [{tag}] 기준 {crit:.4f} · " + " · ".join(
@@ -694,8 +821,9 @@ def main():
         else:
             bad += 1
         ema_swap(); enc.train(); head.train()
-        if xh is not None:
-            xh.train()
+        for m_ in (xh, mf):
+            if m_ is not None:
+                m_.train()
         json.dump(hist, open(os.path.join(A.out_dir, "history.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         if A.save_last_every and len(hist["evals"]) % A.save_last_every == 0:
             torch.save({"encoder": enc.state_dict(), "head": head.state_dict(), "mu": mu.cpu().numpy(),
@@ -737,7 +865,9 @@ def main():
                 else:
                     v = (~fp).to(x.dtype).unsqueeze(-1)
                     pooled = (x * v).sum(1) / v.sum(1).clamp_min(1.0)
-            if xh is None:
+            if mf is not None:
+                feat = mf(x, fp, mu, sd, wav, pmask)
+            elif xh is None:
                 pooled = torch.nan_to_num(pooled.float()).clamp(-50, 50)
                 feat = (pooled - mu) / sd
             else:
