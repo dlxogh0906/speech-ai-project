@@ -1,6 +1,6 @@
 # 국적 모델 전부 비교 데모 (2026-10-27)
 
-문장 하나를 읽으면 서버에 있는 국적 모델 전부(56개)가 각각 어느 나라로 듣는지 한 화면에 나란히 보여 준다.
+문장 하나를 읽으면 서버에 있는 국적 모델 전부(60개)가 각각 어느 나라로 듣는지 한 화면에 나란히 보여 준다.
 내부 비교용이다. 앱·웹 연동용 API 가 아니다(그건 NPU 국적 API · `docs/NPU_서버_API_안내.md`).
 
 | 항목 | 내용 |
@@ -46,7 +46,7 @@ GPU 모델은 인코더의 `nn.Linear` 가중치만 bf16 으로 두고 bf16 auto
 | 프로세스 | tmux `nat-all-demo` → `start.sh` → `app.py` (127.0.0.1:8988). systemd 가 아니라 재부팅하면 다시 띄워야 한다 |
 | 설정 | `~/.config/nat-all-demo/demo.env` (키 · 포트 · 로그 · 캡처 폴더, 권한 600) |
 | 로그 · 캡처 | `$NATIONALITY_OUTPUTS/demo_all_20261027/{serve.log, captures/}` |
-| 적재 | 모델 56개 몇 분. `/health` 의 `loaded/total` 로 진행을 본다. 못 올린 모델은 `failed` 에 남고 나머지는 돈다 |
+| 적재 | 모델 60개 몇 분. `/health` 의 `loaded/total` 로 진행을 본다. 못 올린 모델은 `failed` 에 남고 나머지는 돈다 |
 | 공개 경로 | `tailscale funnel --bg --set-path /nat-all http://127.0.0.1:8988` · 내릴 때 `tailscale funnel --bg --https=443 --set-path /nat-all off` (`--https=443 off` 만 쓰면 443 전체가 내려간다) |
 | 다시 띄우기 | `tmux kill-session -t nat-all-demo; tmux new-session -d -s nat-all-demo bash deploy/nationality-all-demo/start.sh` |
 | 시험 | `$PY deploy/nationality-all-demo/app.py --no-auth --port 8989 --only service,zeroth,deployed,full300m` (일부만 · 저장 안 함) |

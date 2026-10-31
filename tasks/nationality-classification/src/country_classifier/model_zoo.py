@@ -5,6 +5,7 @@
   torch  finetune_full_encoder.py 가 쓴 체크포인트(전체학습 · LoRA 합침 · 학습 안 함 · 운율 실험)와 KD 학생(kd_student.save_student).
          그 스크립트의 --eval_only 와 같은 경로: bf16 autocast 로 forward_pooled → (x−mu)/sd → 선형 헤드(fp32).
          운율 실험(xh_cfg)은 프레임 출력을 xh 모듈에 넣는다. 운율 궤적이 필요한 모델은 pros_fn(파형) → (T,3) 을 받아야 돈다.
+         mel 융합(mf_cfg, results/45)은 프레임 출력과 파형을 mf 모듈에 넣는다(평가처럼 autocast 밖 fp32).
   2b     xlsr2b_finetune.py 의 부분 체크포인트(encoder_partial) — 9월 2B 실험. ckpt 가 "" 면 2B 동결 + 0704 헤드(보고용).
   onnx   KD 인코더 ONNX(encoder_kd_l17.onnx) + head_np.npz — 배포 형식 그대로 CPU 에서 (OnnxKD).
 
@@ -97,13 +98,13 @@ class TorchZoo:
         self.groups.append(g)
         return g
 
-    def _register(self, mid, g, head_w, head_b, mu, sd, labels, xh=None, mu2=None, sd2=None, pros=False):
+    def _register(self, mid, g, head_w, head_b, mu, sd, labels, xh=None, mu2=None, sd2=None, pros=False, mf=None):
         torch = self.torch
         head = torch.nn.Linear(head_w.shape[1], head_w.shape[0])
         head.load_state_dict({"weight": torch.as_tensor(head_w).float(), "bias": torch.as_tensor(head_b).float()})
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a, np.float32)).to(self.dev)
         self.models[mid] = {"group": g, "head": head.to(self.dev).eval(), "mu": t(mu), "sd": t(sd), "labels": list(labels),
-                            "xh": xh, "mu2": t(mu2), "sd2": t(sd2), "pros": pros}
+                            "xh": xh, "mu2": t(mu2), "sd2": t(sd2), "pros": pros, "mf": mf}
         g["ids"].append(mid)
 
     def add_ckpt(self, mid, path):
@@ -122,8 +123,14 @@ class TorchZoo:
             xh = ff.make_xhead(len(np.asarray(ck["mu"]).reshape(-1)), c["pool"], c["pros"])
             xh.load_state_dict(ck["xh"])
             xh = xh.to(self.dev).eval()
+        mf = None
+        if ck.get("mf_cfg"):
+            c = ck["mf_cfg"]
+            mf = ff.make_melfuse(len(np.asarray(ck["mu"]).reshape(-1)), c["mode"], c["d"], c["layers"])
+            mf.load_state_dict(ck["mf"])
+            mf = mf.to(self.dev).eval()
         self._register(mid, g, ck["head"]["weight"], ck["head"]["bias"], np.asarray(ck["mu"]).reshape(-1),
-                       np.asarray(ck["sd"]).reshape(-1), ck["labels"], xh, ck.get("mu2"), ck.get("sd2"), pros)
+                       np.asarray(ck["sd"]).reshape(-1), ck["labels"], xh, ck.get("mu2"), ck.get("sd2"), pros, mf)
 
     def add_2b_partial(self, mid, path, class_order):
         """xlsr2b_finetune.py 형식. path 가 "" 면 2B 동결 + 0704 헤드(class_order 순서로 재배열)."""
@@ -152,8 +159,8 @@ class TorchZoo:
             for g in self.groups:
                 t0 = time.perf_counter()
                 enc, layer = g["enc"], g["layer"]
-                plain = [i for i in g["ids"] if self.models[i]["xh"] is None]
-                fancy = [i for i in g["ids"] if self.models[i]["xh"] is not None]
+                plain = [i for i in g["ids"] if self.models[i]["xh"] is None and self.models[i]["mf"] is None]
+                fancy = [i for i in g["ids"] if i not in plain]
                 if plain:
                     with torch.autocast(**amp):
                         pooled = forward_pooled(enc, x, pm, layer)
@@ -167,6 +174,9 @@ class TorchZoo:
                     fp = res.get("padding_mask")
                     for i in fancy:
                         m = self.models[i]
+                        if m["mf"] is not None:
+                            out[i] = m["head"](m["mf"](h, fp, m["mu"], m["sd"], x, pm)).double().cpu().numpy()[0]
+                            continue
                         pt = None
                         if m["pros"]:
                             if ptrack is None:
