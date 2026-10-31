@@ -4,6 +4,14 @@
 
 작성 2026-09-27 · 갱신 2026-10-10 · **외부 개발자에게 보내지 않는다.** 개발자용 안내는 `docs/NPU_서버_API_안내.md`.
 
+## 2026-10-31 국적 주 모델 무음 정규화 끔
+
+- `run_npu.sh` 8행 `KD_SILENCE_NORM=1 → 0`. 주 모델(run_zeroth)이 원본 입력을 받는다. 원어민 게이트(기존 배포 KD)는 원래대로 원본 입력이고 τ 0.9 그대로다. 모델 파일 · 앱 코드는 바꾸지 않았다.
+- 이유(저장소 `tasks/nationality-classification/results/47`): test 외국인 3문장 묶음을 한국으로 부르는 비율이 2.19% → 0.46% 로 준다. 3문장 top-1 은 0.830 → 0.860 이다. 대신 실제 한국인 녹음 34개 중 한국 판정이 34 → 32 다.
+- 배포 ID `nat-silnorm-off-20261031`(`capture.conf`), 기록 `/data/speech-logs/deployments/nat-silnorm-off-20261031{,-verification}.json`.
+- 확인: `/health` 의 `silence_norm: false`, 워커 8개 모두 "꺼짐". 확인 요청 3건(user-agent `npu-ops-test`)에서 1위는 그대로이고 게이트 확률도 같다.
+- 되돌리기: `run_npu.sh.bak-20261031` · `/root/nat_serve/capture.conf.bak-20261031` 을 제자리로 복사 → `systemctl daemon-reload` → `bash /root/nat_serve/restart.sh`.
+
 ## 2026-10-28 사투리 분류 API 추가
 
 - systemd `dialect-api`(127.0.0.1:8907) — EAT Large + XLS-R 2B 앙상블을 NPU 5번에서 돈다. 번들 `/root/dialect_serve/bundle`, 설명은 저장소 `deploy/dialect-api/npu/README_NPU.md`.
