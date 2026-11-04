@@ -1,0 +1,1157 @@
+{
+ "_설명": "같은 학습자 녹음 23,562개(test_unseen, 41개 모국어 1,168명, 학습 문항·새 화자)에서 Whisper+KoG2P · 원어민만 학습(M1) · slplab · M2 · M3 를 같은 채점기로 비교. 2026-11-03 AI 루키 부스 자료의 출처",
+ "_생성": "2026-11-03 (정리 2026-11-05)",
+ "_재현": "tasks/pronunciation-assessment/scripts/eval/compare_public_baselines.py (명령은 24_공개모델_범용인식_비교_2026-11-03.md)",
+ "모델": {
+  "whisper": {
+   "설명": "Whisper large-v3 (language=ko, greedy) 받아쓰기 → KoG2P 발음 자모",
+   "source": "$MDD_OUTPUTS/analysis/baselines_2026-11-03/whisper_test_unseen.{preds.jsonl,utt.jsonl,metrics.json}"
+  },
+  "m1": {
+   "설명": "원어민만 학습: w2vbert_stage1/step_10000 (KsponSpeech 531,162녹음)",
+   "source": "$MDD_OUTPUTS/analysis/baselines_2026-11-03/m1_test_unseen.*"
+  },
+  "slplab": {
+   "설명": "공개 모델 slplab/wav2vec2-XLSR-300m_KoreanPhonene_spoken_by_foreigners (영어권 학습자 약 12.5만 녹음·121.75시간)",
+   "source": "$MDD_OUTPUTS/experiments/slplab_compare/slplab_test_unseen.*"
+  },
+  "m2": {
+   "설명": "w2vbert_stage2/step_38000 (9월)",
+   "source": "$MDD_OUTPUTS/experiments/w2vbert/w2vbert_fcv2_test_unseen.*"
+  },
+  "m3": {
+   "설명": "운영 w2vbert_synth_tense_v2/step_3000",
+   "source": "$MDD_OUTPUTS/analysis/sentence_jamo_accuracy_2026-11-03/m3_test_unseen.*"
+  }
+ },
+ "결과": {
+  "manifest": "/data/speech-ai/out/mdd/manifest_foreign_clean_v2",
+  "split": "test_unseen",
+  "utterances": 23562,
+  "error_recordings": 6496,
+  "error_word_recordings": 4405,
+  "models": {
+   "whisper": {
+    "recall": 54.8,
+    "precision": 15.0,
+    "f1": 0.235,
+    "frr": 12.68,
+    "diag": 59.5,
+    "per": 18.07,
+    "error_sites": 9209,
+    "detected": 5049,
+    "err_acc_all": 79.6,
+    "err_acc_word": 63.9,
+    "err_acc_sentence": 85.6
+   },
+   "m1": {
+    "recall": 76.4,
+    "precision": 14.3,
+    "f1": 0.241,
+    "frr": 18.62,
+    "diag": 61.6,
+    "per": 23.36,
+    "error_sites": 9209,
+    "detected": 7035,
+    "err_acc_all": 76.0,
+    "err_acc_word": 64.0,
+    "err_acc_sentence": 80.7
+   },
+   "slplab": {
+    "recall": 21.1,
+    "precision": 36.6,
+    "f1": 0.268,
+    "frr": 1.49,
+    "diag": 79.9,
+    "per": 5.1,
+    "error_sites": 9209,
+    "detected": 1946,
+    "err_acc_all": 89.1,
+    "err_acc_word": 78.0,
+    "err_acc_sentence": 93.4
+   },
+   "m2": {
+    "recall": 50.4,
+    "precision": 48.2,
+    "f1": 0.493,
+    "frr": 2.21,
+    "diag": 85.7,
+    "per": 4.65,
+    "error_sites": 9209,
+    "detected": 4643,
+    "err_acc_all": 91.9,
+    "err_acc_word": 85.7,
+    "err_acc_sentence": 94.4
+   },
+   "m3": {
+    "recall": 54.5,
+    "precision": 46.5,
+    "f1": 0.502,
+    "frr": 2.55,
+    "diag": 86.0,
+    "per": 4.84,
+    "error_sites": 9209,
+    "detected": 5017,
+    "err_acc_all": 92.1,
+    "err_acc_word": 86.1,
+    "err_acc_sentence": 94.5
+   }
+  },
+  "series": {
+   "ㄱ·ㄲ·ㅋ": {
+    "word_recordings": 869,
+    "err_acc_word": {
+     "whisper": 71.4,
+     "m1": 67.2,
+     "slplab": 77.0,
+     "m2": 87.4,
+     "m3": 88.3
+    },
+    "diag": {
+     "whisper": 72.3,
+     "m1": 71.8,
+     "slplab": 84.3,
+     "m2": 90.0,
+     "m3": 90.3
+    },
+    "disagreement_detect": {
+     "a": 23,
+     "b": 533,
+     "b_rate": 95.9
+    }
+   },
+   "ㅂ·ㅃ·ㅍ": {
+    "word_recordings": 933,
+    "err_acc_word": {
+     "whisper": 70.4,
+     "m1": 68.5,
+     "slplab": 79.6,
+     "m2": 85.0,
+     "m3": 86.0
+    },
+    "diag": {
+     "whisper": 58.9,
+     "m1": 60.2,
+     "slplab": 85.5,
+     "m2": 85.6,
+     "m3": 84.4
+    },
+    "disagreement_detect": {
+     "a": 57,
+     "b": 606,
+     "b_rate": 91.4
+    }
+   },
+   "ㄷ·ㄸ·ㅌ": {
+    "word_recordings": 207,
+    "err_acc_word": {
+     "whisper": 58.9,
+     "m1": 59.8,
+     "slplab": 79.7,
+     "m2": 83.4,
+     "m3": 84.5
+    },
+    "diag": {
+     "whisper": 51.9,
+     "m1": 49.2,
+     "slplab": 80.9,
+     "m2": 83.4,
+     "m3": 82.0
+    },
+    "disagreement_detect": {
+     "a": 11,
+     "b": 247,
+     "b_rate": 95.7
+    }
+   },
+   "ㅈ·ㅉ·ㅊ": {
+    "word_recordings": 130,
+    "err_acc_word": {
+     "whisper": 73.1,
+     "m1": 75.3,
+     "slplab": 80.1,
+     "m2": 83.8,
+     "m3": 86.4
+    },
+    "diag": {
+     "whisper": 75.9,
+     "m1": 72.8,
+     "slplab": 88.9,
+     "m2": 95.8,
+     "m3": 95.6
+    },
+    "disagreement_detect": {
+     "a": 28,
+     "b": 111,
+     "b_rate": 79.9
+    }
+   },
+   "ㅅ·ㅆ": {
+    "word_recordings": 136,
+    "err_acc_word": {
+     "whisper": 58.7,
+     "m1": 62.6,
+     "slplab": 67.7,
+     "m2": 68.7,
+     "m3": 69.5
+    },
+    "diag": {
+     "whisper": 44.6,
+     "m1": 77.0,
+     "slplab": 94.7,
+     "m2": 100.0,
+     "m3": 100.0
+    },
+    "disagreement_detect": {
+     "a": 14,
+     "b": 20,
+     "b_rate": 58.8
+    }
+   }
+  },
+  "by_language": {
+   "Arabic": {
+    "whisper": {
+     "err_acc_word": 60.6,
+     "diag": 57.1
+    },
+    "m1": {
+     "err_acc_word": 81.8,
+     "diag": 90.0
+    },
+    "slplab": {
+     "err_acc_word": 75.8,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 93.9,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 93.9,
+     "diag": 100.0
+    }
+   },
+   "Armenian": {
+    "whisper": {
+     "err_acc_word": 68.8,
+     "diag": 65.0
+    },
+    "m1": {
+     "err_acc_word": 72.3,
+     "diag": 66.7
+    },
+    "slplab": {
+     "err_acc_word": 78.0,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 85.8,
+     "diag": 84.2
+    },
+    "m3": {
+     "err_acc_word": 87.9,
+     "diag": 95.5
+    }
+   },
+   "Azerbaijani": {
+    "whisper": {
+     "err_acc_word": 57.5,
+     "diag": 54.9
+    },
+    "m1": {
+     "err_acc_word": 52.2,
+     "diag": 57.7
+    },
+    "slplab": {
+     "err_acc_word": 77.7,
+     "diag": 75.0
+    },
+    "m2": {
+     "err_acc_word": 87.4,
+     "diag": 89.6
+    },
+    "m3": {
+     "err_acc_word": 88.3,
+     "diag": 90.4
+    }
+   },
+   "Basque": {
+    "whisper": {
+     "err_acc_word": 57.1,
+     "diag": 66.7
+    },
+    "m1": {
+     "err_acc_word": 71.4,
+     "diag": 40.0
+    },
+    "slplab": {
+     "err_acc_word": 71.4,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 71.4,
+     "diag": 50.0
+    },
+    "m3": {
+     "err_acc_word": 71.4,
+     "diag": 50.0
+    }
+   },
+   "Bulgarian": {
+    "whisper": {
+     "err_acc_word": 60.0,
+     "diag": null
+    },
+    "m1": {
+     "err_acc_word": 60.0,
+     "diag": null
+    },
+    "slplab": {
+     "err_acc_word": 80.0,
+     "diag": null
+    },
+    "m2": {
+     "err_acc_word": 80.0,
+     "diag": null
+    },
+    "m3": {
+     "err_acc_word": 80.0,
+     "diag": null
+    }
+   },
+   "Burmese": {
+    "whisper": {
+     "err_acc_word": 77.8,
+     "diag": 76.5
+    },
+    "m1": {
+     "err_acc_word": 68.1,
+     "diag": 73.3
+    },
+    "slplab": {
+     "err_acc_word": 81.9,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 87.5,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 87.5,
+     "diag": 100.0
+    }
+   },
+   "Catalan": {
+    "whisper": {
+     "err_acc_word": 72.6,
+     "diag": 53.8
+    },
+    "m1": {
+     "err_acc_word": 58.3,
+     "diag": 47.8
+    },
+    "slplab": {
+     "err_acc_word": 85.7,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 88.1,
+     "diag": 88.2
+    },
+    "m3": {
+     "err_acc_word": 88.1,
+     "diag": 85.0
+    }
+   },
+   "Chinese": {
+    "whisper": {
+     "err_acc_word": 68.3,
+     "diag": 66.1
+    },
+    "m1": {
+     "err_acc_word": 71.8,
+     "diag": 69.4
+    },
+    "slplab": {
+     "err_acc_word": 78.2,
+     "diag": 82.2
+    },
+    "m2": {
+     "err_acc_word": 86.1,
+     "diag": 87.4
+    },
+    "m3": {
+     "err_acc_word": 86.1,
+     "diag": 88.5
+    }
+   },
+   "Czech": {
+    "whisper": {
+     "err_acc_word": 55.3,
+     "diag": 54.1
+    },
+    "m1": {
+     "err_acc_word": 54.1,
+     "diag": 57.3
+    },
+    "slplab": {
+     "err_acc_word": 73.6,
+     "diag": 66.7
+    },
+    "m2": {
+     "err_acc_word": 81.0,
+     "diag": 76.5
+    },
+    "m3": {
+     "err_acc_word": 82.2,
+     "diag": 73.1
+    }
+   },
+   "English": {
+    "whisper": {
+     "err_acc_word": 60.3,
+     "diag": 55.5
+    },
+    "m1": {
+     "err_acc_word": 57.4,
+     "diag": 54.3
+    },
+    "slplab": {
+     "err_acc_word": 78.4,
+     "diag": 81.6
+    },
+    "m2": {
+     "err_acc_word": 84.6,
+     "diag": 83.2
+    },
+    "m3": {
+     "err_acc_word": 84.8,
+     "diag": 83.5
+    }
+   },
+   "Estonian": {
+    "whisper": {
+     "err_acc_word": 55.1,
+     "diag": 50.0
+    },
+    "m1": {
+     "err_acc_word": 46.9,
+     "diag": 42.1
+    },
+    "slplab": {
+     "err_acc_word": 66.3,
+     "diag": 66.7
+    },
+    "m2": {
+     "err_acc_word": 71.4,
+     "diag": 91.7
+    },
+    "m3": {
+     "err_acc_word": 71.4,
+     "diag": 91.7
+    }
+   },
+   "French": {
+    "whisper": {
+     "err_acc_word": 69.3,
+     "diag": 66.2
+    },
+    "m1": {
+     "err_acc_word": 64.8,
+     "diag": 58.6
+    },
+    "slplab": {
+     "err_acc_word": 83.7,
+     "diag": 92.9
+    },
+    "m2": {
+     "err_acc_word": 88.7,
+     "diag": 92.0
+    },
+    "m3": {
+     "err_acc_word": 90.8,
+     "diag": 93.0
+    }
+   },
+   "German": {
+    "whisper": {
+     "err_acc_word": 65.8,
+     "diag": 64.5
+    },
+    "m1": {
+     "err_acc_word": 68.1,
+     "diag": 63.9
+    },
+    "slplab": {
+     "err_acc_word": 77.4,
+     "diag": 82.1
+    },
+    "m2": {
+     "err_acc_word": 84.9,
+     "diag": 81.9
+    },
+    "m3": {
+     "err_acc_word": 85.6,
+     "diag": 83.4
+    }
+   },
+   "Hebrew": {
+    "whisper": {
+     "err_acc_word": 57.1,
+     "diag": 71.4
+    },
+    "m1": {
+     "err_acc_word": 57.1,
+     "diag": 66.7
+    },
+    "slplab": {
+     "err_acc_word": 83.3,
+     "diag": 50.0
+    },
+    "m2": {
+     "err_acc_word": 85.7,
+     "diag": 75.0
+    },
+    "m3": {
+     "err_acc_word": 88.1,
+     "diag": 80.0
+    }
+   },
+   "Hindi": {
+    "whisper": {
+     "err_acc_word": 53.4,
+     "diag": 25.0
+    },
+    "m1": {
+     "err_acc_word": 53.4,
+     "diag": 46.2
+    },
+    "slplab": {
+     "err_acc_word": 81.0,
+     "diag": 83.3
+    },
+    "m2": {
+     "err_acc_word": 93.1,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 91.4,
+     "diag": 100.0
+    }
+   },
+   "Hungarian": {
+    "whisper": {
+     "err_acc_word": 64.0,
+     "diag": 58.7
+    },
+    "m1": {
+     "err_acc_word": 57.3,
+     "diag": 60.5
+    },
+    "slplab": {
+     "err_acc_word": 76.2,
+     "diag": 88.9
+    },
+    "m2": {
+     "err_acc_word": 81.6,
+     "diag": 82.3
+    },
+    "m3": {
+     "err_acc_word": 83.3,
+     "diag": 85.7
+    }
+   },
+   "Indonesian": {
+    "whisper": {
+     "err_acc_word": 66.3,
+     "diag": 60.4
+    },
+    "m1": {
+     "err_acc_word": 63.9,
+     "diag": 60.0
+    },
+    "slplab": {
+     "err_acc_word": 79.7,
+     "diag": 78.4
+    },
+    "m2": {
+     "err_acc_word": 87.5,
+     "diag": 88.6
+    },
+    "m3": {
+     "err_acc_word": 88.1,
+     "diag": 88.3
+    }
+   },
+   "Italian": {
+    "whisper": {
+     "err_acc_word": 65.5,
+     "diag": 57.6
+    },
+    "m1": {
+     "err_acc_word": 64.8,
+     "diag": 57.7
+    },
+    "slplab": {
+     "err_acc_word": 80.0,
+     "diag": 81.8
+    },
+    "m2": {
+     "err_acc_word": 86.8,
+     "diag": 80.5
+    },
+    "m3": {
+     "err_acc_word": 87.2,
+     "diag": 80.5
+    }
+   },
+   "Japanese": {
+    "whisper": {
+     "err_acc_word": 67.4,
+     "diag": 59.2
+    },
+    "m1": {
+     "err_acc_word": 70.2,
+     "diag": 68.4
+    },
+    "slplab": {
+     "err_acc_word": 76.5,
+     "diag": 77.7
+    },
+    "m2": {
+     "err_acc_word": 86.8,
+     "diag": 88.6
+    },
+    "m3": {
+     "err_acc_word": 87.9,
+     "diag": 87.5
+    }
+   },
+   "Kazakh": {
+    "whisper": {
+     "err_acc_word": 68.9,
+     "diag": 59.4
+    },
+    "m1": {
+     "err_acc_word": 72.3,
+     "diag": 57.6
+    },
+    "slplab": {
+     "err_acc_word": 81.3,
+     "diag": 87.0
+    },
+    "m2": {
+     "err_acc_word": 85.5,
+     "diag": 87.2
+    },
+    "m3": {
+     "err_acc_word": 85.5,
+     "diag": 87.8
+    }
+   },
+   "Kirghiz": {
+    "whisper": {
+     "err_acc_word": 83.3,
+     "diag": 100.0
+    },
+    "m1": {
+     "err_acc_word": 100.0,
+     "diag": 75.0
+    },
+    "slplab": {
+     "err_acc_word": 83.3,
+     "diag": null
+    },
+    "m2": {
+     "err_acc_word": 100.0,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 100.0,
+     "diag": 100.0
+    }
+   },
+   "Latvian": {
+    "whisper": {
+     "err_acc_word": 61.7,
+     "diag": 50.0
+    },
+    "m1": {
+     "err_acc_word": 63.0,
+     "diag": 59.7
+    },
+    "slplab": {
+     "err_acc_word": 78.2,
+     "diag": 62.5
+    },
+    "m2": {
+     "err_acc_word": 86.8,
+     "diag": 72.3
+    },
+    "m3": {
+     "err_acc_word": 87.7,
+     "diag": 77.1
+    }
+   },
+   "Lithuanian": {
+    "whisper": {
+     "err_acc_word": 68.4,
+     "diag": 100.0
+    },
+    "m1": {
+     "err_acc_word": 57.9,
+     "diag": 100.0
+    },
+    "slplab": {
+     "err_acc_word": 68.4,
+     "diag": 66.7
+    },
+    "m2": {
+     "err_acc_word": 68.4,
+     "diag": 66.7
+    },
+    "m3": {
+     "err_acc_word": 68.4,
+     "diag": 66.7
+    }
+   },
+   "Mongolian": {
+    "whisper": {
+     "err_acc_word": 64.8,
+     "diag": 61.1
+    },
+    "m1": {
+     "err_acc_word": 70.5,
+     "diag": 57.1
+    },
+    "slplab": {
+     "err_acc_word": 77.8,
+     "diag": 73.5
+    },
+    "m2": {
+     "err_acc_word": 86.7,
+     "diag": 83.7
+    },
+    "m3": {
+     "err_acc_word": 86.0,
+     "diag": 82.1
+    }
+   },
+   "Nepali": {
+    "whisper": {
+     "err_acc_word": 48.6,
+     "diag": 66.7
+    },
+    "m1": {
+     "err_acc_word": 43.2,
+     "diag": 54.5
+    },
+    "slplab": {
+     "err_acc_word": 67.6,
+     "diag": 60.0
+    },
+    "m2": {
+     "err_acc_word": 86.5,
+     "diag": 80.0
+    },
+    "m3": {
+     "err_acc_word": 86.5,
+     "diag": 80.0
+    }
+   },
+   "Persian": {
+    "whisper": {
+     "err_acc_word": 75.0,
+     "diag": 100.0
+    },
+    "m1": {
+     "err_acc_word": 75.0,
+     "diag": 50.0
+    },
+    "slplab": {
+     "err_acc_word": 75.0,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 75.0,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 75.0,
+     "diag": 100.0
+    }
+   },
+   "Polish": {
+    "whisper": {
+     "err_acc_word": 60.5,
+     "diag": 61.8
+    },
+    "m1": {
+     "err_acc_word": 63.1,
+     "diag": 60.9
+    },
+    "slplab": {
+     "err_acc_word": 79.4,
+     "diag": 90.7
+    },
+    "m2": {
+     "err_acc_word": 87.9,
+     "diag": 90.0
+    },
+    "m3": {
+     "err_acc_word": 88.7,
+     "diag": 89.0
+    }
+   },
+   "Portuguese": {
+    "whisper": {
+     "err_acc_word": 59.7,
+     "diag": 49.6
+    },
+    "m1": {
+     "err_acc_word": 61.3,
+     "diag": 49.0
+    },
+    "slplab": {
+     "err_acc_word": 77.8,
+     "diag": 78.4
+    },
+    "m2": {
+     "err_acc_word": 84.6,
+     "diag": 84.0
+    },
+    "m3": {
+     "err_acc_word": 84.9,
+     "diag": 86.4
+    }
+   },
+   "Romanian": {
+    "whisper": {
+     "err_acc_word": 70.0,
+     "diag": 56.6
+    },
+    "m1": {
+     "err_acc_word": 61.6,
+     "diag": 65.9
+    },
+    "slplab": {
+     "err_acc_word": 75.2,
+     "diag": 77.8
+    },
+    "m2": {
+     "err_acc_word": 82.0,
+     "diag": 83.6
+    },
+    "m3": {
+     "err_acc_word": 83.7,
+     "diag": 84.9
+    }
+   },
+   "Russian": {
+    "whisper": {
+     "err_acc_word": 59.0,
+     "diag": 55.7
+    },
+    "m1": {
+     "err_acc_word": 66.8,
+     "diag": 67.9
+    },
+    "slplab": {
+     "err_acc_word": 78.1,
+     "diag": 76.1
+    },
+    "m2": {
+     "err_acc_word": 85.4,
+     "diag": 82.7
+    },
+    "m3": {
+     "err_acc_word": 85.7,
+     "diag": 82.5
+    }
+   },
+   "Slovak": {
+    "whisper": {
+     "err_acc_word": 66.4,
+     "diag": 56.0
+    },
+    "m1": {
+     "err_acc_word": 67.2,
+     "diag": 58.1
+    },
+    "slplab": {
+     "err_acc_word": 81.1,
+     "diag": 81.8
+    },
+    "m2": {
+     "err_acc_word": 87.7,
+     "diag": 94.7
+    },
+    "m3": {
+     "err_acc_word": 88.5,
+     "diag": 90.9
+    }
+   },
+   "Spanish; Castilian": {
+    "whisper": {
+     "err_acc_word": 64.9,
+     "diag": 60.8
+    },
+    "m1": {
+     "err_acc_word": 64.2,
+     "diag": 62.2
+    },
+    "slplab": {
+     "err_acc_word": 77.4,
+     "diag": 77.6
+    },
+    "m2": {
+     "err_acc_word": 85.7,
+     "diag": 86.4
+    },
+    "m3": {
+     "err_acc_word": 86.5,
+     "diag": 86.1
+    }
+   },
+   "Swedish": {
+    "whisper": {
+     "err_acc_word": null,
+     "diag": null
+    },
+    "m1": {
+     "err_acc_word": null,
+     "diag": null
+    },
+    "slplab": {
+     "err_acc_word": null,
+     "diag": null
+    },
+    "m2": {
+     "err_acc_word": null,
+     "diag": null
+    },
+    "m3": {
+     "err_acc_word": null,
+     "diag": null
+    }
+   },
+   "Tajik": {
+    "whisper": {
+     "err_acc_word": 69.2,
+     "diag": 20.0
+    },
+    "m1": {
+     "err_acc_word": 61.5,
+     "diag": 37.5
+    },
+    "slplab": {
+     "err_acc_word": 73.1,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 82.7,
+     "diag": 66.7
+    },
+    "m3": {
+     "err_acc_word": 80.8,
+     "diag": 60.0
+    }
+   },
+   "Thai": {
+    "whisper": {
+     "err_acc_word": 63.6,
+     "diag": 33.3
+    },
+    "m1": {
+     "err_acc_word": 63.6,
+     "diag": 25.0
+    },
+    "slplab": {
+     "err_acc_word": 81.8,
+     "diag": 75.0
+    },
+    "m2": {
+     "err_acc_word": 72.7,
+     "diag": 33.3
+    },
+    "m3": {
+     "err_acc_word": 72.7,
+     "diag": 50.0
+    }
+   },
+   "Turkish": {
+    "whisper": {
+     "err_acc_word": 64.7,
+     "diag": 67.4
+    },
+    "m1": {
+     "err_acc_word": 63.1,
+     "diag": 61.2
+    },
+    "slplab": {
+     "err_acc_word": 78.9,
+     "diag": 93.8
+    },
+    "m2": {
+     "err_acc_word": 86.6,
+     "diag": 93.3
+    },
+    "m3": {
+     "err_acc_word": 87.1,
+     "diag": 94.9
+    }
+   },
+   "Turkmen": {
+    "whisper": {
+     "err_acc_word": 72.7,
+     "diag": 100.0
+    },
+    "m1": {
+     "err_acc_word": 90.9,
+     "diag": 66.7
+    },
+    "slplab": {
+     "err_acc_word": 100.0,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 100.0,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 100.0,
+     "diag": 100.0
+    }
+   },
+   "Ukrainian": {
+    "whisper": {
+     "err_acc_word": 61.9,
+     "diag": 50.0
+    },
+    "m1": {
+     "err_acc_word": 66.7,
+     "diag": 100.0
+    },
+    "slplab": {
+     "err_acc_word": 90.5,
+     "diag": 100.0
+    },
+    "m2": {
+     "err_acc_word": 90.5,
+     "diag": 100.0
+    },
+    "m3": {
+     "err_acc_word": 90.5,
+     "diag": 100.0
+    }
+   },
+   "Urdu": {
+    "whisper": {
+     "err_acc_word": 81.2,
+     "diag": null
+    },
+    "m1": {
+     "err_acc_word": 56.2,
+     "diag": 75.0
+    },
+    "slplab": {
+     "err_acc_word": 81.2,
+     "diag": null
+    },
+    "m2": {
+     "err_acc_word": 81.2,
+     "diag": null
+    },
+    "m3": {
+     "err_acc_word": 81.2,
+     "diag": null
+    }
+   },
+   "Uzbek": {
+    "whisper": {
+     "err_acc_word": 66.4,
+     "diag": 51.5
+    },
+    "m1": {
+     "err_acc_word": 59.6,
+     "diag": 55.6
+    },
+    "slplab": {
+     "err_acc_word": 75.8,
+     "diag": 71.4
+    },
+    "m2": {
+     "err_acc_word": 81.6,
+     "diag": 70.7
+    },
+    "m3": {
+     "err_acc_word": 81.2,
+     "diag": 68.6
+    }
+   },
+   "Vietnamese": {
+    "whisper": {
+     "err_acc_word": 62.9,
+     "diag": 58.7
+    },
+    "m1": {
+     "err_acc_word": 63.1,
+     "diag": 60.2
+    },
+    "slplab": {
+     "err_acc_word": 76.4,
+     "diag": 72.5
+    },
+    "m2": {
+     "err_acc_word": 85.4,
+     "diag": 86.1
+    },
+    "m3": {
+     "err_acc_word": 85.1,
+     "diag": 85.8
+    }
+   }
+  },
+  "pair": {
+   "a": "slplab",
+   "b": "m3",
+   "error_sites_detect": {
+    "a": 323,
+    "b": 3394,
+    "b_rate": 91.3
+   },
+   "error_sites_exact_sound": {
+    "a": 322,
+    "b": 3083,
+    "b_rate": 90.5
+   },
+   "all_sites": {
+    "a": 4257,
+    "b": 4621,
+    "b_rate": 52.1
+   }
+  }
+ },
+ "참고_화면_표준발음보정": {
+  "설명": "같은 M3, 2,281발화(학습 문항 224개·새 화자, 말소리 1초 통과). KoG2P 그대로(api) vs 보정 선택(choose)",
+  "source": "$MDD_OUTPUTS/analysis/canonical_source_2026-10-11/report_ft3000_margin1_ds50m.json → report.accepted_only.전체",
+  "KoG2P_그대로": {
+   "발화_헛지적률": 44.6,
+   "재현율": 31.39,
+   "정밀도": 26.68
+  },
+  "보정": {
+   "발화_헛지적률": 19.6,
+   "재현율": 31.95,
+   "정밀도": 46.29
+  }
+ },
+ "주의": [
+  "Whisper 받아쓰기의 4.4%(1,029녹음)는 숫자·영문이 섞여 KoG2P가 일부를 읽지 못함. 그 녹음을 빼도 F1 0.248 · 헛지적 11.47%",
+  "판정이 갈린 자리 91.3%는 실제 오류 자리만 센 값. 정상 자리까지 넣으면 우리 52.1% : slplab 47.9%(헛지적이 더 많기 때문)",
+  "영어 화자는 slplab의 전체 PER이 더 낮음: 4.51% vs M3 5.52% (M2 5.27%). 나머지 8개 모국어 그룹은 M3가 더 낮음",
+  "계열별 진단 정확도는 ㅂ·ㅃ·ㅍ에서 M3가 slplab보다 낮음(85.5 → 84.4)",
+  "학습에 쓴 문항을 새 화자가 읽은 녹음이다. 새 문장 일반화 수치가 아니다(08_문장암기_일반화.md)"
+ ]
+}

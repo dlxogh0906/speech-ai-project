@@ -182,3 +182,22 @@ NPU 에서 서비스 중인 배포본 · 학습 원본 · 위 9월 번들을 비
 - 발음 · 국적은 NPU 배포 코드 일부가 저장소와 다르다(태그 메시지에 파일 목록). 그대로 되돌리려면 HF 쪽 `app/` · `bundle/` 의 코드를 쓴다.
 - 국적 번들 안의 `SHA256SUMS.txt`(09-25)는 그 뒤 바뀐 `app/app.py` · `deployed_gate/encoder_kd_l17_static12s.ts.pt` 와 맞지 않는다.
   NPU 원본도 같다 — 기준은 HF 맨 위 `SHA256SUMS.txt`.
+
+## 8. 발음평가 로컬 백업 zip (2026-11-04)
+
+GPU 서버에 발음평가 전체를 zip 4개로 묶어 두었다. 저장소 `발음평가_백업_20261104/`에 링크와 `00_README.md`(구성·운영 서버 재구성 순서)가 있고, 이 폴더는 git 에서 제외된다. **비공개 — 외부 공유 금지.**
+
+| zip | 내용 | 크기 |
+|---|---|---|
+| `pron_backup_1_ops_code_stats_20261104.zip` | NPU 8932 실행 스크립트·앱 코드·systemd·Caddy·패키지 목록, 저장소 발음평가 코드·문서(미커밋 포함), 162만 녹음 판정 원본(shard), 성능 근거(23,562발화 예측·채점) | 114.6 MB |
+| `pron_backup_2_model_M3_20261104.zip` | 운영 M3 `model_hf` + NPU 컴파일본 `.rbln` + 점수 회귀기 (NPU 원본과 sha256 일치) | 5.41 GB |
+| `pron_backup_3_lineage_M1_M2_M3data_20261104.zip` | M1 `step_10000`, M2 `step_38000`, M3 합성 쌍 음성·학습 목록, M1·M2 학습 목록 | 6.03 GB |
+| `pron_backup_4_english_synth-d_20261104.zip` | 영어 발음평가 synth-d 모델·채점기·코드 | 1.29 GB |
+
+- **M1 · M2 가중치:** 이 zip 말고는 백업이 없다(HF §7 에 없음).
+- **넣지 않은 것:**
+  - API 토큰(`/root/pron_serve/.token`)과 `.env`
+  - 사용자 녹음과 운영 기록 DB (개인정보)
+  - AIHub·KsponSpeech 원본 음성, 공개 사전학습 모델
+- **실제 위치:** `$SPEECH_AI_DATA/../backup_pron_20261104/`(zip 1·3·4)와 홈의 `pron_backup_20261104/`(zip 2)
+
